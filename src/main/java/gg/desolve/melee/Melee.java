@@ -1,6 +1,6 @@
 package gg.desolve.melee;
 
-import gg.desolve.melee.commands.manager.MeleeCommandManager;
+import gg.desolve.melee.commands.MeleeCommandManager;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 

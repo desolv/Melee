@@ -1,9 +1,8 @@
-package gg.desolve.melee.commands.manager;
+package gg.desolve.melee.commands;
 
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.PaperCommandManager;
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.commands.MeleeCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
