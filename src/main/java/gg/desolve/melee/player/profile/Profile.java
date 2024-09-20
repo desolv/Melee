@@ -3,7 +3,6 @@ package gg.desolve.melee.player.profile;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;

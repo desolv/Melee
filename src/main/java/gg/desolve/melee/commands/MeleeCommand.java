@@ -21,7 +21,6 @@ public class MeleeCommand extends BaseCommand {
                 "\n&bMelee Management " + Melee.getInstance().getDescription().getVersion()
                         + "\n&fRunning: &b" + Melee.getInstance().getServer().getVersion()
                         + "\n&fVersion: &b" + Melee.getInstance().getServer().getBukkitVersion()
-                        + "\n&fPlayers: &b" + Bukkit.getOnlinePlayers().size()
         );
     }
 
