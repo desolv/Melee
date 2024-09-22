@@ -1,15 +1,22 @@
 package gg.desolve.melee.player.profile;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
+import gg.desolve.melee.Melee;
+import lombok.Data;
 import lombok.Getter;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+@Data
 public class Profile {
+
+    @Getter
+    private static MongoCollection<Document> mongoCollection = Melee.getMongoManager().getMongoDatabase().getCollection("profiles");
 
     @Getter
     private static Map<UUID, Profile> profiles = new HashMap<>();
@@ -25,6 +32,8 @@ public class Profile {
     public Profile(UUID uuid, String username) {
         this.uuid = uuid;
         this.username = username;
+
+        load();
     }
 
     public static Profile getProfile(UUID uuid) {
@@ -47,4 +56,51 @@ public class Profile {
 
         return profile;
     }
+
+    public void load() {
+        try {
+            Document document = mongoCollection.find(
+                    Filters.eq(
+                            "uuid",
+                            uuid.toString())
+            ).first();
+
+            if (document != null) {
+                username = document.getString("username");
+                logins = document.getInteger("logins");
+                firstSeen = document.getLong("firstSeen");
+                lastSeen = document.getLong("lastSeen");
+                address = document.getString("address");
+            }
+
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("There was a problem loading " + username + "'s document.");
+            e.printStackTrace();
+        }
+    }
+
+    public void save() {
+        try {
+            Document document = new Document();
+            document.put("uuid", uuid.toString());
+            document.put("username", username);
+            document.put("logins", logins);
+            document.put("firstSeen", firstSeen);
+            document.put("lastSeen", lastSeen);
+            document.put("address", address);
+
+            mongoCollection.replaceOne(
+                    Filters.eq(
+                            "uuid",
+                            uuid.toString()),
+                    document,
+                    new ReplaceOptions().upsert(true)
+            );
+
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("There was a problem saving " + username + "'s document.");
+            e.printStackTrace();
+        }
+    }
+
 }
