@@ -16,7 +16,7 @@ import java.util.*;
 public class Profile {
 
     @Getter
-    private static MongoCollection<Document> mongoCollection = Melee.getMongoManager().getMongoDatabase().getCollection("profiles");
+    private static MongoCollection<Document> mongoCollection = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("profiles");
 
     @Getter
     private static Map<UUID, Profile> profiles = new HashMap<>();

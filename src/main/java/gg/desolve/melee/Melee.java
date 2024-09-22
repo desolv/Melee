@@ -6,6 +6,7 @@ import gg.desolve.melee.database.MeleeMongoManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Profile;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Melee extends JavaPlugin {
@@ -17,7 +18,8 @@ public final class Melee extends JavaPlugin {
     private Configuration databaseConfig;
 
     @Getter
-    private static MeleeMongoManager mongoManager;
+    @Setter
+    private MeleeMongoManager mongoManager;
 
     @Override
     public void onEnable() {
@@ -25,7 +27,7 @@ public final class Melee extends JavaPlugin {
 
         databaseConfig = new Configuration("database.yml");
 
-        mongoManager = new MeleeMongoManager(this);
+        new MeleeMongoManager(this);
         new MeleeListenerManager(this);
         new MeleeCommandManager(this);
     }

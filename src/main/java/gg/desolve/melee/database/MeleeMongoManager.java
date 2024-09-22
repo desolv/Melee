@@ -25,6 +25,7 @@ public class MeleeMongoManager {
             mongoClient = MongoClients.create(mongoSettings);
             mongoDatabase = mongoClient.getDatabase(instance.getDatabaseConfig().getString("mongodb.database"));
 
+            Melee.getInstance().setMongoManager(this);
             instance.getLogger().info("Connected to MongoDB.");
         } catch (Exception e) {
             instance.getLogger().warning("There was a problem connecting to MongoDB.");
