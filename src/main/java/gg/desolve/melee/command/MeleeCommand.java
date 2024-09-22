@@ -1,4 +1,4 @@
-package gg.desolve.melee.commands;
+package gg.desolve.melee.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -6,8 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.commons.Message;
-import org.bukkit.Bukkit;
+import gg.desolve.melee.common.Message;
 import org.bukkit.command.CommandSender;
 
 @CommandAlias("melee")

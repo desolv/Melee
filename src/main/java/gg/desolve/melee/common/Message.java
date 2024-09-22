@@ -1,4 +1,4 @@
-package gg.desolve.melee.commons;
+package gg.desolve.melee.common;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
