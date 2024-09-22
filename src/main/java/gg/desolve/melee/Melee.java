@@ -15,10 +15,6 @@ public final class Melee extends JavaPlugin {
 
     @Getter
     private Configuration databaseConfig;
-
-    @Getter
-    private static MongoDatabase mongoDatabase;
-
     @Getter
     private static MeleeMongoManager mongoManager;
 

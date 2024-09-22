@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import gg.desolve.melee.Melee;
 import lombok.Getter;
 import org.bson.UuidRepresentation;
-import org.bukkit.Bukkit;
 
 @Getter
 public class MeleeMongoManager {
