@@ -1,4 +1,4 @@
-package gg.desolve.melee.commands;
+package gg.desolve.melee.command;
 
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.PaperCommandManager;
