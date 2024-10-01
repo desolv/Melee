@@ -2,7 +2,7 @@ package gg.desolve.melee;
 
 import gg.desolve.melee.command.MeleeCommandManager;
 import gg.desolve.melee.common.Configuration;
-import gg.desolve.melee.database.MeleeMongoManager;
+import gg.desolve.melee.storage.MeleeMongoManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Profile;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public final class Melee extends JavaPlugin {
     public static Melee instance;
 
     @Getter
-    private Configuration databaseConfig;
+    private Configuration storageConfig;
 
     @Getter
     @Setter
@@ -25,7 +25,7 @@ public final class Melee extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        databaseConfig = new Configuration("database.yml");
+        storageConfig = new Configuration("storage.yml");
 
         new MeleeMongoManager(this);
         new MeleeListenerManager(this);
@@ -34,7 +34,10 @@ public final class Melee extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Profile.getProfiles().forEach((uuid, profile) -> profile.save());
+        Profile.getProfiles().forEach((uuid, profile) -> {
+            profile.setLastSeen(System.currentTimeMillis());
+            profile.save();
+        });
         mongoManager.getMongoClient().close();
     }
 

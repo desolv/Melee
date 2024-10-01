@@ -1,4 +1,4 @@
-package gg.desolve.melee.database;
+package gg.desolve.melee.storage;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -18,12 +18,12 @@ public class MeleeMongoManager {
     public MeleeMongoManager(Melee instance) {
         try {
             MongoClientSettings mongoSettings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString(instance.getDatabaseConfig().getString("mongodb.url")))
+                    .applyConnectionString(new ConnectionString(instance.getStorageConfig().getString("mongodb.url")))
                     .uuidRepresentation(UuidRepresentation.STANDARD)
                     .build();
 
             mongoClient = MongoClients.create(mongoSettings);
-            mongoDatabase = mongoClient.getDatabase(instance.getDatabaseConfig().getString("mongodb.database"));
+            mongoDatabase = mongoClient.getDatabase(instance.getStorageConfig().getString("mongodb.database"));
 
             Melee.getInstance().setMongoManager(this);
             instance.getLogger().info("Connected to MongoDB.");
