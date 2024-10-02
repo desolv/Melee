@@ -1,0 +1,44 @@
+Owner:
+  priority: 40
+  display: 'Owner'
+  prefix: '&4[Owner] &4'
+  color: '&4'
+  inherits:
+    - Admin
+    - Moderator
+    - Member
+  grantable: true
+  visible: true
+  permissions:
+    - melee.*
+Admin:
+  priority: 30
+  display: 'Admin'
+  prefix: '&c[Admin] &c'
+  color: '&c'
+  inherits:
+    - Moderator
+    - Member
+  grantable: true
+  visible: true
+  permissions:
+    - melee.*
+Moderator:
+  priority: 20
+  display: 'Moderator'
+  prefix: '&3[Moderator] &3'
+  color: '&3'
+  inherits:
+    - Member
+  grantable: true
+  visible: true
+  permissions: []
+Member:
+  priority: 10
+  display: 'Member'
+  prefix: '&a'
+  color: '&a'
+  inherits: []
+  visible: true
+  baseline: true
+  permissions: []

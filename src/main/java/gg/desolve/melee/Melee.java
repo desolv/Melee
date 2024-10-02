@@ -4,6 +4,7 @@ import gg.desolve.melee.command.MeleeCommandManager;
 import gg.desolve.melee.common.Config;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.rank.MeleeRankManager;
 import gg.desolve.melee.storage.MeleeMongoManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,9 @@ public final class Melee extends JavaPlugin {
     private Config storageConfig;
 
     @Getter
+    private Config rankConfig;
+
+    @Getter
     @Setter
     private MeleeMongoManager mongoManager;
 
@@ -26,10 +30,12 @@ public final class Melee extends JavaPlugin {
         instance = this;
 
         storageConfig = new Config("storage.yml");
+        rankConfig = new Config("ranks.yml");
 
         new MeleeMongoManager(this);
         new MeleeListenerManager(this);
         new MeleeCommandManager(this);
+        new MeleeRankManager(this);
     }
 
     @Override
