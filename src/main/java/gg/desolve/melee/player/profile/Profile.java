@@ -4,11 +4,18 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.common.Converter;
+import gg.desolve.melee.player.grant.Grant;
+import gg.desolve.melee.player.grant.GrantType;
+import gg.desolve.melee.rank.Rank;
 import lombok.Data;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,14 +36,20 @@ public class Profile {
     private Long lastSeen;
     private String address;
     private boolean loaded;
+    private Grant grant;
     private List<Marker> markers;
+    private List<Grant> grants;
 
     public Profile(UUID uuid, String username) {
         this.uuid = uuid;
         this.username = username;
         this.markers = new ArrayList<>();
+        this.grants = new ArrayList<>();
 
         load();
+        evaluateGrants();
+        refreshGrants();
+        save();
     }
 
     public static Profile getProfile(UUID uuid) {
@@ -60,6 +73,67 @@ public class Profile {
         return profile;
     }
 
+    public void refreshGrants() {
+        grant = grants.stream()
+                .filter(grant -> grant.getType() == GrantType.ACTIVE)
+                .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
+                .findFirst().get();
+        refreshPermissions();
+    }
+
+    public void evaluateGrants() {
+        if (grant != null && !grant.getType().equals(GrantType.ACTIVE)) {
+            refreshGrants();
+            return;
+        }
+
+        Optional<Grant> missing = grants.stream()
+                .filter(grant -> grant.getRank().equals(Rank.getDefault()))
+                .findFirst();
+
+        if (!missing.isPresent()) {
+            grants.add(
+                    new Grant(
+                            Converter.generateId(),
+                            Rank.getDefault(),
+                            null,
+                            System.currentTimeMillis(),
+                            "Automatic",
+                            Bukkit.getServerName(),
+                            Integer.MAX_VALUE,
+                            GrantType.ACTIVE
+                    )
+            );
+        }
+    }
+
+    public void refreshPermissions() {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) return;
+
+        Set<PermissionAttachmentInfo> attachmentInfo = player.getEffectivePermissions();
+
+        // Filter out only the permissions attached by the plugin
+        attachmentInfo.stream()
+                .filter(info -> info.getAttachment() != null &&
+                        info.getAttachment().getPlugin() != null &&
+                        info.getAttachment().getPlugin().equals(Melee.getInstance()))
+                .map(PermissionAttachmentInfo::getAttachment)
+                .forEach(PermissionAttachment::remove);
+
+        PermissionAttachment attachment = player.addAttachment(Melee.getInstance());
+
+        grants.stream()
+                .filter(grant -> grant.getType() == GrantType.ACTIVE)
+                .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(permission -> {
+                            if (!attachment.getPermissions().containsKey(permission))
+                                attachment.setPermission(permission, true);
+                        })
+                );
+
+        player.recalculatePermissions();
+    }
+
     public void load() {
         try {
             Document document = mongoCollection.find(
@@ -76,6 +150,8 @@ public class Profile {
                 address = document.getString("address");
                 Optional.ofNullable(document.getList("markers", Document.class))
                         .ifPresent(m -> m.forEach(markerDoc -> markers.add(Marker.load(markerDoc))));
+                Optional.ofNullable(document.getList("grants", Document.class))
+                        .ifPresent(m -> m.forEach(grantDoc -> grants.add(Grant.load(grantDoc))));
             }
 
         } catch (Exception e) {
@@ -94,6 +170,7 @@ public class Profile {
             document.put("lastSeen", lastSeen);
             document.put("address", address);
             document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));
+            document.put("grants", grants.stream().map(Grant::save).collect(Collectors.toList()));
 
             mongoCollection.replaceOne(
                     Filters.eq(

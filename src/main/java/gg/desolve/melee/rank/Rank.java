@@ -52,6 +52,22 @@ public class Rank {
                 .findFirst().orElse(null);
     }
 
+    public static Rank getDefault() {
+        return ranks.values().stream()
+                .filter(Rank::isBaseline)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<String> getPermissionsAndInherited() {
+        List<String> storePermissions = new ArrayList<>(permissions);
+        for (String inheritedRank : inherits) {
+            storePermissions.addAll(Rank.getRanks().get(inheritedRank).getPermissions());
+        }
+
+        return new ArrayList<>(storePermissions);
+    }
+
     public static void load(String rank) {
         try {
             FileConfiguration config = Melee.getInstance().getRankConfig().getConfig();
