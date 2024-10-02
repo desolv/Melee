@@ -22,6 +22,9 @@ public final class Melee extends JavaPlugin {
     private Config rankConfig;
 
     @Getter
+    private Config messageConfig;
+
+    @Getter
     @Setter
     private MeleeMongoManager mongoManager;
 
@@ -31,11 +34,12 @@ public final class Melee extends JavaPlugin {
 
         storageConfig = new Config("storage.yml");
         rankConfig = new Config("ranks.yml");
+        messageConfig = new Config("messages.yml");
 
         new MeleeMongoManager(this);
+        new MeleeRankManager(this);
         new MeleeListenerManager(this);
         new MeleeCommandManager(this);
-        new MeleeRankManager(this);
     }
 
     @Override

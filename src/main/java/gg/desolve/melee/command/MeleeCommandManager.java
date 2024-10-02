@@ -2,6 +2,7 @@ package gg.desolve.melee.command;
 
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.player.profile.Profile;
@@ -23,6 +24,7 @@ public class MeleeCommandManager extends PaperCommandManager {
             loadContexts();
 
             this.enableUnstableAPI("help");
+            this.getLocales().loadYamlLanguageFile("messages.yml", Locales.ENGLISH);
         } catch (Exception ex) {
             Melee.getInstance().getLogger().warning("There was a problem loading command manager.");
             ex.printStackTrace();
