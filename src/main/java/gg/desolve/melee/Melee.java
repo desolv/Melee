@@ -2,9 +2,9 @@ package gg.desolve.melee;
 
 import gg.desolve.melee.command.MeleeCommandManager;
 import gg.desolve.melee.common.Configuration;
-import gg.desolve.melee.storage.MeleeMongoManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.storage.MeleeMongoManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
