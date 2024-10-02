@@ -2,6 +2,7 @@ package gg.desolve.melee.listener;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
+import gg.desolve.melee.player.profile.Marker;
 import gg.desolve.melee.player.profile.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Optional;
 
 public class ProfileListener implements Listener {
 
@@ -48,6 +51,20 @@ public class ProfileListener implements Listener {
             if (profile.getAddress() == null || !profile.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
                 profile.setAddress(event.getAddress().getHostAddress());
 
+            Optional<Marker> markerMissing = profile.getMarkers().stream()
+                    .filter(address -> address.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
+                    .findFirst();
+
+            if (!markerMissing.isPresent()) {
+                profile.getMarkers().add(
+                        new Marker(
+                                event.getAddress().getHostAddress(),
+                                0,
+                                System.currentTimeMillis(),
+                                System.currentTimeMillis()
+                        ));
+            }
+
             profile.setLoaded(true);
         } catch (Exception e) {
             instance.getLogger().warning("There was a problem loading " + event.getName() + "'s profile.");
@@ -58,7 +75,7 @@ public class ProfileListener implements Listener {
             event.setKickMessage(
                     Message.translate(
                             "&cThere was a problem loading your account"
-                                    + "\nPlease try again in a few seconds"
+                                    + "\nPlease contact an administrator"
                     ));
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
@@ -85,6 +102,10 @@ public class ProfileListener implements Listener {
         }
 
         profile.setLogins(profile.getLogins() + 1);
+        profile.getMarkers().stream()
+                .filter(marker -> marker.getAddress().equalsIgnoreCase(profile.getAddress()))
+                .findFirst()
+                .ifPresent(marker -> marker.setLogins(marker.getLogins() + 1));
     }
 
     @EventHandler(

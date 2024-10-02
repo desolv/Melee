@@ -10,10 +10,8 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 public class Profile {
@@ -31,10 +29,12 @@ public class Profile {
     private Long lastSeen;
     private String address;
     private boolean loaded;
+    private List<Marker> markers;
 
     public Profile(UUID uuid, String username) {
         this.uuid = uuid;
         this.username = username;
+        this.markers = new ArrayList<>();
 
         load();
     }
@@ -74,6 +74,8 @@ public class Profile {
                 firstSeen = document.getLong("firstSeen");
                 lastSeen = document.getLong("lastSeen");
                 address = document.getString("address");
+                Optional.ofNullable(document.getList("markers", Document.class))
+                        .ifPresent(m -> m.forEach(markerDoc -> markers.add(Marker.load(markerDoc))));
             }
 
         } catch (Exception e) {
@@ -91,6 +93,7 @@ public class Profile {
             document.put("firstSeen", firstSeen);
             document.put("lastSeen", lastSeen);
             document.put("address", address);
+            document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));
 
             mongoCollection.replaceOne(
                     Filters.eq(
