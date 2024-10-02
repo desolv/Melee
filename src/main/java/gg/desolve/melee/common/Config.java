@@ -9,12 +9,12 @@ import java.io.File;
 import java.util.List;
 
 @Getter
-public class Configuration {
+public class Config {
 
     private final File file;
     private FileConfiguration config;
 
-    public Configuration(String name) {
+    public Config(String name) {
         this.file = new File(Melee.getInstance().getDataFolder(), name);
         this.config = new YamlConfiguration();
 
