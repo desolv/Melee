@@ -57,6 +57,14 @@ public class MeleeCommandManager extends PaperCommandManager {
                     return Optional.ofNullable(duration).orElseThrow(() ->
                             new InvalidCommandArgument("&cDuration matching &e" + popDuration + " &ccould not be found.", false));
                 });
+
+        getCommandContexts().registerContext(
+                Rank.class, c -> {
+                    String popRank = c.popFirstArg();
+                    Rank rank = Rank.getRank(popRank);
+                    return Optional.ofNullable(rank).orElseThrow(() ->
+                            new InvalidCommandArgument("&cRank matching &e" + popRank + " &ccould not be found.", false));
+                });
     }
 
     private void loadCompletions() {
