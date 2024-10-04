@@ -119,6 +119,7 @@ public class ProfileListener implements Listener {
         if (profile != null) {
             profile.setLastSeen(System.currentTimeMillis());
             profile.save();
+            profile.cancelSchedules();
             Profile.getProfiles().remove(event.getPlayer().getUniqueId());
         }
     }
