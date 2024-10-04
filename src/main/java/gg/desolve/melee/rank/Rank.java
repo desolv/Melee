@@ -52,6 +52,18 @@ public class Rank {
                 .findFirst().orElse(null);
     }
 
+    public String getNameColored() {
+        return color + name;
+    }
+
+    public String getDisplayColored() {
+        return color + display;
+    }
+
+    public static boolean rankIsHigherThanRank(Rank rank, Rank compareRank) {
+        return rank.getPriority() >= compareRank.getPriority();
+    }
+
     public static Rank getDefault() {
         return ranks.values().stream()
                 .filter(Rank::isBaseline)
