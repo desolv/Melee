@@ -5,6 +5,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
+import gg.desolve.melee.common.Message;
+import gg.desolve.melee.common.Schedule;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.rank.Rank;
@@ -39,16 +41,18 @@ public class Profile {
     private Grant grant;
     private List<Marker> markers;
     private List<Grant> grants;
+    private List<Schedule> schedules;
 
     public Profile(UUID uuid, String username) {
         this.uuid = uuid;
         this.username = username;
         this.markers = new ArrayList<>();
         this.grants = new ArrayList<>();
+        this.schedules = new ArrayList<>();
 
         load();
         evaluateGrants();
-        refreshGrants();
+        refreshGrant();
         save();
     }
 
@@ -99,17 +103,50 @@ public class Profile {
                 .orElse(null);
     }
 
-    public void refreshGrants() {
+    public void refreshGrant() {
         grant = grants.stream()
-                .filter(grant -> grant.getType() == GrantType.ACTIVE)
+                .filter(grant -> grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
         refreshPermissions();
     }
 
     public void evaluateGrants() {
+        grants.stream()
+                .filter(grant -> grant.getType() == GrantType.ACTIVE && !grant.isPermanent())
+                .forEach(grant -> {
+                    if (grant.hasExpired() && grant.getType().equals(GrantType.ACTIVE)) {
+                        grant.setRemovedAt(System.currentTimeMillis());
+                        grant.setRemovedReason("Automatic Expired");
+                        grant.setRemovedOrigin(Bukkit.getServerName());
+                        grant.setType(GrantType.EXPIRED);
+                        save();
+
+                        Player player = Bukkit.getPlayer(uuid);
+                        if (player != null)
+                            Message.send(player, grant.getRank().getDisplayColored() + " &arank has expired.");
+
+                    } else if (!grant.hasExpired()
+                            && Bukkit.getPlayer(uuid) != null
+                            && !hasSchedule(grant.getId() + grant.getRank().getName())
+                    ) {
+                        if (!grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 48) {
+                            Runnable runnable = () -> {
+                                if (username != null)
+                                    evaluateGrants();
+                            };
+
+                            addSchedule(
+                                    grant.getId() + grant.getRank().getName(),
+                                    runnable,
+                                    grant.getDuration() + 1000
+                            );
+                        }
+                    }
+                });
+
         if (grant != null && !grant.getType().equals(GrantType.ACTIVE)) {
-            refreshGrants();
+            refreshGrant();
             return;
         }
 
@@ -158,6 +195,33 @@ public class Profile {
                 );
 
         player.recalculatePermissions();
+    }
+
+    public void addSchedule(String identity, Runnable runnable, long millis) {
+        if (!hasSchedule(identity)) {
+            Schedule schedule = new Schedule(identity, runnable, millis);
+            schedules.add(schedule);
+            schedule.start();
+        }
+    }
+
+    public boolean hasSchedule(String identity) {
+        return schedules.stream().anyMatch(schedule -> schedule.getIdentity().equals(identity));
+    }
+
+    public void cancelSchedule(String identity) {
+        schedules.stream()
+                .filter(schedule -> schedule.getIdentity().equals(identity))
+                .findFirst()
+                .ifPresent(schedule -> {
+                    schedule.cancel();
+                    schedules.remove(schedule);
+                });
+    }
+
+    public void cancelSchedules() {
+        schedules.forEach(Schedule::cancel);
+        schedules.clear();
     }
 
     public void load() {
