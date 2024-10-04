@@ -6,6 +6,7 @@ import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.collect.ImmutableList;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.command.management.GrantManualCommand;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.player.profile.Profile;
 import gg.desolve.melee.rank.Rank;
@@ -23,8 +24,8 @@ public class MeleeCommandManager extends PaperCommandManager {
         super(plugin);
 
         try {
-            loadCommands();
             loadContexts();
+            loadCommands();
             loadCompletions();
 
             this.enableUnstableAPI("help");
@@ -37,7 +38,8 @@ public class MeleeCommandManager extends PaperCommandManager {
 
     private void loadCommands() {
         Arrays.asList(
-                new MeleeCommand()
+                new MeleeCommand(),
+                new GrantManualCommand()
         ).forEach(this::registerCommand);
     }
 
