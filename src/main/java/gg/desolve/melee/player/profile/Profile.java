@@ -73,6 +73,32 @@ public class Profile {
         return profile;
     }
 
+    public String getUsernameColored() {
+        return grant.getRank().getColor() + username;
+    }
+
+    public boolean hasPermission(String permission) {
+        Player player = Bukkit.getPlayer(uuid);
+
+        if (player != null) {
+            return player.hasPermission("melee.*") || Arrays.stream(permission.split("\\|"))
+                    .anyMatch(player::hasPermission);
+        }
+
+        return Arrays.stream(permission.split("\\|"))
+                .anyMatch(perm -> grants.stream()
+                        .filter(grant -> grant.getType() == GrantType.ACTIVE)
+                        .anyMatch(grant -> grant.getRank().getPermissionsAndInherited().contains("melee.*") ||
+                                grant.getRank().getPermissionsAndInherited().contains(perm)));
+    }
+
+    public Grant hasGrant(Rank rank) {
+        return grants.stream()
+                .filter(grant -> grant.getRank().equals(rank) && grant.getType().equals(GrantType.ACTIVE))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void refreshGrants() {
         grant = grants.stream()
                 .filter(grant -> grant.getType() == GrantType.ACTIVE)
