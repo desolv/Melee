@@ -34,6 +34,14 @@ public class Grant {
         this.type = type;
     }
 
+    public boolean isPermanent() {
+        return duration == Integer.MAX_VALUE;
+    }
+
+    public boolean hasExpired() {
+        return (!isPermanent()) && (System.currentTimeMillis() >= (addedAt + duration));
+    }
+
     public static Grant load(Document document) {
         Rank rank = Rank.getRank(document.getString("rank"));
 
