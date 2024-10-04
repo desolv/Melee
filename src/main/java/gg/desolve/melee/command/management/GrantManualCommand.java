@@ -21,7 +21,7 @@ public class GrantManualCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("@players @ranks @durations @reasons")
-    @CommandPermission("sandbox.command.grantmanual")
+    @CommandPermission("melee.command.grantmanual")
     @Syntax("<player> <rank> <duration> [reason]")
     @Description("Manually grant to a player")
     public static void execute(CommandSender sender, Profile profile, Rank rank, Duration duration, @Optional String reason) {
@@ -49,7 +49,7 @@ public class GrantManualCommand extends BaseCommand {
             return;
         }
 
-        reason = reason == null ? "Promoted" : ChatColor.stripColor(reason);
+        reason = reason == null ? "Other" : ChatColor.stripColor(reason);
         long durationValue = duration.getValue();
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
