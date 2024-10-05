@@ -6,6 +6,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Getter;
 import org.bson.UuidRepresentation;
 
@@ -18,12 +19,13 @@ public class MeleeMongoManager {
     public MeleeMongoManager(Melee instance) {
         try {
             MongoClientSettings mongoSettings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString(instance.getStorageConfig().getString("mongodb.url")))
+                    .applyConnectionString(new ConnectionString(MeleeConfigManager.getStorageConfig().getString("mongodb.url")))
                     .uuidRepresentation(UuidRepresentation.STANDARD)
                     .build();
 
+
             mongoClient = MongoClients.create(mongoSettings);
-            mongoDatabase = mongoClient.getDatabase(instance.getStorageConfig().getString("mongodb.database"));
+            mongoDatabase = mongoClient.getDatabase(MeleeConfigManager.getStorageConfig().getString("mongodb.database"));
 
             Melee.getInstance().setMongoManager(this);
             instance.getLogger().info("Connected to MongoDB.");

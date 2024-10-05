@@ -1,7 +1,7 @@
 package gg.desolve.melee;
 
 import gg.desolve.melee.command.MeleeCommandManager;
-import gg.desolve.melee.common.Config;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Profile;
 import gg.desolve.melee.rank.MeleeRankManager;
@@ -16,15 +16,6 @@ public final class Melee extends JavaPlugin {
     public static Melee instance;
 
     @Getter
-    private Config storageConfig;
-
-    @Getter
-    private Config rankConfig;
-
-    @Getter
-    private Config messageConfig;
-
-    @Getter
     @Setter
     private MeleeMongoManager mongoManager;
 
@@ -32,10 +23,7 @@ public final class Melee extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        storageConfig = new Config("storage.yml");
-        rankConfig = new Config("ranks.yml");
-        messageConfig = new Config("messages.yml");
-
+        new MeleeConfigManager(this);
         new MeleeMongoManager(this);
         new MeleeRankManager(this);
         new MeleeListenerManager(this);

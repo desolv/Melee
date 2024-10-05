@@ -1,4 +1,4 @@
-package gg.desolve.melee.common;
+package gg.desolve.melee.configuration;
 
 import gg.desolve.melee.Melee;
 import lombok.Getter;

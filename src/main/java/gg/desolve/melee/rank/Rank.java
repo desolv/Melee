@@ -1,14 +1,13 @@
 package gg.desolve.melee.rank;
 
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 public class Rank {
@@ -60,6 +59,12 @@ public class Rank {
         return color + display;
     }
 
+    public static List<Rank> getSortedRanks() {
+        return ranks.values().stream()
+                .sorted(Comparator.comparingInt(Rank::getPriority).reversed())
+                .collect(Collectors.toList());
+    }
+
     public static boolean rankIsHigherThanRank(Rank rank, Rank compareRank) {
         return rank.getPriority() >= compareRank.getPriority();
     }
@@ -82,7 +87,7 @@ public class Rank {
 
     public static void load(String rank) {
         try {
-            FileConfiguration config = Melee.getInstance().getRankConfig().getConfig();
+            FileConfiguration config = MeleeConfigManager.getRankConfig().getConfig();
 
             new Rank(
                     rank,
@@ -105,7 +110,7 @@ public class Rank {
 
     public void save() {
         try {
-            FileConfiguration config = Melee.getInstance().getRankConfig().getConfig();
+            FileConfiguration config = MeleeConfigManager.getRankConfig().getConfig();
 
             config.set(name + ".priority", priority);
             config.set(name + ".name", display);
@@ -115,7 +120,7 @@ public class Rank {
             config.set(name + "." + (baseline ? "baseline" : "grantable"), baseline || grantable);
             config.set(name + ".visible", visible);
             config.set(name + ".permissions", permissions);
-            Melee.getInstance().getRankConfig().save();
+            MeleeConfigManager.getRankConfig().save();
 
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem saving " + name + " rank.");
