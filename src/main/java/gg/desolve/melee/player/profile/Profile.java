@@ -39,6 +39,7 @@ public class Profile {
     private String address;
     private boolean loaded;
     private Grant grant;
+    private Grant priorityGrant;
     private List<Marker> markers;
     private List<Grant> grants;
     private List<Schedule> schedules;
@@ -96,6 +97,13 @@ public class Profile {
                                 grant.getRank().getPermissionsAndInherited().contains(perm)));
     }
 
+    public Grant getGrant() {
+        if (!grant.getRank().isVisible())
+            refreshGrant();
+
+        return grant;
+    }
+
     public Grant hasGrant(Rank rank) {
         return grants.stream()
                 .filter(grant -> grant.getRank().equals(rank) && grant.getType().equals(GrantType.ACTIVE))
@@ -104,11 +112,18 @@ public class Profile {
     }
 
     public void refreshGrant() {
-        grant = grants.stream()
-                .filter(grant -> grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
+        priorityGrant = grants.stream()
+                .filter(grant -> grant.getType() == GrantType.ACTIVE)
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
         refreshPermissions();
+
+        grant = !priorityGrant.getRank().isVisible() ?
+                grants.stream()
+                        .filter(aGrant -> aGrant.getType() == GrantType.ACTIVE && aGrant.getRank().isVisible())
+                        .findFirst()
+                        .orElse(null) :
+                priorityGrant;
     }
 
     public void evaluateGrants() {
@@ -129,34 +144,31 @@ public class Profile {
                     } else if (!grant.hasExpired()
                             && Bukkit.getPlayer(uuid) != null
                             && !hasSchedule(grant.getId() + grant.getRank().getName())
+                            && !grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 48
                     ) {
-                        if (!grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 48) {
-                            Runnable runnable = () -> {
-                                if (username != null)
-                                    evaluateGrants();
-                            };
+                        Runnable runnable = () -> {
+                            if (username != null)
+                                evaluateGrants();
+                        };
 
-                            addSchedule(
-                                    grant.getId() + grant.getRank().getName(),
-                                    runnable,
-                                    grant.getDuration() + 1000
-                            );
-                        }
+                        addSchedule(
+                                grant.getId() + grant.getRank().getName(),
+                                runnable,
+                                grant.getDuration() + 1000
+                        );
                     }
                 });
 
-        if (grant != null && !grant.getType().equals(GrantType.ACTIVE)) {
+        if (priorityGrant != null && !priorityGrant.getType().equals(GrantType.ACTIVE)) {
             refreshGrant();
             return;
         }
 
-        Optional<Grant> missing = grants.stream()
+        grants.stream()
                 .filter(grant -> grant.getRank().equals(Rank.getDefault()))
-                .findFirst();
-
-        if (!missing.isPresent()) {
-            grants.add(
-                    new Grant(
+                .findFirst()
+                .orElseGet(() -> {
+                    Grant grant = new Grant(
                             Converter.generateId(),
                             Rank.getDefault(),
                             null,
@@ -165,9 +177,10 @@ public class Profile {
                             Bukkit.getServerName(),
                             Integer.MAX_VALUE,
                             GrantType.ACTIVE
-                    )
-            );
-        }
+                    );
+                    grants.add(grant);
+                    return grant;
+                });
     }
 
     public void refreshPermissions() {

@@ -38,7 +38,7 @@ public class GrantManualCommand extends BaseCommand {
                 return;
             }
 
-            if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getGrant().getRank())) {
+            if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getPriorityGrant().getRank())) {
                 Message.send(sender, "&cYou cannot grant ranks higher than yours.");
                 return;
             }

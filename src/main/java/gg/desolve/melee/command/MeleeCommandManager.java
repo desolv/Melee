@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.command.management.GrantManualCommand;
 import gg.desolve.melee.command.management.InvalidateGrantCommand;
+import gg.desolve.melee.command.management.RankCommand;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.player.profile.Profile;
 import gg.desolve.melee.rank.Rank;
@@ -41,7 +42,8 @@ public class MeleeCommandManager extends PaperCommandManager {
         Arrays.asList(
                 new MeleeCommand(),
                 new GrantManualCommand(),
-                new InvalidateGrantCommand()
+                new InvalidateGrantCommand(),
+                new RankCommand()
         ).forEach(this::registerCommand);
     }
 
