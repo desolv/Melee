@@ -152,4 +152,48 @@ public class RankCommand extends BaseCommand {
         Message.send(sender, "&aUpdated &e" + updated + " &aplayers visibility.");
     }
 
+    @Subcommand("permission add")
+    @CommandCompletion("@ranks")
+    @CommandPermission("melee.command.rank|melee.command.rank.permission")
+    @Syntax("<rank> <permission>")
+    @Description("Changes permission of a rank")
+    public static void onPermissionAdd(CommandSender sender, Rank rank, @Single String permission) {
+        if (permission.equalsIgnoreCase("melee.*") && !sender.hasPermission("melee.*")) {
+            Message.send(sender, "&cYou cannot change this rank.");
+            return;
+        }
+
+        if (rank.getPermissions().contains(permission)) {
+            Message.send(sender, "&e" + permission + " &cis already present.");
+            return;
+        }
+
+        rank.getPermissions().add(permission);
+        rank.save();
+
+        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by adding &e" + permission + " &apermission.");
+    }
+
+    @Subcommand("permission remove")
+    @CommandCompletion("@ranks")
+    @CommandPermission("melee.command.rank|melee.command.rank.permission")
+    @Syntax("<rank> <permission>")
+    @Description("Changes permission of a rank")
+    public static void onPermissionRemove(CommandSender sender, Rank rank, @Single String permission) {
+        if (permission.equalsIgnoreCase("melee.*") && !sender.hasPermission("melee.*")) {
+            Message.send(sender, "&cYou cannot change this rank.");
+            return;
+        }
+
+        if (!rank.getPermissions().contains(permission)) {
+            Message.send(sender, "&e" + permission + " &cis not present.");
+            return;
+        }
+
+        rank.getPermissions().remove(permission);
+        rank.save();
+
+        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by removing &e" + permission + " &apermission.");
+    }
+
 }
