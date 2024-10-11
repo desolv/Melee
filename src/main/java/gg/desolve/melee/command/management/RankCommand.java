@@ -196,4 +196,58 @@ public class RankCommand extends BaseCommand {
         Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by removing &e" + permission + " &apermission.");
     }
 
+    @Subcommand("inherit add")
+    @CommandCompletion("@ranks @ranks")
+    @CommandPermission("melee.command.rank|melee.command.rank.inherit")
+    @Syntax("<rank> <inherit-rank>")
+    @Description("Changes inherits of a rank")
+    public static void onInheritAdd(CommandSender sender, Rank rank, Rank inheritRank) {
+        if (inheritRank.getPermissions().contains("melee.*") && !sender.hasPermission("melee.*")) {
+            Message.send(sender, "&cYou cannot change this rank.");
+            return;
+        }
+
+        if (rank.equals(inheritRank)) {
+            Message.send(sender, "&cYou are not allowed to add the same rank to it self.");
+            return;
+        }
+
+        if (rank.getInherits().contains(inheritRank.getName())) {
+            Message.send(sender, inheritRank.getNameColored() + " &cis already present.");
+            return;
+        }
+
+        rank.getInherits().add(inheritRank.getName());
+        rank.save();
+
+        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by adding " + inheritRank.getDisplayColored() + " &arank.");
+    }
+
+    @Subcommand("inherit remove")
+    @CommandCompletion("@ranks @ranks")
+    @CommandPermission("melee.command.rank|melee.command.rank.inherit")
+    @Syntax("<rank> <inherit-rank>")
+    @Description("Changes inherits of a rank")
+    public static void onInheritRemove(CommandSender sender, Rank rank, Rank inheritRank) {
+        if (inheritRank.getPermissions().contains("melee.*") && !sender.hasPermission("melee.*")) {
+            Message.send(sender, "&cYou cannot change this rank.");
+            return;
+        }
+
+        if (rank.equals(inheritRank)) {
+            Message.send(sender, "&cYou are not allowed to remove the same rank from it self.");
+            return;
+        }
+
+        if (!rank.getInherits().contains(inheritRank.getName())) {
+            Message.send(sender, inheritRank.getNameColored() + " &cis not present.");
+            return;
+        }
+
+        rank.getInherits().remove(inheritRank.getName());
+        rank.save();
+
+        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by removing " + inheritRank.getDisplayColored() + " &arank.");
+    }
+
 }
