@@ -20,7 +20,7 @@ public class InvalidateGrantCommand extends BaseCommand {
     @CommandPermission("melee.command.invalidategrant")
     @Syntax("<player> <rank> [reason]")
     @Description("Manually invalidate grant from a player")
-    public static void execute(CommandSender sender, Profile profile, Rank rank, @Optional String reason) {
+    public static void execute(CommandSender sender, Profile profile, Rank rank, @Optional @Default("Demoted") String reason) {
         if (rank.isBaseline()) {
             Message.send(sender, "&cYou cannot invalidate the default rank.");
             return;
@@ -46,8 +46,6 @@ public class InvalidateGrantCommand extends BaseCommand {
             Message.send(sender, rank.getDisplayColored() + " &crank is not present for " + profile.getUsernameColored() + ".");
             return;
         }
-
-        reason = reason == null ? "Other" : ChatColor.stripColor(reason);
 
         grant.setRemovedAt(System.currentTimeMillis());
         grant.setRemovedBy(sender instanceof Player ? ((Player) sender).getUniqueId() : null);

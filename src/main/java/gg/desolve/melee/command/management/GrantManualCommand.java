@@ -24,7 +24,7 @@ public class GrantManualCommand extends BaseCommand {
     @CommandPermission("melee.command.grantmanual")
     @Syntax("<player> <rank> <duration> [reason]")
     @Description("Manually grant to a player")
-    public static void execute(CommandSender sender, Profile profile, Rank rank, Duration duration, @Optional String reason) {
+    public static void execute(CommandSender sender, Profile profile, Rank rank, Duration duration, @Optional @Default("Promoted") String reason) {
         if (rank.isBaseline()) {
             Message.send(sender, "&cYou cannot grant the default rank.");
             return;
@@ -49,7 +49,6 @@ public class GrantManualCommand extends BaseCommand {
             return;
         }
 
-        reason = reason == null ? "Other" : ChatColor.stripColor(reason);
         long durationValue = duration.getValue();
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
