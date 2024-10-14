@@ -17,19 +17,21 @@ public class MeleeMongoManager {
     private MongoDatabase mongoDatabase;
     private MongoClient mongoClient;
 
-    public MeleeMongoManager(Plugin plugin) {
+    public MeleeMongoManager(Plugin plugin, long millis) {
         try {
+            MeleeConfigManager configManager = new MeleeConfigManager(plugin);
+
             MongoClientSettings mongoSettings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString(MeleeConfigManager.getStorageConfig().getString("mongodb.url")))
+                    .applyConnectionString(new ConnectionString(configManager.getStorage().getString("mongodb.url")))
                     .uuidRepresentation(UuidRepresentation.STANDARD)
                     .build();
 
 
             mongoClient = MongoClients.create(mongoSettings);
-            mongoDatabase = mongoClient.getDatabase(MeleeConfigManager.getStorageConfig().getString("mongodb.database"));
+            mongoDatabase = mongoClient.getDatabase(configManager.getStorage().getString("mongodb.database"));
 
             Melee.getInstance().setMongoManager(this);
-            plugin.getLogger().info("Connected to MongoDB.");
+            plugin.getLogger().info("Merged MongoDB @ " + (System.currentTimeMillis() - millis) + "ms.");
         } catch (Exception e) {
             plugin.getLogger().warning("There was a problem connecting to MongoDB.");
             e.printStackTrace();
