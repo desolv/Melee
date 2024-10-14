@@ -39,7 +39,6 @@ public class Profile {
     private String address;
     private boolean loaded;
     private Grant grant;
-    private Grant priorityGrant;
     private List<Marker> markers;
     private List<Grant> grants;
     private List<Schedule> schedules;
@@ -112,18 +111,11 @@ public class Profile {
     }
 
     public void refreshGrant() {
-        priorityGrant = grants.stream()
-                .filter(grant -> grant.getType() == GrantType.ACTIVE)
+        grants.stream()
+                .filter(grant -> grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
         refreshPermissions();
-
-        grant = !priorityGrant.getRank().isVisible() ?
-                grants.stream()
-                        .filter(aGrant -> aGrant.getType() == GrantType.ACTIVE && aGrant.getRank().isVisible())
-                        .findFirst()
-                        .orElse(null) :
-                priorityGrant;
     }
 
     public void evaluateGrants() {
@@ -159,7 +151,7 @@ public class Profile {
                     }
                 });
 
-        if (priorityGrant != null && !priorityGrant.getType().equals(GrantType.ACTIVE)) {
+        if (grant != null && !grant.getType().equals(GrantType.ACTIVE)) {
             refreshGrant();
             return;
         }

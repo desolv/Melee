@@ -8,7 +8,6 @@ import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,7 +33,7 @@ public class InvalidateGrantCommand extends BaseCommand {
                 return;
             }
 
-            if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getPriorityGrant().getRank())) {
+            if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getGrant().getRank())) {
                 Message.send(sender, "&cYou cannot invalidate ranks higher than yours.");
                 return;
             }
