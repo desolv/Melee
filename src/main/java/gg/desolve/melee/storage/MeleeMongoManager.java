@@ -9,6 +9,7 @@ import gg.desolve.melee.Melee;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Getter;
 import org.bson.UuidRepresentation;
+import org.bukkit.plugin.Plugin;
 
 @Getter
 public class MeleeMongoManager {
@@ -16,7 +17,7 @@ public class MeleeMongoManager {
     private MongoDatabase mongoDatabase;
     private MongoClient mongoClient;
 
-    public MeleeMongoManager(Melee instance) {
+    public MeleeMongoManager(Plugin plugin) {
         try {
             MongoClientSettings mongoSettings = MongoClientSettings.builder()
                     .applyConnectionString(new ConnectionString(MeleeConfigManager.getStorageConfig().getString("mongodb.url")))
@@ -28,9 +29,9 @@ public class MeleeMongoManager {
             mongoDatabase = mongoClient.getDatabase(MeleeConfigManager.getStorageConfig().getString("mongodb.database"));
 
             Melee.getInstance().setMongoManager(this);
-            instance.getLogger().info("Connected to MongoDB.");
+            plugin.getLogger().info("Connected to MongoDB.");
         } catch (Exception e) {
-            instance.getLogger().warning("There was a problem connecting to MongoDB.");
+            plugin.getLogger().warning("There was a problem connecting to MongoDB.");
             e.printStackTrace();
         }
     }
