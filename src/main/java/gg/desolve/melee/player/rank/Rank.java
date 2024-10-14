@@ -1,4 +1,4 @@
-package gg.desolve.melee.rank;
+package gg.desolve.melee.player.rank;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.configuration.MeleeConfigManager;
@@ -87,7 +87,7 @@ public class Rank {
 
     public static void load(String rank) {
         try {
-            FileConfiguration config = MeleeConfigManager.getRankConfig().getConfig();
+            FileConfiguration config = new MeleeConfigManager(Melee.getInstance()).getRank().getConfig();
 
             new Rank(
                     rank,
@@ -110,7 +110,8 @@ public class Rank {
 
     public void save() {
         try {
-            FileConfiguration config = MeleeConfigManager.getRankConfig().getConfig();
+            MeleeConfigManager configManager = new MeleeConfigManager(Melee.getInstance());
+            FileConfiguration config = configManager.getRank().getConfig();
 
             config.set(name + ".priority", priority);
             config.set(name + ".name", display);
@@ -120,7 +121,7 @@ public class Rank {
             config.set(name + "." + (baseline ? "baseline" : "grantable"), baseline || grantable);
             config.set(name + ".visible", visible);
             config.set(name + ".permissions", permissions);
-            MeleeConfigManager.getRankConfig().save();
+            configManager.getRank().save();
 
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem saving " + name + " rank.");
