@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class Profile {
 
     @Getter
-    private static MongoCollection<Document> mongoCollection = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("profiles");
+    private static MongoCollection<Document> collection = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("profiles");
 
     @Getter
     private static Map<UUID, Profile> profiles = new HashMap<>();
@@ -231,7 +231,7 @@ public class Profile {
 
     public void load() {
         try {
-            Document document = mongoCollection.find(
+            Document document = collection.find(
                     Filters.eq(
                             "uuid",
                             uuid.toString())
@@ -267,7 +267,7 @@ public class Profile {
             document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));
             document.put("grants", grants.stream().map(Grant::save).collect(Collectors.toList()));
 
-            mongoCollection.replaceOne(
+            collection.replaceOne(
                     Filters.eq(
                             "uuid",
                             uuid.toString()),
