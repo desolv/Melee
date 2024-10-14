@@ -11,7 +11,7 @@ import gg.desolve.melee.command.management.InvalidateGrantCommand;
 import gg.desolve.melee.command.management.RankCommand;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.player.profile.Profile;
-import gg.desolve.melee.rank.Rank;
+import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
