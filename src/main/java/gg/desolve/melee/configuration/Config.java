@@ -30,6 +30,10 @@ public class Config {
         return config.getString(path);
     }
 
+    public int getInt(String path) {
+        return config.getInt(path);
+    }
+
     public List<String> getStringList(String path) {
         return config.getStringList(path);
     }

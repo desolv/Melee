@@ -1,25 +1,20 @@
 package gg.desolve.melee.configuration;
 
-import gg.desolve.melee.Melee;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
+@Getter
 public class MeleeConfigManager {
 
-    @Getter
-    private static Config storageConfig;
-
-    @Getter
-    private static Config rankConfig;
-
-    @Getter
-    private static Config messageConfig;
+    private Config storage;
+    private Config rank;
+    private Config message;
 
     public MeleeConfigManager(Plugin plugin) {
         try {
-            storageConfig = new Config("storage.yml");
-            rankConfig = new Config("ranks.yml");
-            messageConfig = new Config("messages.yml");
+            storage = new Config("storage.yml");
+            rank = new Config("ranks.yml");
+            message = new Config("messages.yml");
         } catch (Exception e) {
             plugin.getLogger().warning("There was a problem loading configs.");
             e.printStackTrace();
