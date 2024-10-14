@@ -1,6 +1,6 @@
 package gg.desolve.melee.player.grant;
 
-import gg.desolve.melee.rank.Rank;
+import gg.desolve.melee.player.rank.Rank;
 import lombok.Data;
 import org.bson.Document;
 import org.bukkit.Bukkit;

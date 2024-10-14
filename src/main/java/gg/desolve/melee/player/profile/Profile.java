@@ -9,7 +9,7 @@ import gg.desolve.melee.common.Message;
 import gg.desolve.melee.common.Schedule;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
-import gg.desolve.melee.rank.Rank;
+import gg.desolve.melee.player.rank.Rank;
 import lombok.Data;
 import lombok.Getter;
 import org.bson.Document;

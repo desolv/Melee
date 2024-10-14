@@ -5,7 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Profile;
-import gg.desolve.melee.rank.Rank;
+import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
