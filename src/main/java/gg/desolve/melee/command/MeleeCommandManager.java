@@ -12,15 +12,21 @@ import gg.desolve.melee.command.management.RankCommand;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.player.profile.Profile;
 import gg.desolve.melee.player.rank.Rank;
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class MeleeCommandManager extends PaperCommandManager {
+
+    @Getter
+    private static final List<String> commands = new ArrayList<>();
 
     public MeleeCommandManager(Plugin plugin) {
         super(plugin);
@@ -44,7 +50,10 @@ public class MeleeCommandManager extends PaperCommandManager {
                 new GrantManualCommand(),
                 new InvalidateGrantCommand(),
                 new RankCommand()
-        ).forEach(this::registerCommand);
+        ).forEach(command -> {
+            registerCommand(command);
+            commands.add(command.getClass().getSimpleName());
+        });
     }
 
     private void loadContexts() {

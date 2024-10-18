@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
+import gg.desolve.melee.listener.MeleeListenerManager;
 import org.bukkit.command.CommandSender;
 
 @CommandAlias("melee")
@@ -20,6 +21,8 @@ public class MeleeCommand extends BaseCommand {
                 "\n&bMelee Management " + Melee.getInstance().getDescription().getVersion()
                         + "\n&fRunning: &b" + Melee.getInstance().getServer().getVersion()
                         + "\n&fVersion: &b" + Melee.getInstance().getServer().getBukkitVersion()
+                        + "\n&fListeners (" + MeleeListenerManager.getListeners().size() + "): &b" + String.join("&f, &b", MeleeListenerManager.getListeners())
+                        + "\n&fCommands (" + MeleeCommandManager.getCommands().size() + "): &b" + String.join("&f, &b", MeleeCommandManager.getCommands())
         );
     }
 
