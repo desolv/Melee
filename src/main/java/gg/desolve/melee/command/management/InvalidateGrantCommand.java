@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.*;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
-import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,14 +19,14 @@ public class InvalidateGrantCommand extends BaseCommand {
     @CommandPermission("melee.command.invalidategrant")
     @Syntax("<player> <rank> [reason]")
     @Description("Manually invalidate grant from a player")
-    public static void execute(CommandSender sender, Profile profile, Rank rank, @Optional @Default("Demoted") String reason) {
+    public static void execute(CommandSender sender, Hunter hunter, Rank rank, @Optional @Default("Demoted") String reason) {
         if (rank.isBaseline()) {
             Message.send(sender, "&cYou cannot invalidate the default rank.");
             return;
         }
 
         if (sender instanceof Player) {
-            Profile granter = Profile.getProfile(((Player) sender).getUniqueId());
+            Hunter granter = Hunter.getHunter(((Player) sender).getUniqueId());
 
             if (!granter.hasPermission("melee.*") && !rank.isGrantable()) {
                 Message.send(sender, "&cYou cannot invalidate this rank.");
@@ -39,10 +39,10 @@ public class InvalidateGrantCommand extends BaseCommand {
             }
         }
 
-        Grant grant = profile.hasGrant(rank);
+        Grant grant = hunter.hasGrant(rank);
 
         if (grant == null) {
-            Message.send(sender, rank.getDisplayColored() + " &crank is not present for " + profile.getUsernameColored() + ".");
+            Message.send(sender, rank.getDisplayColored() + " &crank is not present for " + hunter.getUsernameColored() + ".");
             return;
         }
 
@@ -53,18 +53,18 @@ public class InvalidateGrantCommand extends BaseCommand {
         grant.setType(GrantType.REMOVED);
 
         if (!grant.isPermanent())
-            profile.cancelSchedule(grant.getId() + grant.getRank().getName());
+            hunter.cancelSchedule(grant.getId() + grant.getRank().getName());
 
-        profile.refreshGrant();
-        profile.refreshPermissions();
-        profile.save();
+        hunter.refreshGrant();
+        hunter.refreshPermissions();
+        hunter.save();
 
-        Player player = Bukkit.getPlayer(profile.getUuid());
+        Player player = Bukkit.getPlayer(hunter.getUuid());
 
         Message.send(sender,
                 "&aRemoved rank% &arank from player% &afor &7reason%."
                         .replace("rank%", rank.getDisplayColored())
-                        .replace("player%", profile.getUsernameColored())
+                        .replace("player%", hunter.getUsernameColored())
                         .replace("reason%", reason)
         );
 

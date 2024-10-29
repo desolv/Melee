@@ -3,7 +3,7 @@ package gg.desolve.melee.listener;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Marker;
-import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.player.profile.Hunter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,26 +37,26 @@ public class ProfileListener implements Listener {
             return;
         }
 
-        Profile profile = null;
+        Hunter hunter = null;
 
         try {
-            profile = new Profile(event.getUniqueId(), event.getName());
-            profile.setUsername(event.getName());
+            hunter = new Hunter(event.getUniqueId(), event.getName());
+            hunter.setUsername(event.getName());
 
-            if (profile.getFirstSeen() == null)
-                profile.setFirstSeen(System.currentTimeMillis());
+            if (hunter.getFirstSeen() == null)
+                hunter.setFirstSeen(System.currentTimeMillis());
 
-            profile.setLastSeen(System.currentTimeMillis());
+            hunter.setLastSeen(System.currentTimeMillis());
 
-            if (profile.getAddress() == null || !profile.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
-                profile.setAddress(event.getAddress().getHostAddress());
+            if (hunter.getAddress() == null || !hunter.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
+                hunter.setAddress(event.getAddress().getHostAddress());
 
-            Optional<Marker> markerMissing = profile.getMarkers().stream()
-                    .filter(address -> address.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
+            Optional<Marker> markerMissing = hunter.getMarkers().stream()
+                    .filter(marker -> marker.getAddress() != null && marker.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
                     .findFirst();
 
             if (!markerMissing.isPresent()) {
-                profile.getMarkers().add(
+                hunter.getMarkers().add(
                         new Marker(
                                 event.getAddress().getHostAddress(),
                                 0,
@@ -65,13 +65,13 @@ public class ProfileListener implements Listener {
                         ));
             }
 
-            profile.setLoaded(true);
+            hunter.setLoaded(true);
         } catch (Exception e) {
             instance.getLogger().warning("There was a problem loading " + event.getName() + "'s profile.");
             e.printStackTrace();
         }
 
-        if (profile == null || !profile.isLoaded()) {
+        if (hunter == null || !hunter.isLoaded()) {
             event.setKickMessage(
                     Message.translate(
                             "&cThere was a problem loading your account"
@@ -81,8 +81,8 @@ public class ProfileListener implements Listener {
             return;
         }
 
-        Profile.getProfiles().put(profile.getUuid(), profile);
-        profile.save();
+        Hunter.getHunters().put(hunter.getUuid(), hunter);
+        hunter.save();
     }
 
     @EventHandler(
@@ -90,9 +90,9 @@ public class ProfileListener implements Listener {
     )
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
-        Profile profile = Profile.getProfiles().get(event.getPlayer().getUniqueId());
+        Hunter hunter = Hunter.getHunters().get(event.getPlayer().getUniqueId());
 
-        if (profile == null || !profile.isLoaded()) {
+        if (hunter == null || !hunter.isLoaded()) {
             event.getPlayer().kickPlayer(
                     Message.translate(
                             "&cYou attempted to login while booting"
@@ -101,9 +101,9 @@ public class ProfileListener implements Listener {
             return;
         }
 
-        profile.setLogins(profile.getLogins() + 1);
-        profile.getMarkers().stream()
-                .filter(marker -> marker.getAddress().equalsIgnoreCase(profile.getAddress()))
+        hunter.setLogins(hunter.getLogins() + 1);
+        hunter.getMarkers().stream()
+                .filter(marker -> marker.getAddress() != null && marker.getAddress().equalsIgnoreCase(hunter.getAddress()))
                 .findFirst()
                 .ifPresent(marker -> marker.setLogins(marker.getLogins() + 1));
     }
@@ -114,13 +114,13 @@ public class ProfileListener implements Listener {
     )
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
-        Profile profile = Profile.getProfiles().get(event.getPlayer().getUniqueId());
+        Hunter hunter = Hunter.getHunters().get(event.getPlayer().getUniqueId());
 
-        if (profile != null) {
-            profile.setLastSeen(System.currentTimeMillis());
-            profile.save();
-            profile.cancelSchedules();
-            Profile.getProfiles().remove(event.getPlayer().getUniqueId());
+        if (hunter != null) {
+            hunter.setLastSeen(System.currentTimeMillis());
+            hunter.save();
+            hunter.cancelSchedules();
+            Hunter.getHunters().remove(event.getPlayer().getUniqueId());
         }
     }
 

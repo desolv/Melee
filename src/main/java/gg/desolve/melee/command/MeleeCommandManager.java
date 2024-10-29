@@ -10,7 +10,7 @@ import gg.desolve.melee.command.management.GrantManualCommand;
 import gg.desolve.melee.command.management.InvalidateGrantCommand;
 import gg.desolve.melee.command.management.RankCommand;
 import gg.desolve.melee.common.Duration;
-import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -58,10 +58,10 @@ public class MeleeCommandManager extends PaperCommandManager {
 
     private void loadContexts() {
         getCommandContexts().registerContext(
-                Profile.class, c -> {
+                Hunter.class, c -> {
                     String popName = c.popFirstArg();
-                    Profile profile = Profile.getProfile(popName);
-                    return Optional.ofNullable(profile).orElseThrow(() ->
+                    Hunter hunter = Hunter.getHunter(popName);
+                    return Optional.ofNullable(hunter).orElseThrow(() ->
                             new InvalidCommandArgument("&cPlayer matching &e" + popName + " &ccould not be found.", false));
                 });
 

@@ -23,13 +23,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
-public class Profile {
+public class Hunter {
 
     @Getter
-    private static MongoCollection<Document> collection = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("profiles");
+    private static final MongoCollection<Document> hunter_collections = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("hunters");
 
     @Getter
-    private static Map<UUID, Profile> profiles = new HashMap<>();
+    private static Map<UUID, Hunter> hunters = new HashMap<>();
 
     private final UUID uuid;
     private String username;
@@ -39,16 +39,16 @@ public class Profile {
     private String address;
     private boolean loaded;
     private Grant grant;
-    private List<Marker> markers;
     private List<Grant> grants;
+    private List<Marker> markers;
     private List<Schedule> schedules;
 
-    public Profile(UUID uuid, String username) {
+    public Hunter(UUID uuid, String username) {
         this.uuid = uuid;
         this.username = username;
-        this.markers = new ArrayList<>();
-        this.grants = new ArrayList<>();
         this.schedules = new ArrayList<>();
+        this.grants = new ArrayList<>();
+        this.markers = new ArrayList<>();
 
         load();
         evaluateGrants();
@@ -56,44 +56,29 @@ public class Profile {
         save();
     }
 
-    public static Profile getProfile(UUID uuid) {
-        return profiles.containsKey(uuid) ?
-                profiles.get(uuid) :
-                new Profile(uuid, null);
+    public static Hunter getHunter(UUID uuid) {
+        return hunters.containsKey(uuid) ?
+                hunters.get(uuid) :
+                new Hunter(uuid, null);
     }
 
-    public static Profile getProfile(String username) {
-        Profile profile = Optional.ofNullable(Bukkit.getPlayer(username))
-                .map(player -> profiles.get(player.getUniqueId()))
+    public static Hunter getHunter(String username) {
+        Hunter hunter = Optional.ofNullable(Bukkit.getPlayer(username))
+                .map(player -> hunters.get(player.getUniqueId()))
                 .orElse(null);
 
-        if (profile == null) {
+        if (hunter == null) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
-            profile = offlinePlayer.hasPlayedBefore() && profiles.containsKey(offlinePlayer.getUniqueId())
-                    ? profiles.get(offlinePlayer.getUniqueId())
-                    : new Profile(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+            hunter = offlinePlayer.hasPlayedBefore() && hunters.containsKey(offlinePlayer.getUniqueId())
+                    ? hunters.get(offlinePlayer.getUniqueId())
+                    : new Hunter(offlinePlayer.getUniqueId(), offlinePlayer.getName());
         }
 
-        return profile;
+        return hunter;
     }
 
     public String getUsernameColored() {
         return grant.getRank().getColor() + username;
-    }
-
-    public boolean hasPermission(String permission) {
-        Player player = Bukkit.getPlayer(uuid);
-
-        if (player != null) {
-            return player.hasPermission("melee.*") || Arrays.stream(permission.split("\\|"))
-                    .anyMatch(player::hasPermission);
-        }
-
-        return Arrays.stream(permission.split("\\|"))
-                .anyMatch(perm -> grants.stream()
-                        .filter(grant -> grant.getType() == GrantType.ACTIVE)
-                        .anyMatch(grant -> grant.getRank().getPermissionsAndInherited().contains("melee.*") ||
-                                grant.getRank().getPermissionsAndInherited().contains(perm)));
     }
 
     public Grant getGrant() {
@@ -101,13 +86,6 @@ public class Profile {
             refreshGrant();
 
         return grant;
-    }
-
-    public Grant hasGrant(Rank rank) {
-        return grants.stream()
-                .filter(grant -> grant.getRank().equals(rank) && grant.getType().equals(GrantType.ACTIVE))
-                .findFirst()
-                .orElse(null);
     }
 
     public void refreshGrant() {
@@ -118,13 +96,27 @@ public class Profile {
         refreshPermissions();
     }
 
+    public Grant hasGrant(Rank rank) {
+        return grants.stream()
+                .filter(grant -> grant.getRank().equals(rank) && grant.getType().equals(GrantType.ACTIVE))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Grant hasGrant(String id) {
+        return grants.stream()
+                .filter(grant -> grant.getId().equals(id) && grant.getType().equals(GrantType.ACTIVE))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void evaluateGrants() {
         grants.stream()
                 .filter(grant -> grant.getType() == GrantType.ACTIVE && !grant.isPermanent())
                 .forEach(grant -> {
                     if (grant.hasExpired() && grant.getType().equals(GrantType.ACTIVE)) {
                         grant.setRemovedAt(System.currentTimeMillis());
-                        grant.setRemovedReason("Automatic Expired");
+                        grant.setRemovedReason("Automatic");
                         grant.setRemovedOrigin(Bukkit.getServerName());
                         grant.setType(GrantType.EXPIRED);
                         save();
@@ -175,6 +167,21 @@ public class Profile {
                 });
     }
 
+    public boolean hasPermission(String permission) {
+        Player player = Bukkit.getPlayer(uuid);
+
+        if (player != null) {
+            return player.hasPermission("melee.*") || Arrays.stream(permission.split("\\|"))
+                    .anyMatch(player::hasPermission);
+        }
+
+        return Arrays.stream(permission.split("\\|"))
+                .anyMatch(perm -> grants.stream()
+                        .filter(grant -> grant.getType() == GrantType.ACTIVE)
+                        .anyMatch(grant -> grant.getRank().getPermissionsAndInherited().contains("melee.*") ||
+                                grant.getRank().getPermissionsAndInherited().contains(perm)));
+    }
+
     public void refreshPermissions() {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) return;
@@ -194,8 +201,10 @@ public class Profile {
         grants.stream()
                 .filter(grant -> grant.getType() == GrantType.ACTIVE)
                 .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(permission -> {
-                            if (!attachment.getPermissions().containsKey(permission))
-                                attachment.setPermission(permission, true);
+                            if (!attachment.getPermissions().containsKey(permission)) {
+                                attachment.setPermission(permission, !permission.startsWith("-"));
+                                Melee.getInstance().getLogger().info("Added permission: " + permission + " " + !permission.startsWith("-"));
+                            }
                         })
                 );
 
@@ -231,7 +240,7 @@ public class Profile {
 
     public void load() {
         try {
-            Document document = collection.find(
+            Document document = hunter_collections.find(
                     Filters.eq(
                             "uuid",
                             uuid.toString())
@@ -244,9 +253,9 @@ public class Profile {
                 lastSeen = document.getLong("lastSeen");
                 address = document.getString("address");
                 Optional.ofNullable(document.getList("markers", Document.class))
-                        .ifPresent(m -> m.forEach(markerDoc -> markers.add(Marker.load(markerDoc))));
+                        .ifPresent(m -> m.forEach(marker -> markers.add(Marker.load(marker))));
                 Optional.ofNullable(document.getList("grants", Document.class))
-                        .ifPresent(m -> m.forEach(grantDoc -> grants.add(Grant.load(grantDoc))));
+                        .ifPresent(g -> g.forEach(grant -> grants.add(Grant.load(grant))));
             }
 
         } catch (Exception e) {
@@ -267,7 +276,7 @@ public class Profile {
             document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));
             document.put("grants", grants.stream().map(Grant::save).collect(Collectors.toList()));
 
-            collection.replaceOne(
+            hunter_collections.replaceOne(
                     Filters.eq(
                             "uuid",
                             uuid.toString()),

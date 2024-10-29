@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.common.Message;
-import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -144,9 +144,9 @@ public class RankCommand extends BaseCommand {
         Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank visibility to &e" + (option ? "true" : "false") + ".");
 
         long updated = Bukkit.getOnlinePlayers().stream()
-                .map(player -> Profile.getProfile(player.getUniqueId()))
+                .map(player -> Hunter.getHunter(player.getUniqueId()))
                 .filter(profile -> profile.hasGrant(rank) != null)
-                .peek(Profile::refreshGrant)
+                .peek(Hunter::refreshGrant)
                 .count();
 
         Message.send(sender, "&aUpdated &e" + updated + " &aplayers visibility.");

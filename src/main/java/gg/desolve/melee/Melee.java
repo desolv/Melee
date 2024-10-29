@@ -3,7 +3,7 @@ package gg.desolve.melee;
 import gg.desolve.melee.command.MeleeCommandManager;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
-import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.MeleeRankManager;
 import gg.desolve.melee.storage.MeleeMongoManager;
 import gg.desolve.melee.storage.MeleeRedisManager;
@@ -38,7 +38,7 @@ public final class Melee extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Profile.getProfiles().forEach((uuid, profile) -> {
+        Hunter.getHunters().forEach((uuid, profile) -> {
             profile.setLastSeen(System.currentTimeMillis());
             profile.save();
         });

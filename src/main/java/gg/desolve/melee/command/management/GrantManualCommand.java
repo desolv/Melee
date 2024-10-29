@@ -7,7 +7,7 @@ import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
-import gg.desolve.melee.player.profile.Profile;
+import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -23,14 +23,14 @@ public class GrantManualCommand extends BaseCommand {
     @CommandPermission("melee.command.grantmanual")
     @Syntax("<player> <rank> <duration> [reason]")
     @Description("Manually grant to a player")
-    public static void execute(CommandSender sender, Profile profile, Rank rank, Duration duration, @Optional @Default("Promoted") String reason) {
+    public static void execute(CommandSender sender, Hunter hunter, Rank rank, Duration duration, @Optional @Default("Promoted") String reason) {
         if (rank.isBaseline()) {
             Message.send(sender, "&cYou cannot grant the default rank.");
             return;
         }
 
         if (sender instanceof Player) {
-            Profile granter = Profile.getProfile(((Player) sender).getUniqueId());
+            Hunter granter = Hunter.getHunter(((Player) sender).getUniqueId());
 
             if (!granter.hasPermission("melee.*") && !rank.isGrantable()) {
                 Message.send(sender, "&cYou cannot grant this rank.");
@@ -43,8 +43,8 @@ public class GrantManualCommand extends BaseCommand {
             }
         }
 
-        if (profile.hasGrant(rank) != null) {
-            Message.send(sender, rank.getDisplayColored() + " &crank is present for " + profile.getUsernameColored() + ".");
+        if (hunter.hasGrant(rank) != null) {
+            Message.send(sender, rank.getDisplayColored() + " &crank is present for " + hunter.getUsernameColored() + ".");
             return;
         }
 
@@ -52,7 +52,7 @@ public class GrantManualCommand extends BaseCommand {
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
         Grant grant = new Grant(
-                Converter.generateId(),
+                Converter.grantId(hunter),
                 rank,
                 addedBy,
                 System.currentTimeMillis(),
@@ -62,20 +62,20 @@ public class GrantManualCommand extends BaseCommand {
                 GrantType.ACTIVE
         );
 
-        profile.getGrants().add(grant);
-        profile.refreshGrant();
-        profile.refreshPermissions();
-        profile.save();
+        hunter.getGrants().add(grant);
+        hunter.refreshGrant();
+        hunter.refreshPermissions();
+        hunter.save();
 
-        Player player = Bukkit.getPlayer(profile.getUuid());
+        Player player = Bukkit.getPlayer(hunter.getUuid());
 
         if (durationValue != Integer.MAX_VALUE && Converter.millisToHours(durationValue) <= 48 && (player != null && player.isOnline())) {
             Runnable runnable = () -> {
-                if (profile.getUsername() != null)
-                    profile.evaluateGrants();
+                if (hunter.getUsername() != null)
+                    hunter.evaluateGrants();
             };
 
-            profile.addSchedule(
+            hunter.addSchedule(
                     grant.getId() + rank.getName(),
                     runnable,
                     (durationValue + 1000)
@@ -85,7 +85,7 @@ public class GrantManualCommand extends BaseCommand {
         Message.send(sender,
                 "&aGranted rank% &arank to player% &afor &7duration%."
                         .replace("rank%", rank.getDisplayColored())
-                        .replace("player%", profile.getUsernameColored())
+                        .replace("player%", hunter.getUsernameColored())
                         .replace("duration%",
                                 grant.isPermanent() ?
                                         "forever" :
