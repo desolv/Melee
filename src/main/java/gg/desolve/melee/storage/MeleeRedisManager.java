@@ -16,21 +16,14 @@ public class MeleeRedisManager {
     public MeleeRedisManager(Plugin plugin, long millis) {
         try {
             JedisPoolConfig poolConfig = new JedisPoolConfig();
-            poolConfig.setMaxTotal(10);
+            poolConfig.setMaxTotal(20);
+            poolConfig.setBlockWhenExhausted(true);
 
-            MeleeConfigManager configManager = new MeleeConfigManager(plugin);
-
-            jedisPool = new JedisPool(
-                    poolConfig,
-                    configManager.getStorage().getString("redis.host"),
-                    configManager.getStorage().getInt("redis.port"),
-                    5000,
-                    configManager.getStorage().getString("redis.password"),
-                    configManager.getStorage().getInt("redis.database")
-            );
+            jedisPool = new JedisPool(new MeleeConfigManager(plugin).getStorage().getString("redis.url"));
 
             Melee.getInstance().setRedisManager(this);
             plugin.getLogger().info("Merged Redis @ " + (System.currentTimeMillis() - millis) + "ms.");
+
         } catch (Exception e) {
             plugin.getLogger().warning("There was a problem connecting to Redis.");
             e.printStackTrace();
@@ -38,7 +31,15 @@ public class MeleeRedisManager {
     }
 
     public Jedis getConnection() {
-        return jedisPool.getResource();
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("Failed to obtain Redis connection.");
+            e.printStackTrace();
+        }
+        return jedis;
     }
+
 
 }
