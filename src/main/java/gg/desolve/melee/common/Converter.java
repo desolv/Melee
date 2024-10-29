@@ -1,5 +1,7 @@
 package gg.desolve.melee.common;
 
+import gg.desolve.melee.player.profile.Hunter;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -12,6 +14,14 @@ public class Converter {
                 .replaceAll("-", "")
                 .toLowerCase();
         return randomId.substring(0, Math.min(10, randomId.length()));
+    }
+
+    public static String grantId(Hunter hunter) {
+        String generateId;
+        do {
+            generateId = generateId();
+        } while (hunter.hasGrant(generateId) != null);
+        return generateId;
     }
 
     public static String millisToDate(long millis) {
