@@ -34,6 +34,10 @@ public class Converter {
         return millis / (1000 * 60 * 60);
     }
 
+    public static long millisToSeconds(long millis) {
+        return millis / 1000;
+    }
+
     public static String millisToTime(long millis) {
         millis += 1L;
 
