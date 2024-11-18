@@ -2,16 +2,19 @@ package gg.desolve.melee.command.management;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.grant.Grant;
+import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import redis.clients.jedis.Jedis;
 
 import java.util.UUID;
 
@@ -64,23 +67,11 @@ public class GrantManualCommand extends BaseCommand {
 
         hunter.getGrants().add(grant);
         hunter.refreshGrant();
-        hunter.refreshPermissions();
-        hunter.save();
 
         Player player = Bukkit.getPlayer(hunter.getUuid());
 
-        if (durationValue != Integer.MAX_VALUE && Converter.millisToHours(durationValue) <= 48 && (player != null && player.isOnline())) {
-            Runnable runnable = () -> {
-                if (hunter.getUsername() != null)
-                    hunter.evaluateGrants();
-            };
-
-            hunter.addSchedule(
-                    grant.getId() + rank.getName(),
-                    runnable,
-                    (durationValue + 1000)
-            );
-        }
+        if (player != null) hunter.refreshPermissions();
+        hunter.save();
 
         Message.send(sender,
                 "&aGranted rank% &arank to player% &afor &7duration%."
@@ -95,18 +86,28 @@ public class GrantManualCommand extends BaseCommand {
                         )
         );
 
-        if (player != null && (sender != player))
-            Message.send(player,
-                    "&aYou've been granted rank% &arank &afor &7duration%."
-                            .replace("rank%", rank.getDisplayColored())
-                            .replace("duration%",
-                                    grant.isPermanent() ?
-                                            "forever" :
-                                            durationValue == Integer.MAX_VALUE ?
-                                                    "forever" :
-                                                    Converter.millisToTime(durationValue)
-                            )
-            );
+        String message = "&aYou've been granted rank% &arank &afor &7duration%."
+                .replace("rank%", rank.getDisplayColored())
+                .replace("duration%",
+                        grant.isPermanent() ?
+                                "forever" :
+                                durationValue == Integer.MAX_VALUE ?
+                                        "forever" :
+                                        Converter.millisToTime(durationValue)
+                );
+
+        String redisMessage = String.join("&%$",
+                hunter.getUsername(),
+                sender.getName(),
+                String.valueOf(durationValue),
+                grant.getId(),
+                rank.getName(),
+                message
+        );
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            jedis.publish(GrantSubscriber.channel, redisMessage);
+        }
 
     }
 }
