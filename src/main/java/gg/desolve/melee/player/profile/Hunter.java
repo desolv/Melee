@@ -1,5 +1,6 @@
 package gg.desolve.melee.player.profile;
 
+import com.google.gson.Gson;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
@@ -18,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import redis.clients.jedis.Jedis;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,16 +28,16 @@ import java.util.stream.Collectors;
 public class Hunter {
 
     @Getter
-    private static final MongoCollection<Document> hunter_collections = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("hunters");
+    private transient final MongoCollection<Document> hunter_collections = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("hunters");
 
-    @Getter
-    private static Map<UUID, Hunter> hunters = new HashMap<>();
+    private transient final Gson gson = new Gson();
 
     private final UUID uuid;
     private String username;
     private int logins;
     private Long firstSeen;
     private Long lastSeen;
+    private String server;
     private String address;
     private boolean loaded;
     private Grant grant;
@@ -57,28 +59,16 @@ public class Hunter {
     }
 
     public static Hunter getHunter(UUID uuid) {
-        return hunters.containsKey(uuid) ?
-                hunters.get(uuid) :
-                new Hunter(uuid, null);
+        return new Hunter(uuid, null);
     }
 
     public static Hunter getHunter(String username) {
-        Hunter hunter = Optional.ofNullable(Bukkit.getPlayer(username))
-                .map(player -> hunters.get(player.getUniqueId()))
-                .orElse(null);
-
-        if (hunter == null) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
-            hunter = offlinePlayer.hasPlayedBefore() && hunters.containsKey(offlinePlayer.getUniqueId())
-                    ? hunters.get(offlinePlayer.getUniqueId())
-                    : new Hunter(offlinePlayer.getUniqueId(), offlinePlayer.getName());
-        }
-
-        return hunter;
+        OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+        return new Hunter(player.getUniqueId(), player.getName());
     }
 
     public String getUsernameColored() {
-        return grant.getRank().getColor() + username;
+        return getGrant().getRank().getColor() + username;
     }
 
     public Grant getGrant() {
@@ -89,11 +79,12 @@ public class Hunter {
     }
 
     public void refreshGrant() {
-        grants.stream()
+        grant = grants.stream()
                 .filter(grant -> grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
-        refreshPermissions();
+        if (!Melee.getInstance().isDisabling())
+            refreshPermissions();
     }
 
     public Grant hasGrant(Rank rank) {
@@ -201,10 +192,8 @@ public class Hunter {
         grants.stream()
                 .filter(grant -> grant.getType() == GrantType.ACTIVE)
                 .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(permission -> {
-                            if (!attachment.getPermissions().containsKey(permission)) {
+                            if (!attachment.getPermissions().containsKey(permission))
                                 attachment.setPermission(permission, !permission.startsWith("-"));
-                                Melee.getInstance().getLogger().info("Added permission: " + permission + " " + !permission.startsWith("-"));
-                            }
                         })
                 );
 
@@ -216,6 +205,7 @@ public class Hunter {
             Schedule schedule = new Schedule(identity, runnable, millis);
             schedules.add(schedule);
             schedule.start();
+            save();
         }
     }
 
@@ -239,6 +229,32 @@ public class Hunter {
     }
 
     public void load() {
+        Hunter hunter = null;
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            String hunterJson = jedis.get("hunter:" + uuid.toString());
+            if (hunterJson != null) {
+                hunter = gson.fromJson(hunterJson, Hunter.class);
+            }
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("There was a problem loading " + username + "'s redis.");
+            e.printStackTrace();
+        }
+
+        if (hunter != null) {
+            this.username = hunter.username;
+            this.logins = hunter.logins;
+            this.firstSeen = hunter.firstSeen;
+            this.lastSeen = hunter.lastSeen;
+            this.server = hunter.server;
+            this.address = hunter.address;
+            this.grants = hunter.grants != null ? hunter.grants : new ArrayList<>();
+            this.markers = hunter.markers != null ? hunter.markers : new ArrayList<>();
+            this.schedules = hunter.schedules != null ? hunter.schedules : new ArrayList<>();
+            this.loaded = hunter.loaded;
+            return;
+        }
+
         try {
             Document document = hunter_collections.find(
                     Filters.eq(
@@ -251,11 +267,13 @@ public class Hunter {
                 logins = document.getInteger("logins");
                 firstSeen = document.getLong("firstSeen");
                 lastSeen = document.getLong("lastSeen");
+                server = document.getString("server");
                 address = document.getString("address");
                 Optional.ofNullable(document.getList("markers", Document.class))
                         .ifPresent(m -> m.forEach(marker -> markers.add(Marker.load(marker))));
                 Optional.ofNullable(document.getList("grants", Document.class))
                         .ifPresent(g -> g.forEach(grant -> grants.add(Grant.load(grant))));
+                save();
             }
 
         } catch (Exception e) {
@@ -265,6 +283,28 @@ public class Hunter {
     }
 
     public void save() {
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            String hunterJson = gson.toJson(this);
+            jedis.set("hunter:" + uuid.toString(), hunterJson);
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("There was a problem saving " + username + "'s redis.");
+            e.printStackTrace();
+        }
+    }
+
+    public void expire() {
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            String hunterJson = gson.toJson(this);
+            String key = "hunter:" + uuid.toString();
+            jedis.set(key, hunterJson);
+            jedis.expire(key, 600);
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("There was a problem expiring " + username + "'s redis.");
+            e.printStackTrace();
+        }
+    }
+
+    public void saveMongo() {
         try {
             Document document = new Document();
             document.put("uuid", uuid.toString());
@@ -272,6 +312,7 @@ public class Hunter {
             document.put("logins", logins);
             document.put("firstSeen", firstSeen);
             document.put("lastSeen", lastSeen);
+            document.put("server", server);
             document.put("address", address);
             document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));
             document.put("grants", grants.stream().map(Grant::save).collect(Collectors.toList()));

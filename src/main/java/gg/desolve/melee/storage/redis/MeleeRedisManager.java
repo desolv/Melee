@@ -1,4 +1,4 @@
-package gg.desolve.melee.storage;
+package gg.desolve.melee.storage.redis;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.configuration.MeleeConfigManager;
@@ -23,7 +23,6 @@ public class MeleeRedisManager {
 
             Melee.getInstance().setRedisManager(this);
             plugin.getLogger().info("Merged Redis @ " + (System.currentTimeMillis() - millis) + "ms.");
-
         } catch (Exception e) {
             plugin.getLogger().warning("There was a problem connecting to Redis.");
             e.printStackTrace();
