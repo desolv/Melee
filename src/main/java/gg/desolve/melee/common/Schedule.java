@@ -8,10 +8,10 @@ import org.bukkit.scheduler.BukkitTask;
 @Data
 public class Schedule {
 
-    private final Runnable runnable;
+    private final transient Runnable runnable;
     private final String identity;
     private final long millis;
-    private BukkitTask task;
+    private transient BukkitTask task;
 
     public Schedule(String identity, Runnable runnable, long millis) {
         this.identity = identity;
