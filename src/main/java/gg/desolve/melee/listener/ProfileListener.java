@@ -2,8 +2,8 @@ package gg.desolve.melee.listener;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
-import gg.desolve.melee.player.profile.Marker;
 import gg.desolve.melee.player.profile.Hunter;
+import gg.desolve.melee.player.profile.Marker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -81,8 +81,8 @@ public class ProfileListener implements Listener {
             return;
         }
 
-        Hunter.getHunters().put(hunter.getUuid(), hunter);
         hunter.save();
+        hunter.saveMongo();
     }
 
     @EventHandler(
@@ -90,9 +90,9 @@ public class ProfileListener implements Listener {
     )
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
-        Hunter hunter = Hunter.getHunters().get(event.getPlayer().getUniqueId());
+        Hunter hunter = Hunter.getHunter(event.getPlayer().getUniqueId());
 
-        if (hunter == null || !hunter.isLoaded()) {
+        if (!hunter.isLoaded()) {
             event.getPlayer().kickPlayer(
                     Message.translate(
                             "&cYou attempted to login while booting"
@@ -106,6 +106,9 @@ public class ProfileListener implements Listener {
                 .filter(marker -> marker.getAddress() != null && marker.getAddress().equalsIgnoreCase(hunter.getAddress()))
                 .findFirst()
                 .ifPresent(marker -> marker.setLogins(marker.getLogins() + 1));
+        hunter.setServer(Bukkit.getServerName());
+        hunter.save();
+        hunter.saveMongo();
     }
 
     @EventHandler(
@@ -114,14 +117,12 @@ public class ProfileListener implements Listener {
     )
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
-        Hunter hunter = Hunter.getHunters().get(event.getPlayer().getUniqueId());
+        Hunter hunter = Hunter.getHunter(event.getPlayer().getUniqueId());
 
-        if (hunter != null) {
-            hunter.setLastSeen(System.currentTimeMillis());
-            hunter.save();
-            hunter.cancelSchedules();
-            Hunter.getHunters().remove(event.getPlayer().getUniqueId());
-        }
+        hunter.setLastSeen(System.currentTimeMillis());
+        hunter.expire();
+        hunter.saveMongo();
+        hunter.cancelSchedules();
     }
 
 }
