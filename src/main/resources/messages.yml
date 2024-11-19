@@ -1,6 +1,6 @@
 acf-core:
-  permission_denied:  "&cNo Permission."
-  permission_denied_parameter: "&cNo Permission."
+  permission_denied:  "&cYou are missing required permissions."
+  permission_denied_parameter: "&cYou are missing required permissions."
   error_generic_logged: "&cAn error occurred. This problem has been logged."
   unknown_command: "&fUnknown Command, please type /help for help."
   invalid_syntax: "&bUsage: {command} &f{syntax}"

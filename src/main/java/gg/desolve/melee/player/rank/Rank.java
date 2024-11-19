@@ -114,7 +114,7 @@ public class Rank {
             FileConfiguration config = configManager.getRank().getConfig();
 
             config.set(name + ".priority", priority);
-            config.set(name + ".name", display);
+            config.set(name + ".display", display);
             config.set(name + ".prefix", prefix);
             config.set(name + ".color", color);
             config.set(name + ".inherits", inherits);
