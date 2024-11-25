@@ -2,14 +2,18 @@ package gg.desolve.melee.command.management;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.grant.Grant;
+import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.GrantType;
+import gg.desolve.melee.player.grant.InvalidateGrantSubscriber;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import redis.clients.jedis.Jedis;
 
 @CommandAlias("invalidategrant")
 public class InvalidateGrantCommand extends BaseCommand {
@@ -70,12 +74,19 @@ public class InvalidateGrantCommand extends BaseCommand {
                         .replace("reason%", reason)
         );
 
-        if (player != null && (sender != player))
-            Message.send(player,
-                    "rank% &arank has been removed &afor &7reason%."
-                            .replace("rank%", rank.getDisplayColored())
-                            .replace("reason%", reason)
-            );
+        String message = "rank% &arank has been removed &afor &7reason%."
+                .replace("rank%", rank.getDisplayColored())
+                .replace("reason%", reason);
+
+        String redisMessage = String.join("&%$",
+                hunter.getUsername(),
+                sender.getName(),
+                message
+        );
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            jedis.publish(InvalidateGrantSubscriber.update, redisMessage);
+        }
 
     }
 }

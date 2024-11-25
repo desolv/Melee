@@ -11,7 +11,7 @@ import redis.clients.jedis.JedisPubSub;
 @Getter
 public class GrantSubscriber extends JedisPubSub {
 
-    public static final String channel = "grantUpdate";
+    public static final String update = "grantUpdate";
 
     @Override
     public void onMessage(String channel, String message) {

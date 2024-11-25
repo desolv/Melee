@@ -2,6 +2,7 @@ package gg.desolve.melee.storage.redis;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.player.grant.GrantSubscriber;
+import gg.desolve.melee.player.grant.InvalidateGrantSubscriber;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 import redis.clients.jedis.Jedis;
@@ -20,11 +21,12 @@ public class MeleeSubscriberManager {
         try {
 
             Arrays.asList(
-                    new GrantSubscriber()
+                    new GrantSubscriber(),
+                    new InvalidateGrantSubscriber()
             ).forEach(subscriber -> {
-                String channel = "";
+                String channel;
                 try {
-                    channel = (String) subscriber.getClass().getField("channel").get(null);
+                    channel = (String) subscriber.getClass().getField("update").get(null);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }

@@ -113,7 +113,7 @@ public class GrantManualCommand extends BaseCommand {
         );
 
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            jedis.publish(GrantSubscriber.channel, redisMessage);
+            jedis.publish(GrantSubscriber.update, redisMessage);
         }
 
     }
