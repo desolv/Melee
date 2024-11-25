@@ -40,5 +40,15 @@ public class MeleeRedisManager {
         return jedis;
     }
 
-
+    public void flush() {
+        try (Jedis jedis = getConnection()) {
+            if (jedis != null) {
+                jedis.flushAll();
+                Melee.getInstance().getLogger().info("All Redis data has been cleared.");
+            }
+        } catch (Exception e) {
+            Melee.getInstance().getLogger().warning("An error occurred while flushing Redis data.");
+            e.printStackTrace();
+        }
+    }
 }
