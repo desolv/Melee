@@ -20,14 +20,14 @@ public class InstanceCommand extends BaseCommand {
     @Description("Manage server instances")
     public static void execute(CommandSender sender) {
         Message.send(sender,
-                "\n<aqua>Melee Instance Manager "
-                        + "\n" + MeleeServerManager.getServers().stream()
+                "<newline><aqua>Melee Instance Manager "
+                        + "<newline>" + MeleeServerManager.getServers().stream()
                         .map(server ->
-                                "\n<aqua>" + server.getName() + " v" + server.getMelee() + " " + server.getVersion() + " <dark_gray>#" + server.getId()
-                                + "\n<white>Instance has been up for "
+                                "<newline><aqua>" + server.getName() + " v" + server.getMelee() + " " + server.getVersion() + " <dark_gray>#" + server.getId()
+                                + "<newline><white>Instance has been up for "
                                         + Converter.millisToTime(System.currentTimeMillis() - server.getBooting())
-                                        + " (" + Converter.millisToTime(System.currentTimeMillis() - server.getHeartbeat()) + ").\n")
-                        .collect(Collectors.joining("\n"))
+                                        + " (" + Converter.millisToTime(System.currentTimeMillis() - server.getHeartbeat()) + ").<newline>")
+                        .collect(Collectors.joining("<newline>"))
         );
 
     }

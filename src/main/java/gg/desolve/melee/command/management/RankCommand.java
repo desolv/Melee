@@ -29,7 +29,7 @@ public class RankCommand extends BaseCommand {
     @CommandPermission("melee.command.rank|melee.command.rank.list")
     @Description("Shows list of all ranks")
     public static void onList(CommandSender sender) {
-        Message.send(sender, "\n<aqua>Loaded Ranks <gray>(" + Rank.getRanks().size() + "<gray>)");
+        Message.send(sender, "<newline><aqua>Loaded Ranks <gray>(" + Rank.getRanks().size() + "<gray>)");
         Rank.getSortedRanks().forEach(rank ->
                 Message.send(sender,
                         (rank.isVisible() ? "<white>" : "<white>*")
@@ -52,14 +52,14 @@ public class RankCommand extends BaseCommand {
         List<String> permissions = new ArrayList<>(rank.getPermissions());
 
         Message.send(sender,
-                "\n<aqua>Rank Information <gray>(" + rank.getNameColored() + "<gray>)"
-                        + "\n<white>Priority: <aqua>" + rank.getPriority()
-                        + "\n<white>Prefix: " + rank.getPrefix() + "You <gray>(" + rank.getColor() + "this<gray>)"
-                        + "\n<white>Display Name: " + rank.getDisplayColored()
-                        + "\n<white>Visible: " + (rank.isVisible() ? "<green>True" : "<red>False")
-                        + "\n<white>Grantable: " + (rank.isGrantable() ? "<green>True" : "<red>False")
-                        + "\n<white>Inherits (" + inherits.size() + "): <white>" + (inherits.isEmpty() ? "<red>None" : String.join("<white>, <white>", inherits))
-                        + "\n<white>Permissions (" + permissions.size() + "): <white>" + (permissions.isEmpty() ? "<red>None" : String.join("<white>, <white>", permissions))
+                "<newline><aqua>Rank Information <gray>(" + rank.getNameColored() + "<gray>)"
+                        + "<newline><white>Priority: <aqua>" + rank.getPriority()
+                        + "<newline><white>Prefix: " + rank.getPrefix() + "You <gray>(" + rank.getColor() + "this<gray>)"
+                        + "<newline><white>Display Name: " + rank.getDisplayColored()
+                        + "<newline><white>Visible: " + (rank.isVisible() ? "<green>True" : "<red>False")
+                        + "<newline><white>Grantable: " + (rank.isGrantable() ? "<green>True" : "<red>False")
+                        + "<newline><white>Inherits (" + inherits.size() + "): <white>" + (inherits.isEmpty() ? "<red>None" : String.join("<white>, <white>", inherits))
+                        + "<newline><white>Permissions (" + permissions.size() + "): <white>" + (permissions.isEmpty() ? "<red>None" : String.join("<white>, <white>", permissions))
         );
     }
 

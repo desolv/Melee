@@ -30,7 +30,7 @@ public class ProfileListener implements Listener {
             event.setKickMessage(
                     Message.translate(
                             "&cYou attempted to login shortly after disconnecting"
-                                    + "\nPlease try again in a few seconds"
+                                    + "<newline>Please try again in a few seconds"
                     ));
             instance.getServer().getScheduler().runTask(
                     instance, () -> player.kickPlayer(Message.translate("<red>Duplicate login :?")));
@@ -75,7 +75,7 @@ public class ProfileListener implements Listener {
             event.setKickMessage(
                     Message.translate(
                             "&cThere was a problem loading your account"
-                                    + "\nPlease contact an administrator"
+                                    + "<newline>Please contact an administrator"
                     ));
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
@@ -96,7 +96,7 @@ public class ProfileListener implements Listener {
             event.getPlayer().kickPlayer(
                     Message.translate(
                             "&cYou attempted to login while booting"
-                                    + "\nPlease try again in a few seconds"
+                                    + "<newline>Please try again in a few seconds"
                     ));
             return;
         }
