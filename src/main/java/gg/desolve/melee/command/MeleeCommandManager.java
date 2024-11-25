@@ -6,10 +6,7 @@ import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.collect.ImmutableList;
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.command.management.GrantManualCommand;
-import gg.desolve.melee.command.management.InstanceCommand;
-import gg.desolve.melee.command.management.InvalidateGrantCommand;
-import gg.desolve.melee.command.management.RankCommand;
+import gg.desolve.melee.command.management.*;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
@@ -56,7 +53,8 @@ public class MeleeCommandManager extends PaperCommandManager {
                 new GrantManualCommand(),
                 new InvalidateGrantCommand(),
                 new RankCommand(),
-                new InstanceCommand()
+                new InstanceCommand(),
+                new AnnounceCommand()
         ).forEach(command -> {
             registerCommand(command);
             commands.add(command.getClass().getSimpleName());
