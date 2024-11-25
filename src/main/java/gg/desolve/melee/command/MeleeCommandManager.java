@@ -13,6 +13,9 @@ import gg.desolve.melee.command.management.RankCommand;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
+import gg.desolve.melee.server.MeleeServerManager;
+import gg.desolve.melee.server.Scope;
+import gg.desolve.melee.server.Server;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -23,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MeleeCommandManager extends PaperCommandManager {
 
@@ -82,6 +87,14 @@ public class MeleeCommandManager extends PaperCommandManager {
                     return Optional.ofNullable(rank).orElseThrow(() ->
                             new InvalidCommandArgument("&cRank matching &e" + popRank + " &ccould not be found.", false));
                 });
+
+        getCommandContexts().registerContext(
+                Scope.class, c -> {
+                    String popScope = c.popFirstArg();
+                    Scope scope = Scope.fromString(popScope);
+                    return Optional.ofNullable(scope).orElseThrow(() ->
+                            new InvalidCommandArgument("&cScope matching &e" + popScope + " &ccould not be found.", false));
+                });
     }
 
     private void loadCompletions() {
@@ -89,11 +102,19 @@ public class MeleeCommandManager extends PaperCommandManager {
                 "ranks", c -> Rank.getRanks().keySet()
         );
 
-        getCommandCompletions().registerAsyncCompletion("durations", c ->
+        getCommandCompletions().registerAsyncCompletion("durations", d ->
                 ImmutableList.of("permanent", "s", "m", "h", "d", "w", "M", "y"));
 
-        getCommandCompletions().registerAsyncCompletion("reasons", c ->
+        getCommandCompletions().registerAsyncCompletion("reasons", r ->
                 ImmutableList.of("Store", "Whitelist", "Won", "Promoted", "Demoted", "Famous", "Other"));
+
+        getCommandCompletions().registerAsyncCompletion("scopes", s ->
+                Stream.concat(
+                        Stream.of("global"),
+                        MeleeServerManager.getServers()
+                                .stream()
+                                .map(Server::getName)
+                ).collect(Collectors.toList()));
     }
 
     @Override

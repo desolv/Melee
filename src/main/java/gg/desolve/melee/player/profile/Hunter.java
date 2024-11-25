@@ -80,7 +80,8 @@ public class Hunter {
 
     public void refreshGrant() {
         grant = grants.stream()
-                .filter(grant -> grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
+                .filter(grant -> (grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
+                        && (grant.getScope().equalsIgnoreCase(Bukkit.getServerName()) || grant.getScope().equalsIgnoreCase("global")))
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
         if (!Melee.getInstance().isDisabling())
@@ -103,7 +104,10 @@ public class Hunter {
 
     public void evaluateGrants() {
         grants.stream()
-                .filter(grant -> grant.getType() == GrantType.ACTIVE && !grant.isPermanent())
+                .filter(grant ->
+                        (grant.getType() == GrantType.ACTIVE)
+                        && !grant.isPermanent()
+                )
                 .forEach(grant -> {
                     if (grant.hasExpired() && grant.getType().equals(GrantType.ACTIVE)) {
                         grant.setRemovedAt(System.currentTimeMillis());
@@ -119,7 +123,8 @@ public class Hunter {
                     } else if (!grant.hasExpired()
                             && Bukkit.getPlayer(uuid) != null
                             && !hasSchedule(grant.getId() + grant.getRank().getName())
-                            && !grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 48
+                            && !grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 24
+                            && (grant.getScope().equalsIgnoreCase(Bukkit.getServerName()) || grant.getScope().equalsIgnoreCase("global"))
                     ) {
                         Runnable runnable = () -> {
                             if (username != null)
@@ -150,6 +155,7 @@ public class Hunter {
                             System.currentTimeMillis(),
                             "Automatic",
                             Bukkit.getServerName(),
+                            "global",
                             Integer.MAX_VALUE,
                             GrantType.ACTIVE
                     );
@@ -190,12 +196,16 @@ public class Hunter {
         PermissionAttachment attachment = player.addAttachment(Melee.getInstance());
 
         grants.stream()
-                .filter(grant -> grant.getType() == GrantType.ACTIVE)
-                .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(permission -> {
-                            if (!attachment.getPermissions().containsKey(permission))
-                                attachment.setPermission(permission, !permission.startsWith("-"));
-                        })
-                );
+                .filter(grant -> (grant.getType() == GrantType.ACTIVE)
+                        && (grant.getScope().equalsIgnoreCase(Bukkit.getServerName()) || grant.getScope().equalsIgnoreCase("global")))
+                .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(p -> {
+
+                    String permission = p.startsWith("-") ? p.substring(1) : p;
+                    boolean negative = !p.startsWith("-");
+
+                    if (!attachment.getPermissions().containsKey(permission))
+                        attachment.setPermission(permission, negative);
+                }));
 
         player.recalculatePermissions();
     }
@@ -297,7 +307,7 @@ public class Hunter {
             String hunterJson = gson.toJson(this);
             String key = "hunter:" + uuid.toString();
             jedis.set(key, hunterJson);
-            jedis.expire(key, 600);
+            jedis.expire(key, 300);
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem expiring " + username + "'s redis.");
             e.printStackTrace();

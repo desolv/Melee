@@ -11,6 +11,8 @@ import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
+import gg.desolve.melee.server.Scope;
+import gg.desolve.melee.server.Server;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,11 +24,11 @@ import java.util.UUID;
 public class GrantManualCommand extends BaseCommand {
 
     @Default
-    @CommandCompletion("@players @ranks @durations @reasons")
+    @CommandCompletion("@players @ranks @scopes @durations @reasons")
     @CommandPermission("melee.command.grantmanual")
-    @Syntax("<player> <rank> <duration> [reason]")
+    @Syntax("<player> <rank> <scope> <duration> [reason]")
     @Description("Manually grant to a player")
-    public static void execute(CommandSender sender, Hunter hunter, Rank rank, Duration duration, @Optional @Default("Promoted") String reason) {
+    public static void execute(CommandSender sender, Hunter hunter, Rank rank, Scope scope, Duration duration, @Optional @Default("Promoted") String reason) {
         if (rank.isBaseline()) {
             Message.send(sender, "&cYou cannot grant the default rank.");
             return;
@@ -52,6 +54,7 @@ public class GrantManualCommand extends BaseCommand {
         }
 
         long durationValue = duration.getValue();
+        String scopeValue = scope.getValue();
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
         Grant grant = new Grant(
@@ -61,6 +64,7 @@ public class GrantManualCommand extends BaseCommand {
                 System.currentTimeMillis(),
                 reason,
                 Bukkit.getServerName(),
+                scopeValue,
                 durationValue,
                 GrantType.ACTIVE
         );
@@ -74,19 +78,20 @@ public class GrantManualCommand extends BaseCommand {
         hunter.save();
 
         Message.send(sender,
-                "&aGranted rank% &arank to player% &afor &7duration%."
+                "&aYou've granted the rank% &arank to player% &alasting &eduration% &aon scope &dscope%."
                         .replace("rank%", rank.getDisplayColored())
                         .replace("player%", hunter.getUsernameColored())
                         .replace("duration%",
-                                grant.isPermanent() ?
+                                (grant.isPermanent() ?
                                         "forever" :
                                         durationValue == Integer.MAX_VALUE ?
                                                 "forever" :
-                                                Converter.millisToTime(durationValue)
-                        )
+                                                Converter.millisToTime(durationValue)))
+                        .replace("scope%", scopeValue)
+                        .replace("reason%", reason)
         );
 
-        String message = "&aYou've been granted rank% &arank &afor &7duration%."
+        String message = "&aYou've been granted rank% &arank &alasting &eduration% &aon scope &dscope%."
                 .replace("rank%", rank.getDisplayColored())
                 .replace("duration%",
                         grant.isPermanent() ?
@@ -94,7 +99,8 @@ public class GrantManualCommand extends BaseCommand {
                                 durationValue == Integer.MAX_VALUE ?
                                         "forever" :
                                         Converter.millisToTime(durationValue)
-                );
+                )
+                .replace("scope%", scopeValue);
 
         String redisMessage = String.join("&%$",
                 hunter.getUsername(),
@@ -102,6 +108,7 @@ public class GrantManualCommand extends BaseCommand {
                 String.valueOf(durationValue),
                 grant.getId(),
                 rank.getName(),
+                scopeValue,
                 message
         );
 

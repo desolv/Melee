@@ -16,6 +16,7 @@ public class Grant {
     private long addedAt;
     private String addedReason;
     private String addedOrigin;
+    private String scope;
     private long duration;
     private UUID removedBy;
     private long removedAt;
@@ -23,13 +24,14 @@ public class Grant {
     private String removedOrigin;
     private GrantType type;
 
-    public Grant(String id, Rank rank, UUID addedBy, long addedAt, String addedReason, String addedOrigin, long duration, GrantType type) {
+    public Grant(String id, Rank rank, UUID addedBy, long addedAt, String addedReason, String addedOrigin, String scope, long duration, GrantType type) {
         this.id = id;
         this.rank = rank;
         this.addedBy = addedBy;
         this.addedAt = addedAt;
         this.addedReason = addedReason;
         this.addedOrigin = addedOrigin;
+        this.scope = scope;
         this.duration = duration;
         this.type = type;
     }
@@ -52,11 +54,14 @@ public class Grant {
                 document.getLong("addedAt"),
                 document.getString("addedReason"),
                 document.getString("addedOrigin"),
+                document.getString("scope"),
                 document.getLong("duration"),
                 rank == null ? GrantType.REMOVED : GrantType.string(document.getString("type"))
         );
 
-        if (grant.getType().equals(GrantType.ACTIVE) && Rank.getRank(document.getString("rank")) == null) {
+        if ((grant.getScope().equalsIgnoreCase("global") && grant.getScope().equalsIgnoreCase(Bukkit.getServerName()))
+                && grant.getType().equals(GrantType.ACTIVE)
+                && Rank.getRank(document.getString("rank")) == null) {
             grant.setType(GrantType.REMOVED);
             grant.setRemovedBy(null);
             grant.setRemovedAt(System.currentTimeMillis());
@@ -81,6 +86,7 @@ public class Grant {
                 .append("addedAt", addedAt)
                 .append("addedReason", addedReason)
                 .append("addedOrigin", addedOrigin)
+                .append("scope", scope)
                 .append("duration", duration)
                 .append("removedBy", removedBy)
                 .append("removedAt", removedAt)

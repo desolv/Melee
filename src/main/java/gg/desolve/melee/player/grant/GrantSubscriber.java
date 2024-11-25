@@ -1,5 +1,6 @@
 package gg.desolve.melee.player.grant;
 
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
@@ -14,18 +15,20 @@ public class GrantSubscriber extends JedisPubSub {
 
     @Override
     public void onMessage(String channel, String message) {
-        String[] parts = message.split("&%\\$", 6);
+        String[] parts = message.split("&%\\$", 7);
         String username = parts[0];
         String senderUsername = parts[1];
         long durationValue = Long.parseLong(parts[2]);
         String grantId = parts[3];
         String rankName = parts[4];
-        String msg = parts[5];
+        String scope = parts[5];
+        String msg = parts[6];
 
         Hunter hunter = Hunter.getHunter(username);
         Player player = Bukkit.getPlayer(hunter.getUuid());
 
-        if (player != null && hunter.getServer().equals(Bukkit.getServerName())) {
+        if ((scope.equalsIgnoreCase("global") || Bukkit.getServerName().equalsIgnoreCase(scope))
+                && hunter.getServer().equals(scope)) {
             hunter.refreshGrant();
             hunter.refreshPermissions();
             hunter.save();
@@ -43,9 +46,9 @@ public class GrantSubscriber extends JedisPubSub {
                         (durationValue + 1000)
                 );
             }
-
-            if (Bukkit.getPlayer(senderUsername) != player) Message.send(player, msg);
         }
+
+        if (player != null && (Bukkit.getPlayer(senderUsername) != player)) Message.send(player, msg);
     }
 
 }
