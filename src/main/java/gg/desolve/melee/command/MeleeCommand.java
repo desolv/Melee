@@ -22,13 +22,13 @@ public class MeleeCommand extends BaseCommand {
     @Description("Melee's information")
     public static void execute(CommandSender sender) {
         Message.send(sender,
-                "\n&bMelee Management " + Melee.getInstance().getDescription().getVersion()
-                        + "\n&fRunning: &b" + Melee.getInstance().getServer().getVersion()
-                        + "\n&fVersion: &b" + Melee.getInstance().getServer().getBukkitVersion()
-                        + "\n&fServers (" + MeleeServerManager.getServers().size() + "): &b" + MeleeServerManager.getServers().stream().map(server -> server.getName() + " v" + server.getMelee()).collect(Collectors.joining("&f, &b"))
-                        + "\n&fListeners (" + MeleeListenerManager.getListeners().size() + "): &b" + String.join("&f, &b", MeleeListenerManager.getListeners())
-                        + "\n&fCommands (" + MeleeCommandManager.getCommands().size() + "): &b" + String.join("&f, &b", MeleeCommandManager.getCommands())
-                        + "\n&fSubscribers (" + MeleeSubscriberManager.getSubscribers().size() + "): &b" + String.join("&f, &b", MeleeSubscriberManager.getSubscribers())
+                "\n<aqua>Melee Management " + Melee.getInstance().getDescription().getVersion()
+                        + "\n<white>Running: <aqua>" + Melee.getInstance().getServer().getVersion()
+                        + "\n<white>Version: <aqua>" + Melee.getInstance().getServer().getBukkitVersion()
+                        + "\n<white>Servers (" + MeleeServerManager.getServers().size() + "): <aqua>" + MeleeServerManager.getServers().stream().map(server -> server.getName() + " v" + server.getMelee()).collect(Collectors.joining("<white>, <aqua>"))
+                        + "\n<white>Listeners (" + MeleeListenerManager.getListeners().size() + "): <aqua>" + String.join("<white>, <aqua>", MeleeListenerManager.getListeners())
+                        + "\n<white>Commands (" + MeleeCommandManager.getCommands().size() + "): <aqua>" + String.join("<white>, <aqua>", MeleeCommandManager.getCommands())
+                        + "\n<white>Subscribers (" + MeleeSubscriberManager.getSubscribers().size() + "): <aqua>" + String.join("<white>, <aqua>", MeleeSubscriberManager.getSubscribers())
         );
     }
 

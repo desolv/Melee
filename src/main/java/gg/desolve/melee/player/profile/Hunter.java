@@ -118,7 +118,7 @@ public class Hunter {
 
                         Player player = Bukkit.getPlayer(uuid);
                         if (player != null)
-                            Message.send(player, grant.getRank().getDisplayColored() + " &arank has expired.");
+                            Message.send(player, grant.getRank().getDisplayColored() + " <green>rank has expired.");
 
                     } else if (!grant.hasExpired()
                             && Bukkit.getPlayer(uuid) != null

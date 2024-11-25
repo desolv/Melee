@@ -29,12 +29,12 @@ public class RankCommand extends BaseCommand {
     @CommandPermission("melee.command.rank|melee.command.rank.list")
     @Description("Shows list of all ranks")
     public static void onList(CommandSender sender) {
-        Message.send(sender, "\n&bLoaded Ranks &7(" + Rank.getRanks().size() + "&7)");
+        Message.send(sender, "\n<aqua>Loaded Ranks <gray>(" + Rank.getRanks().size() + "<gray>)");
         Rank.getSortedRanks().forEach(rank ->
                 Message.send(sender,
-                        (rank.isVisible() ? "&f" : "&f*")
+                        (rank.isVisible() ? "<white>" : "<white>*")
                                 + rank.getNameColored()
-                                + " &f(Priority: " + rank.getPriority() + ")"
+                                + " <white>(Priority: " + rank.getPriority() + ")"
                 ));
     }
 
@@ -52,14 +52,14 @@ public class RankCommand extends BaseCommand {
         List<String> permissions = new ArrayList<>(rank.getPermissions());
 
         Message.send(sender,
-                "\n&bRank Information &7(" + rank.getNameColored() + "&7)"
-                        + "\n&fPriority: &b" + rank.getPriority()
-                        + "\n&fPrefix: " + rank.getPrefix() + "You &7(" + rank.getColor() + "this&7)"
-                        + "\n&fDisplay Name: " + rank.getDisplayColored()
-                        + "\n&fVisible: " + (rank.isVisible() ? "&aTrue" : "&cFalse")
-                        + "\n&fGrantable: " + (rank.isGrantable() ? "&aTrue" : "&cFalse")
-                        + "\n&fInherits (" + inherits.size() + "): &f" + (inherits.isEmpty() ? "&cNone" : String.join("&f, &f", inherits))
-                        + "\n&fPermissions (" + permissions.size() + "): &f" + (permissions.isEmpty() ? "&cNone" : String.join("&f, &f", permissions))
+                "\n<aqua>Rank Information <gray>(" + rank.getNameColored() + "<gray>)"
+                        + "\n<white>Priority: <aqua>" + rank.getPriority()
+                        + "\n<white>Prefix: " + rank.getPrefix() + "You <gray>(" + rank.getColor() + "this<gray>)"
+                        + "\n<white>Display Name: " + rank.getDisplayColored()
+                        + "\n<white>Visible: " + (rank.isVisible() ? "<green>True" : "<red>False")
+                        + "\n<white>Grantable: " + (rank.isGrantable() ? "<green>True" : "<red>False")
+                        + "\n<white>Inherits (" + inherits.size() + "): <white>" + (inherits.isEmpty() ? "<red>None" : String.join("<white>, <white>", inherits))
+                        + "\n<white>Permissions (" + permissions.size() + "): <white>" + (permissions.isEmpty() ? "<red>None" : String.join("<white>, <white>", permissions))
         );
     }
 
@@ -73,7 +73,7 @@ public class RankCommand extends BaseCommand {
         rank.setPriority(priority);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank priority from &e" + priorityBefore + " &ato &e" + priority + ".");
+        Message.send(sender, "<green>You've changed " + rank.getNameColored() + " <green>rank priority from <yellow>" + priorityBefore + " <green>to <yellow>" + priority + ".");
     }
 
     @Subcommand("prefix")
@@ -86,7 +86,7 @@ public class RankCommand extends BaseCommand {
         rank.setPrefix(prefix);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank prefix from &f" + prefixBefore + " &ato &f" + prefix + ".");
+        Message.send(sender, "<green>You've changed " + rank.getNameColored() + " <green>rank prefix from <white>" + prefixBefore + " <green>to <white>" + prefix + ".");
     }
 
     @Subcommand("display")
@@ -99,7 +99,7 @@ public class RankCommand extends BaseCommand {
         rank.setDisplay(display);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank prefix from &f" + displayBefore + " &ato &f" + rank.getDisplayColored() + ".");
+        Message.send(sender, "<green>You've changed " + rank.getNameColored() + " <green>rank prefix from <white>" + displayBefore + " <green>to <white>" + rank.getDisplayColored() + ".");
     }
 
     @Subcommand("color")
@@ -112,7 +112,7 @@ public class RankCommand extends BaseCommand {
         rank.setColor(color);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank color from &f" + colorBefore + "this &ato &f" + rank.getColor() + "this.");
+        Message.send(sender, "<green>You've changed " + rank.getNameColored() + " <green>rank color from <white>" + colorBefore + "this <green>to <white>" + rank.getColor() + "this.");
     }
 
     @Subcommand("grantable")
@@ -122,14 +122,14 @@ public class RankCommand extends BaseCommand {
     @Description("Changes grantability of a rank")
     public static void onGrantable(CommandSender sender, Rank rank, boolean option) {
         if (rank.isBaseline() || (rank.getPermissions().contains("melee.*") && !sender.hasPermission("melee.*"))) {
-            Message.send(sender, "&cYou cannot change this rank.");
+            Message.send(sender, "<red>You cannot change this rank.");
             return;
         }
 
         rank.setGrantable(option);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank grantability to &e" + (option ? "true" : "false") + ".");
+        Message.send(sender, "<green>You've changed " + rank.getNameColored() + " <green>rank grantability to <yellow>" + (option ? "true" : "false") + ".");
     }
 
     @Subcommand("visible")
@@ -141,7 +141,7 @@ public class RankCommand extends BaseCommand {
         rank.setVisible(option);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getNameColored() + " &arank visibility to &e" + (option ? "true" : "false") + ".");
+        Message.send(sender, "<green>You've changed " + rank.getNameColored() + " <green>rank visibility to <yellow>" + (option ? "true" : "false") + ".");
 
         long updated = Bukkit.getOnlinePlayers().stream()
                 .map(player -> Hunter.getHunter(player.getUniqueId()))
@@ -149,7 +149,7 @@ public class RankCommand extends BaseCommand {
                 .peek(Hunter::refreshGrant)
                 .count();
 
-        Message.send(sender, "&aUpdated &e" + updated + " &aplayers visibility.");
+        Message.send(sender, "<green>Updated <yellow>" + updated + " <green>players visibility.");
     }
 
     @Subcommand("permission add")
@@ -159,19 +159,19 @@ public class RankCommand extends BaseCommand {
     @Description("Changes permission of a rank")
     public static void onPermissionAdd(CommandSender sender, Rank rank, @Single String permission) {
         if (permission.equalsIgnoreCase("melee.*") && !sender.hasPermission("melee.*")) {
-            Message.send(sender, "&cYou cannot change this rank.");
+            Message.send(sender, "<red>You cannot change this rank.");
             return;
         }
 
         if (rank.getPermissions().contains(permission)) {
-            Message.send(sender, "&e" + permission + " &cis already present.");
+            Message.send(sender, "<yellow>" + permission + " <red>is already present.");
             return;
         }
 
         rank.getPermissions().add(permission);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by adding &e" + permission + " &apermission.");
+        Message.send(sender, "<green>You've changed " + rank.getDisplayColored() + " <green>rank by adding <yellow>" + permission + " <green>permission.");
     }
 
     @Subcommand("permission remove")
@@ -181,19 +181,19 @@ public class RankCommand extends BaseCommand {
     @Description("Changes permission of a rank")
     public static void onPermissionRemove(CommandSender sender, Rank rank, @Single String permission) {
         if (permission.equalsIgnoreCase("melee.*") && !sender.hasPermission("melee.*")) {
-            Message.send(sender, "&cYou cannot change this rank.");
+            Message.send(sender, "<red>You cannot change this rank.");
             return;
         }
 
         if (!rank.getPermissions().contains(permission)) {
-            Message.send(sender, "&e" + permission + " &cis not present.");
+            Message.send(sender, "<yellow>" + permission + " <red>is not present.");
             return;
         }
 
         rank.getPermissions().remove(permission);
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by removing &e" + permission + " &apermission.");
+        Message.send(sender, "<green>You've changed " + rank.getDisplayColored() + " <green>rank by removing <yellow>" + permission + " <green>permission.");
     }
 
     @Subcommand("inherit add")
@@ -203,24 +203,24 @@ public class RankCommand extends BaseCommand {
     @Description("Changes inherits of a rank")
     public static void onInheritAdd(CommandSender sender, Rank rank, Rank inheritRank) {
         if (inheritRank.getPermissions().contains("melee.*") && !sender.hasPermission("melee.*")) {
-            Message.send(sender, "&cYou cannot change this rank.");
+            Message.send(sender, "<red>You cannot change this rank.");
             return;
         }
 
         if (rank.equals(inheritRank)) {
-            Message.send(sender, "&cYou are not allowed to add the same rank to it self.");
+            Message.send(sender, "<red>You are not allowed to add the same rank to it self.");
             return;
         }
 
         if (rank.getInherits().contains(inheritRank.getName())) {
-            Message.send(sender, inheritRank.getNameColored() + " &cis already present.");
+            Message.send(sender, inheritRank.getNameColored() + " <red>is already present.");
             return;
         }
 
         rank.getInherits().add(inheritRank.getName());
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by adding " + inheritRank.getDisplayColored() + " &arank.");
+        Message.send(sender, "<green>You've changed " + rank.getDisplayColored() + " <green>rank by adding " + inheritRank.getDisplayColored() + " <green>rank.");
     }
 
     @Subcommand("inherit remove")
@@ -230,24 +230,24 @@ public class RankCommand extends BaseCommand {
     @Description("Changes inherits of a rank")
     public static void onInheritRemove(CommandSender sender, Rank rank, Rank inheritRank) {
         if (inheritRank.getPermissions().contains("melee.*") && !sender.hasPermission("melee.*")) {
-            Message.send(sender, "&cYou cannot change this rank.");
+            Message.send(sender, "<red>You cannot change this rank.");
             return;
         }
 
         if (rank.equals(inheritRank)) {
-            Message.send(sender, "&cYou are not allowed to remove the same rank from it self.");
+            Message.send(sender, "<red>You are not allowed to remove the same rank from it self.");
             return;
         }
 
         if (!rank.getInherits().contains(inheritRank.getName())) {
-            Message.send(sender, inheritRank.getNameColored() + " &cis not present.");
+            Message.send(sender, inheritRank.getNameColored() + " <red>is not present.");
             return;
         }
 
         rank.getInherits().remove(inheritRank.getName());
         rank.save();
 
-        Message.send(sender, "&aYou've changed " + rank.getDisplayColored() + " &arank by removing " + inheritRank.getDisplayColored() + " &arank.");
+        Message.send(sender, "<green>You've changed " + rank.getDisplayColored() + " <green>rank by removing " + inheritRank.getDisplayColored() + " <green>rank.");
     }
 
 }

@@ -23,9 +23,9 @@ public class InvalidateGrantCommand extends BaseCommand {
     @CommandPermission("melee.command.invalidategrant")
     @Syntax("<player> <rank> [reason]")
     @Description("Manually invalidate grant from a player")
-    public static void execute(CommandSender sender, Hunter hunter, Rank rank, @Optional @Default("Demoted") String reason) {
+    public static void execute(CommandSender sender, Hunter hunter, Rank rank, @Optional @Default("Other") String reason) {
         if (rank.isBaseline()) {
-            Message.send(sender, "&cYou cannot invalidate the default rank.");
+            Message.send(sender, "<red>You cannot invalidate the default rank.");
             return;
         }
 
@@ -33,12 +33,12 @@ public class InvalidateGrantCommand extends BaseCommand {
             Hunter granter = Hunter.getHunter(((Player) sender).getUniqueId());
 
             if (!granter.hasPermission("melee.*") && !rank.isGrantable()) {
-                Message.send(sender, "&cYou cannot invalidate this rank.");
+                Message.send(sender, "<red>You cannot invalidate this rank.");
                 return;
             }
 
             if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getGrant().getRank())) {
-                Message.send(sender, "&cYou cannot invalidate ranks higher than yours.");
+                Message.send(sender, "<red>You cannot invalidate ranks higher than yours.");
                 return;
             }
         }
@@ -46,7 +46,7 @@ public class InvalidateGrantCommand extends BaseCommand {
         Grant grant = hunter.hasGrant(rank);
 
         if (grant == null) {
-            Message.send(sender, rank.getDisplayColored() + " &crank is not present for " + hunter.getUsernameColored() + ".");
+            Message.send(sender, rank.getDisplayColored() + " <red>rank is not present for " + hunter.getUsernameColored() + ".");
             return;
         }
 
@@ -68,13 +68,13 @@ public class InvalidateGrantCommand extends BaseCommand {
 
 
         Message.send(sender,
-                "&aRemoved rank% &arank from player% &afor &7reason%."
+                "<green>Removed rank% <green>rank from player% <green>for <gray>reason%."
                         .replace("rank%", rank.getDisplayColored())
                         .replace("player%", hunter.getUsernameColored())
                         .replace("reason%", reason)
         );
 
-        String message = "rank% &arank has been removed &afor &7reason%."
+        String message = "rank% <green>rank has been removed <green>for <gray>reason%."
                 .replace("rank%", rank.getDisplayColored())
                 .replace("reason%", reason);
 

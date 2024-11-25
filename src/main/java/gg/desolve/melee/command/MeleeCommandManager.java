@@ -69,7 +69,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popName = c.popFirstArg();
                     Hunter hunter = Hunter.getHunter(popName);
                     return Optional.ofNullable(hunter).orElseThrow(() ->
-                            new InvalidCommandArgument("&cPlayer matching &e" + popName + " &ccould not be found.", false));
+                            new InvalidCommandArgument("<red>Player matching <yellow>" + popName + " <red>could not be found.", false));
                 });
 
         getCommandContexts().registerContext(
@@ -77,7 +77,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popDuration = c.popFirstArg();
                     Duration duration = Duration.fromString(popDuration);
                     return Optional.ofNullable(duration).orElseThrow(() ->
-                            new InvalidCommandArgument("&cDuration matching &e" + popDuration + " &ccould not be found.", false));
+                            new InvalidCommandArgument("<red>Duration matching <yellow>" + popDuration + " <red>could not be found.", false));
                 });
 
         getCommandContexts().registerContext(
@@ -85,7 +85,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popRank = c.popFirstArg();
                     Rank rank = Rank.getRank(popRank);
                     return Optional.ofNullable(rank).orElseThrow(() ->
-                            new InvalidCommandArgument("&cRank matching &e" + popRank + " &ccould not be found.", false));
+                            new InvalidCommandArgument("<red>Rank matching <yellow>" + popRank + " <red>could not be found.", false));
                 });
 
         getCommandContexts().registerContext(
@@ -93,7 +93,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popScope = c.popFirstArg();
                     Scope scope = Scope.fromString(popScope);
                     return Optional.ofNullable(scope).orElseThrow(() ->
-                            new InvalidCommandArgument("&cScope matching &e" + popScope + " &ccould not be found.", false));
+                            new InvalidCommandArgument("<red>Scope matching <yellow>" + popScope + " <red>could not be found.", false));
                 });
     }
 

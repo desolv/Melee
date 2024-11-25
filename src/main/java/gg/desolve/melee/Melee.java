@@ -11,6 +11,7 @@ import gg.desolve.melee.storage.redis.MeleeRedisManager;
 import gg.desolve.melee.storage.redis.MeleeSubscriberManager;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +29,9 @@ public final class Melee extends JavaPlugin {
     private MeleeRedisManager redisManager;
 
     @Getter
+    private BukkitAudiences adventure;
+
+    @Getter
     private boolean isDisabling = false;
 
     @Getter
@@ -38,6 +42,7 @@ public final class Melee extends JavaPlugin {
         instance = this;
         booting = System.currentTimeMillis();
 
+        this.adventure = BukkitAudiences.create(this);
         new MeleeConfigManager(this);
         new MeleeMongoManager(this, booting);
         new MeleeRedisManager(this, booting);
@@ -52,9 +57,13 @@ public final class Melee extends JavaPlugin {
     public void onDisable() {
         isDisabling = true;
         Bukkit.getOnlinePlayers().forEach(player -> {
-            Hunter hunter = Hunter.getHunter(player.getUniqueId());
-            hunter.setLastSeen(System.currentTimeMillis());
-            hunter.saveMongo();
+            try {
+                Hunter hunter = Hunter.getHunter(player.getUniqueId());
+                hunter.setLastSeen(System.currentTimeMillis());
+                hunter.saveMongo();
+            } catch (Exception e) {
+                instance.getLogger().warning("There was a problem saving " + player.getName() + "' on disable.");
+            }
         });
         MeleeServerManager.removeServer(MeleeServerManager.getId());
         mongoManager.getMongoClient().close();

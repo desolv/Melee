@@ -18,8 +18,8 @@ public class Rank {
     private String name;
     private int priority = 1;
     private String display = name;
-    private String prefix = "&f";
-    private String color = "&f";
+    private String prefix = "<white>";
+    private String color = "<white>";
     private List<String> inherits = new ArrayList<>();
     private boolean grantable;
     private boolean visible;
@@ -93,8 +93,8 @@ public class Rank {
                     rank,
                     config.getInt(rank + ".priority", 1),
                     config.getString(rank + ".display", rank),
-                    config.getString(rank + ".prefix", "&f"),
-                    config.getString(rank + ".color", "&f"),
+                    config.getString(rank + ".prefix", "<white>"),
+                    config.getString(rank + ".color", "<white>"),
                     config.getStringList(rank + ".inherits"),
                     config.getBoolean(rank + ".grantable", false),
                     config.getBoolean(rank + ".visible", false),

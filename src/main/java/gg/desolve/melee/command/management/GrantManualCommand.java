@@ -28,9 +28,9 @@ public class GrantManualCommand extends BaseCommand {
     @CommandPermission("melee.command.grantmanual")
     @Syntax("<player> <rank> <scope> <duration> [reason]")
     @Description("Manually grant to a player")
-    public static void execute(CommandSender sender, Hunter hunter, Rank rank, Scope scope, Duration duration, @Optional @Default("Promoted") String reason) {
+    public static void execute(CommandSender sender, Hunter hunter, Rank rank, Scope scope, Duration duration, @Optional @Default("Other") String reason) {
         if (rank.isBaseline()) {
-            Message.send(sender, "&cYou cannot grant the default rank.");
+            Message.send(sender, "<red>You cannot grant the default rank.");
             return;
         }
 
@@ -38,18 +38,18 @@ public class GrantManualCommand extends BaseCommand {
             Hunter granter = Hunter.getHunter(((Player) sender).getUniqueId());
 
             if (!granter.hasPermission("melee.*") && !rank.isGrantable()) {
-                Message.send(sender, "&cYou cannot grant this rank.");
+                Message.send(sender, "<red>You cannot grant this rank.");
                 return;
             }
 
             if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getGrant().getRank())) {
-                Message.send(sender, "&cYou cannot grant ranks higher than yours.");
+                Message.send(sender, "<red>You cannot grant ranks higher than yours.");
                 return;
             }
         }
 
         if (hunter.hasGrant(rank) != null) {
-            Message.send(sender, rank.getDisplayColored() + " &crank is present for " + hunter.getUsernameColored() + ".");
+            Message.send(sender, rank.getDisplayColored() + " <red>rank is present for " + hunter.getUsernameColored() + ".");
             return;
         }
 
@@ -78,7 +78,7 @@ public class GrantManualCommand extends BaseCommand {
         hunter.save();
 
         Message.send(sender,
-                "&aYou've granted the rank% &arank to player% &alasting &eduration% &aon scope &dscope%."
+                "<green>You've granted the rank% <green>rank to player% <green>lasting <yellow>duration% <green>on scope <light_purple>scope%."
                         .replace("rank%", rank.getDisplayColored())
                         .replace("player%", hunter.getUsernameColored())
                         .replace("duration%",
@@ -91,7 +91,7 @@ public class GrantManualCommand extends BaseCommand {
                         .replace("reason%", reason)
         );
 
-        String message = "&aYou've been granted rank% &arank &alasting &eduration% &aon scope &dscope%."
+        String message = "<green>You've been granted rank% <green>rank <green>lasting <yellow>duration% <green>on scope <light_purple>scope%."
                 .replace("rank%", rank.getDisplayColored())
                 .replace("duration%",
                         grant.isPermanent() ?

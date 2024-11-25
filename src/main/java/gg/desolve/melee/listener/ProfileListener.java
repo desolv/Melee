@@ -33,7 +33,7 @@ public class ProfileListener implements Listener {
                                     + "\nPlease try again in a few seconds"
                     ));
             instance.getServer().getScheduler().runTask(
-                    instance, () -> player.kickPlayer(Message.translate("&cDuplicate login :?")));
+                    instance, () -> player.kickPlayer(Message.translate("<red>Duplicate login :?")));
             return;
         }
 
