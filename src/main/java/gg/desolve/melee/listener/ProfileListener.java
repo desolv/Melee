@@ -120,6 +120,7 @@ public class ProfileListener implements Listener {
         Hunter hunter = Hunter.getHunter(event.getPlayer().getUniqueId());
 
         hunter.setLastSeen(System.currentTimeMillis());
+        hunter.setLoaded(false);
         hunter.expire();
         hunter.saveMongo();
         hunter.cancelSchedules();

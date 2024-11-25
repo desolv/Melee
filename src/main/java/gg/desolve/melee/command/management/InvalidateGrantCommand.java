@@ -56,10 +56,12 @@ public class InvalidateGrantCommand extends BaseCommand {
             hunter.cancelSchedule(grant.getId() + grant.getRank().getName());
 
         hunter.refreshGrant();
-        hunter.refreshPermissions();
-        hunter.save();
 
         Player player = Bukkit.getPlayer(hunter.getUuid());
+
+        if (player != null) hunter.refreshPermissions();
+        hunter.save();
+
 
         Message.send(sender,
                 "&aRemoved rank% &arank from player% &afor &7reason%."

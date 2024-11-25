@@ -29,7 +29,7 @@ public class RankCommand extends BaseCommand {
     @CommandPermission("melee.command.rank|melee.command.rank.list")
     @Description("Shows list of all ranks")
     public static void onList(CommandSender sender) {
-        Message.send(sender, "\n&bLOADED RANKS &7(" + Rank.getRanks().size() + "&7)");
+        Message.send(sender, "\n&bLoaded Ranks &7(" + Rank.getRanks().size() + "&7)");
         Rank.getSortedRanks().forEach(rank ->
                 Message.send(sender,
                         (rank.isVisible() ? "&f" : "&f*")
@@ -52,7 +52,7 @@ public class RankCommand extends BaseCommand {
         List<String> permissions = new ArrayList<>(rank.getPermissions());
 
         Message.send(sender,
-                "\n&bRANK INFORMATION &7(" + rank.getNameColored() + "&7)"
+                "\n&bRank Information &7(" + rank.getNameColored() + "&7)"
                         + "\n&fPriority: &b" + rank.getPriority()
                         + "\n&fPrefix: " + rank.getPrefix() + "You &7(" + rank.getColor() + "this&7)"
                         + "\n&fDisplay Name: " + rank.getDisplayColored()
