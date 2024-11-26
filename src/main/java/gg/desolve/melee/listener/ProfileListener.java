@@ -29,7 +29,7 @@ public class ProfileListener implements Listener {
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             event.setKickMessage(
                     Message.translate(
-                            "&cYou attempted to login shortly after disconnecting"
+                            "<red>You attempted to login shortly after disconnecting"
                                     + "<newline>Please try again in a few seconds"
                     ));
             instance.getServer().getScheduler().runTask(
@@ -74,7 +74,7 @@ public class ProfileListener implements Listener {
         if (hunter == null || !hunter.isLoaded()) {
             event.setKickMessage(
                     Message.translate(
-                            "&cThere was a problem loading your account"
+                            "<red>There was a problem loading your account"
                                     + "<newline>Please contact an administrator"
                     ));
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
@@ -95,7 +95,7 @@ public class ProfileListener implements Listener {
         if (!hunter.isLoaded()) {
             event.getPlayer().kickPlayer(
                     Message.translate(
-                            "&cYou attempted to login while booting"
+                            "<red>You attempted to login while booting"
                                     + "<newline>Please try again in a few seconds"
                     ));
             return;
