@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
@@ -25,6 +26,7 @@ public class MeleeServerManager {
                             plugin.getServer().getServerName(),
                             plugin.getServer().getVersion(),
                             Melee.getInstance().getDescription().getVersion(),
+                            Bukkit.getOnlinePlayers().size(),
                             Melee.getInstance().getBooting()
                     )
             );
@@ -40,6 +42,7 @@ public class MeleeServerManager {
                 Server server = getServer(id);
                 if (server != null) {
                     server.setHeartbeat(System.currentTimeMillis());
+                    server.setOnline(Bukkit.getOnlinePlayers().size());
                     saveServer(server);
                 }
             }
