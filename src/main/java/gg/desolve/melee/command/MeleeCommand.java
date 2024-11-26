@@ -25,10 +25,10 @@ public class MeleeCommand extends BaseCommand {
                 "<newline><aqua>Melee Management " + Melee.getInstance().getDescription().getVersion()
                         + "<newline><white>Running: <aqua>" + Melee.getInstance().getServer().getVersion()
                         + "<newline><white>Version: <aqua>" + Melee.getInstance().getServer().getBukkitVersion()
-                        + "<newline><white>Servers (" + MeleeServerManager.getServers().size() + "): <aqua>" + MeleeServerManager.getServers().stream().map(server -> server.getName() + " v" + server.getMelee()).collect(Collectors.joining("<white>, <aqua>"))
-                        + "<newline><white>Listeners (" + MeleeListenerManager.getListeners().size() + "): <aqua>" + String.join("<white>, <aqua>", MeleeListenerManager.getListeners())
-                        + "<newline><white>Commands (" + MeleeCommandManager.getCommands().size() + "): <aqua>" + String.join("<white>, <aqua>", MeleeCommandManager.getCommands())
-                        + "<newline><white>Subscribers (" + MeleeSubscriberManager.getSubscribers().size() + "): <aqua>" + String.join("<white>, <aqua>", MeleeSubscriberManager.getSubscribers())
+                        + "<newline><white>Servers: <aqua>" + MeleeServerManager.getServers().stream().map(server -> server.getName() + " v" + server.getMelee()).collect(Collectors.joining("<white>, <aqua>"))
+                        + "<newline><white>Listeners: <aqua>" + String.join("<white>, <aqua>", MeleeListenerManager.getListeners())
+                        + "<newline><white>Commands: <aqua>" + String.join("<white>, <aqua>", MeleeCommandManager.getCommands())
+                        + "<newline><white>Subscribers: <aqua>" + String.join("<white>, <aqua>", MeleeSubscriberManager.getSubscribers())
         );
     }
 
