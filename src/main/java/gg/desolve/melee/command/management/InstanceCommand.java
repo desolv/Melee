@@ -20,16 +20,23 @@ public class InstanceCommand extends BaseCommand {
     @Description("Manage server instances")
     public static void execute(CommandSender sender) {
         Message.send(sender,
-                "<newline><aqua>Melee Instance Manager "
-                        + "<newline>" + MeleeServerManager.getServers().stream()
+                "<newline><aqua>Melee Instance Manager"
+                        + MeleeServerManager.getServers().stream()
                         .map(server ->
-                                "<newline><aqua>" + server.getName() + " v" + server.getMelee() + " " + server.getVersion() + " <dark_gray>#" + server.getId()
-                                + "<newline><white>Instance has been up for "
-                                        + Converter.millisToTime(System.currentTimeMillis() - server.getBooting())
-                                        + " (" + Converter.millisToTime(System.currentTimeMillis() - server.getHeartbeat()) + ").<newline>")
+                                "<click:run_command:/instance>" +
+                                "<hover:show_text:'<yellow>Hosting a total of online% concurrents"
+                                        .replace("online%", String.valueOf(server.getOnline())) +
+                                "<newline><newline><green>Click to update instances'>" +
+                                "<newline><aqua>@server% vmelee% version% <dark_gray>#id%"
+                                        .replace("server%", server.getName())
+                                        .replace("melee%", server.getMelee())
+                                        .replace("version%", server.getVersion())
+                                        .replace("id%", server.getId()) +
+                                "<newline><white>Instance has been up for duration% (heartbeat% ago)"
+                                        .replace("duration%", Converter.millisToTime(System.currentTimeMillis() - server.getBooting()))
+                                        .replace("heartbeat%", Converter.millisToTime(System.currentTimeMillis() - server.getHeartbeat())))
                         .collect(Collectors.joining("<newline>"))
         );
-
     }
 
 }
