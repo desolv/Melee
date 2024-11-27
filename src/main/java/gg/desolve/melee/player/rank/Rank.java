@@ -16,19 +16,15 @@ public class Rank {
     private static Map<String, Rank> ranks = new HashMap<>();
 
     private String name;
-    private int priority = 1;
-    private String display = name;
-    private String prefix = "<white>";
-    private String color = "<white>";
-    private List<String> inherits = new ArrayList<>();
+    private int priority;
+    private String display;
+    private String prefix;
+    private String color;
+    private List<String> inherits;
     private boolean grantable;
     private boolean visible;
     private boolean baseline; // default
-    private List<String> permissions = new ArrayList<>();
-
-    public Rank(String name) {
-        this.name = name;
-    }
+    private List<String> permissions;
 
     public Rank(String name, int priority, String display, String prefix, String color, List<String> inherits, boolean grantable, boolean visible, boolean baseline, List<String> permissions) {
         this.name = name;
