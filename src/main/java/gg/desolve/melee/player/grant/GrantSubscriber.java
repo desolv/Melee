@@ -8,6 +8,9 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.JedisPubSub;
+
+import java.util.UUID;
+
 @Getter
 public class GrantSubscriber extends JedisPubSub {
 
@@ -16,7 +19,7 @@ public class GrantSubscriber extends JedisPubSub {
     @Override
     public void onMessage(String channel, String message) {
         String[] parts = message.split("&%\\$", 7);
-        String username = parts[0];
+        String uuid = parts[0];
         String senderUsername = parts[1];
         long durationValue = Long.parseLong(parts[2]);
         String grantId = parts[3];
@@ -24,7 +27,7 @@ public class GrantSubscriber extends JedisPubSub {
         String scope = parts[5];
         String msg = parts[6];
 
-        Hunter hunter = Hunter.getHunter(username);
+        Hunter hunter = Hunter.getHunter(UUID.fromString(uuid));
         Player player = Bukkit.getPlayer(hunter.getUuid());
 
         if ((scope.equalsIgnoreCase("global") || Bukkit.getServerName().equalsIgnoreCase(scope))

@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.JedisPubSub;
 
+import java.util.UUID;
+
 @Getter
 public class InvalidateGrantSubscriber extends JedisPubSub {
 
@@ -16,11 +18,11 @@ public class InvalidateGrantSubscriber extends JedisPubSub {
     @Override
     public void onMessage(String channel, String message) {
         String[] parts = message.split("&%\\$", 3);
-        String username = parts[0];
+        String uuid = parts[0];
         String senderUsername = parts[1];
         String msg = parts[2];
 
-        Hunter hunter = Hunter.getHunter(username);
+        Hunter hunter = Hunter.getHunter(UUID.fromString(uuid));
         Player player = Bukkit.getPlayer(hunter.getUuid());
 
         if (hunter.getServer().equalsIgnoreCase(Bukkit.getServerName())) {

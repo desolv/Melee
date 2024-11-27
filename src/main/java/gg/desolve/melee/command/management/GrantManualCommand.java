@@ -58,7 +58,7 @@ public class GrantManualCommand extends BaseCommand {
 
         Grant grant = new Grant(
                 Converter.grantId(hunter),
-                rank,
+                rank.getName(),
                 addedBy,
                 System.currentTimeMillis(),
                 reason,
@@ -102,7 +102,7 @@ public class GrantManualCommand extends BaseCommand {
                 .replace("scope%", scopeValue);
 
         String redisMessage = String.join("&%$",
-                hunter.getUsername(),
+                hunter.getUuid().toString(),
                 sender.getName(),
                 String.valueOf(durationValue),
                 grant.getId(),

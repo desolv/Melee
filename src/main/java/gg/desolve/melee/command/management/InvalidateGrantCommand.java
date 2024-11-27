@@ -79,7 +79,7 @@ public class InvalidateGrantCommand extends BaseCommand {
                 .replace("reason%", reason);
 
         String redisMessage = String.join("&%$",
-                hunter.getUsername(),
+                hunter.getUuid().toString(),
                 sender.getName(),
                 message
         );
