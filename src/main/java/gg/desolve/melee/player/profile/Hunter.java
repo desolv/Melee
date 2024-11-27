@@ -150,7 +150,7 @@ public class Hunter {
                 .orElseGet(() -> {
                     Grant grant = new Grant(
                             Converter.generateId(),
-                            Rank.getDefault(),
+                            Rank.getDefault().getName(),
                             null,
                             System.currentTimeMillis(),
                             "Automatic",

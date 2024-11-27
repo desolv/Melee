@@ -11,7 +11,7 @@ import java.util.UUID;
 public class Grant {
 
     private final String id;
-    private final Rank rank;
+    private final String rank;
     private UUID addedBy;
     private long addedAt;
     private String addedReason;
@@ -24,7 +24,7 @@ public class Grant {
     private String removedOrigin;
     private GrantType type;
 
-    public Grant(String id, Rank rank, UUID addedBy, long addedAt, String addedReason, String addedOrigin, String scope, long duration, GrantType type) {
+    public Grant(String id, String rank, UUID addedBy, long addedAt, String addedReason, String addedOrigin, String scope, long duration, GrantType type) {
         this.id = id;
         this.rank = rank;
         this.addedBy = addedBy;
@@ -34,6 +34,10 @@ public class Grant {
         this.scope = scope;
         this.duration = duration;
         this.type = type;
+    }
+
+    public Rank getRank() {
+        return Rank.getRank(rank);
     }
 
     public boolean isPermanent() {
@@ -49,7 +53,7 @@ public class Grant {
 
         Grant grant = new Grant(
                 document.getString("id"),
-                rank == null ? new Rank(document.getString("rank")) : rank,
+                rank == null ? document.getString("rank") : rank.getName(),
                 document.get("addedBy", UUID.class),
                 document.getLong("addedAt"),
                 document.getString("addedReason"),
@@ -81,7 +85,7 @@ public class Grant {
     public Document save() {
         return new Document()
                 .append("id", id)
-                .append("rank", rank.getName())
+                .append("rank", rank)
                 .append("addedBy", addedBy)
                 .append("addedAt", addedAt)
                 .append("addedReason", addedReason)
