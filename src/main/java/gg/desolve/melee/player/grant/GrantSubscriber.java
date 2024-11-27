@@ -31,7 +31,7 @@ public class GrantSubscriber extends JedisPubSub {
         Player player = Bukkit.getPlayer(hunter.getUuid());
 
         if ((scope.equalsIgnoreCase("global") || Bukkit.getServerName().equalsIgnoreCase(scope))
-                && hunter.getServer().equals(scope)) {
+                && (!scope.equalsIgnoreCase("global") && hunter.getServer().equals(scope))) {
             hunter.refreshGrant();
             hunter.refreshPermissions();
             hunter.save();
