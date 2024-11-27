@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.command.management.*;
 import gg.desolve.melee.common.Duration;
+import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import gg.desolve.melee.server.MeleeServerManager;
@@ -54,7 +55,8 @@ public class MeleeCommandManager extends PaperCommandManager {
                 new InvalidateGrantCommand(),
                 new RankCommand(),
                 new InstanceCommand(),
-                new AnnounceCommand()
+                new AnnounceCommand(),
+                new GrantCommand()
         ).forEach(command -> {
             registerCommand(command);
             commands.add(command.getClass().getSimpleName());
@@ -67,7 +69,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popName = c.popFirstArg();
                     Hunter hunter = Hunter.getHunter(popName);
                     return Optional.ofNullable(hunter).orElseThrow(() ->
-                            new InvalidCommandArgument("<red>Player matching <yellow>" + popName + " <red>could not be found.", false));
+                            new InvalidCommandArgument(Message.translate("<red>Player matching <yellow>" + popName + " <red>could not be found."), false));
                 });
 
         getCommandContexts().registerContext(
@@ -75,7 +77,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popDuration = c.popFirstArg();
                     Duration duration = Duration.fromString(popDuration);
                     return Optional.ofNullable(duration).orElseThrow(() ->
-                            new InvalidCommandArgument("<red>Duration matching <yellow>" + popDuration + " <red>could not be found.", false));
+                            new InvalidCommandArgument(Message.translate("<red>Duration matching <yellow>" + popDuration + " <red>could not be found."), false));
                 });
 
         getCommandContexts().registerContext(
@@ -83,7 +85,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popRank = c.popFirstArg();
                     Rank rank = Rank.getRank(popRank);
                     return Optional.ofNullable(rank).orElseThrow(() ->
-                            new InvalidCommandArgument("<red>Rank matching <yellow>" + popRank + " <red>could not be found.", false));
+                            new InvalidCommandArgument(Message.translate("<red>Rank matching <yellow>" + popRank + " <red>could not be found."), false));
                 });
 
         getCommandContexts().registerContext(
@@ -91,7 +93,7 @@ public class MeleeCommandManager extends PaperCommandManager {
                     String popScope = c.popFirstArg();
                     Scope scope = Scope.fromString(popScope);
                     return Optional.ofNullable(scope).orElseThrow(() ->
-                            new InvalidCommandArgument("<red>Scope matching <yellow>" + popScope + " <red>could not be found.", false));
+                            new InvalidCommandArgument(Message.translate("<red>Scope matching <yellow>" + popScope + " <red>could not be found."), false));
                 });
     }
 
