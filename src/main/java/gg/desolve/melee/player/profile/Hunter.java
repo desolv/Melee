@@ -63,9 +63,27 @@ public class Hunter {
     }
 
     public static Hunter getHunter(String username) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(username);
-        return new Hunter(player.getUniqueId(), player.getName());
+        Player player = Bukkit.getPlayer(username);
+        if (player != null) return new Hunter(player.getUniqueId(), player.getName());
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            String hunterJson = jedis.get("hunter:username:" + username);
+            if (hunterJson != null) {
+                return new Hunter(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
+            }
+        }
+
+        Document hunterDoc = Melee.getInstance().getMongoManager().getMongoDatabase()
+                .getCollection("hunters")
+                .find(Filters.eq("username", username))
+                .first();
+
+        return hunterDoc != null ?
+                new Hunter(UUID.fromString(hunterDoc.getString("uuid")), hunterDoc.getString("username")) :
+                null;
     }
+
+
 
     public String getUsernameColored() {
         return getGrant().getRank().getColor() + username;
