@@ -30,6 +30,18 @@ public class MeleeServerManager {
                             Melee.getInstance().getBooting()
                     )
             );
+
+            String redisMessage = String.join("&%$",
+                    "global",
+                    "message",
+                    "<red>[Admin] <aqua>" + plugin.getServer().getServerName() + " <aqua>has <green>connected <aqua>with <green>"
+                            + (System.currentTimeMillis() - Melee.getInstance().getBooting()) + "ms.",
+                    "melee.admin"
+            );
+
+            try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+                jedis.publish(BroadcastSubscriber.update, redisMessage);
+            }
         }
 
         startHeartbeat();

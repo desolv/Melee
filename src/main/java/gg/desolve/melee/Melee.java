@@ -52,11 +52,11 @@ public final class Melee extends JavaPlugin {
         new MeleeConfigManager(this);
         new MeleeMongoManager(this, booting);
         new MeleeRedisManager(this, booting);
-        new MeleeSubscriberManager(this);
+        new MeleeServerManager(this);
         new MeleeRankManager(this);
         new MeleeListenerManager(this);
         new MeleeCommandManager(this);
-        new MeleeServerManager(this);
+        new MeleeSubscriberManager(this);
 
         this.adventure = BukkitAudiences.create(this);
         this.inventoryManager = new InventoryManager(this);
@@ -76,6 +76,18 @@ public final class Melee extends JavaPlugin {
             }
         });
         MeleeServerManager.removeServer(MeleeServerManager.getId());
+
+        String redisMessage = String.join("&%$",
+                "global",
+                "message",
+                "<red>[Admin] <aqua>" + this.getServer().getServerName() + " <aqua>has <red>disconnected.",
+                "melee.admin"
+        );
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            jedis.publish(BroadcastSubscriber.update, redisMessage);
+        }
+
         mongoManager.getMongoClient().close();
         redisManager.getJedisPool().close();
     }
