@@ -1,6 +1,8 @@
 package gg.desolve.melee;
 
+import fr.minuskube.inv.InventoryManager;
 import gg.desolve.melee.command.MeleeCommandManager;
+import gg.desolve.melee.command.inventory.MeleeInventoryManager;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Hunter;
@@ -32,6 +34,10 @@ public final class Melee extends JavaPlugin {
     private BukkitAudiences adventure;
 
     @Getter
+    @Setter
+    private MeleeInventoryManager inventoryManager;
+
+    @Getter
     private boolean isDisabling = false;
 
     @Getter
@@ -42,7 +48,6 @@ public final class Melee extends JavaPlugin {
         instance = this;
         booting = System.currentTimeMillis();
 
-        this.adventure = BukkitAudiences.create(this);
         new MeleeConfigManager(this);
         new MeleeMongoManager(this, booting);
         new MeleeRedisManager(this, booting);
@@ -51,6 +56,9 @@ public final class Melee extends JavaPlugin {
         new MeleeListenerManager(this);
         new MeleeCommandManager(this);
         new MeleeServerManager(this);
+
+        this.adventure = BukkitAudiences.create(this);
+        new MeleeInventoryManager(this);
     }
 
     @Override
