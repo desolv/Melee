@@ -14,7 +14,7 @@ public class AnnounceCommand extends BaseCommand {
     @Syntax("<message>")
     @Description("Announce a message to the server")
     public static void execute(CommandSender sender, String message) {
-        Bukkit.getOnlinePlayers().forEach(player -> Message.send(player, message));
+        Bukkit.broadcastMessage(Message.translate(message));
     }
 
 }
