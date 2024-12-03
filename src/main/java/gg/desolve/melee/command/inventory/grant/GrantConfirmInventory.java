@@ -9,6 +9,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.command.inventory.MeleeInventoryManager;
 import gg.desolve.melee.common.Material;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
@@ -62,7 +63,7 @@ public class GrantConfirmInventory implements InventoryProvider {
                 "");
         infoLore.replaceAll(Message::translate);
 
-        Melee.getInstance().getInventoryManager().addButton(
+        MeleeInventoryManager.addButton(
                 contents,
                 XMaterial.PAPER,
                 "<aqua>Reporting",
@@ -72,7 +73,7 @@ public class GrantConfirmInventory implements InventoryProvider {
                 () -> {}
         );
 
-        Melee.getInstance().getInventoryManager().addButton(
+        MeleeInventoryManager.addButton(
                 contents,
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTc5YTVjOTVlZTE3YWJmZWY0NWM4ZGMyMjQxODk5NjQ5NDRkNTYwZjE5YTQ0ZjE5ZjhhNDZhZWYzZmVlNDc1NiJ9fX0=",
                 "<green>Confirm",
@@ -92,7 +93,7 @@ public class GrantConfirmInventory implements InventoryProvider {
                 }
         );
 
-        Melee.getInstance().getInventoryManager().addButton(
+        MeleeInventoryManager.addButton(
                 contents,
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0=",
                 "<red>Cancel",

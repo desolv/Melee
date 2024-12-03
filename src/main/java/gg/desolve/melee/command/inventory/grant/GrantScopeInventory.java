@@ -76,7 +76,7 @@ public class GrantScopeInventory implements InventoryProvider {
                 "");
         infoLore.replaceAll(Message::translate);
 
-        Melee.getInstance().getInventoryManager().addButton(
+        MeleeInventoryManager.addButton(
                 contents,
                 XMaterial.PAPER,
                 "<aqua>Reporting",
@@ -87,14 +87,14 @@ public class GrantScopeInventory implements InventoryProvider {
         );
 
         if (!pagination.isFirst()) {
-            Melee.getInstance().getInventoryManager().addLeftButton(
+            MeleeInventoryManager.addLeftButton(
                     contents,
                     () -> getInventory(hunter, rank).open(player, pagination.previous().getPage())
             );
         }
 
         if (!pagination.isLast()) {
-            Melee.getInstance().getInventoryManager().addRightButton(
+            MeleeInventoryManager.addRightButton(
                     contents,
                     () -> getInventory(hunter, rank).open(player, pagination.next().getPage())
             );

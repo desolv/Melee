@@ -9,6 +9,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.command.inventory.MeleeInventoryManager;
 import gg.desolve.melee.common.Material;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
@@ -77,7 +78,7 @@ public class GrantReasonInventory implements InventoryProvider {
                 "");
         infoLore.replaceAll(Message::translate);
 
-        Melee.getInstance().getInventoryManager().addButton(
+        MeleeInventoryManager.addButton(
                 contents,
                 XMaterial.PAPER,
                 "<aqua>Reporting",
@@ -88,14 +89,14 @@ public class GrantReasonInventory implements InventoryProvider {
         );
 
         if (!pagination.isFirst()) {
-            Melee.getInstance().getInventoryManager().addLeftButton(
+            MeleeInventoryManager.addLeftButton(
                     contents,
                     () -> getInventory(hunter, rank, scope, duration).open(player, pagination.previous().getPage())
             );
         }
 
         if (!pagination.isLast()) {
-            Melee.getInstance().getInventoryManager().addRightButton(
+            MeleeInventoryManager.addRightButton(
                     contents,
                     () -> getInventory(hunter, rank, scope, duration).open(player, pagination.next().getPage())
             );

@@ -7,6 +7,7 @@ import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.MeleeRankManager;
+import gg.desolve.melee.server.BroadcastSubscriber;
 import gg.desolve.melee.server.MeleeServerManager;
 import gg.desolve.melee.storage.MeleeMongoManager;
 import gg.desolve.melee.storage.redis.MeleeRedisManager;
@@ -16,6 +17,7 @@ import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import redis.clients.jedis.Jedis;
 
 public final class Melee extends JavaPlugin {
 
@@ -34,8 +36,7 @@ public final class Melee extends JavaPlugin {
     private BukkitAudiences adventure;
 
     @Getter
-    @Setter
-    private MeleeInventoryManager inventoryManager;
+    private InventoryManager inventoryManager;
 
     @Getter
     private boolean isDisabling = false;
@@ -58,7 +59,8 @@ public final class Melee extends JavaPlugin {
         new MeleeServerManager(this);
 
         this.adventure = BukkitAudiences.create(this);
-        new MeleeInventoryManager(this);
+        this.inventoryManager = new InventoryManager(this);
+        inventoryManager.init();
     }
 
     @Override
