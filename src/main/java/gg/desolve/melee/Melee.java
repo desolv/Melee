@@ -9,6 +9,7 @@ import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.MeleeRankManager;
 import gg.desolve.melee.server.BroadcastSubscriber;
 import gg.desolve.melee.server.MeleeServerManager;
+import gg.desolve.melee.server.Server;
 import gg.desolve.melee.storage.MeleeMongoManager;
 import gg.desolve.melee.storage.redis.MeleeRedisManager;
 import gg.desolve.melee.storage.redis.MeleeSubscriberManager;
@@ -75,18 +76,10 @@ public final class Melee extends JavaPlugin {
                 instance.getLogger().warning("There was a problem saving " + player.getName() + "' on disable.");
             }
         });
-        MeleeServerManager.removeServer(MeleeServerManager.getId());
 
-        String redisMessage = String.join("&%$",
-                "global",
-                "message",
-                "<red>[Admin] <aqua>" + this.getServer().getServerName() + " <aqua>has <red>disconnected.",
-                "melee.admin"
-        );
-
-        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            jedis.publish(BroadcastSubscriber.update, redisMessage);
-        }
+        Server server = MeleeServerManager.getServer(MeleeServerManager.getId());
+        MeleeServerManager.disconnected(server);
+        MeleeServerManager.removeServer(server.getId());
 
         mongoManager.getMongoClient().close();
         redisManager.getJedisPool().close();

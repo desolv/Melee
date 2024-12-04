@@ -15,35 +15,24 @@ import java.util.List;
 public class MeleeServerManager {
 
     @Getter
-    private static final String id = Converter.generateId();
+    private static String id = Converter.generateId();
 
     public MeleeServerManager(Plugin plugin) {
-        if (getServer(id) == null) {
-            removeServer(id);
-            saveServer(
-                    new Server(
-                            id,
-                            plugin.getServer().getServerName(),
-                            plugin.getServer().getVersion(),
-                            Melee.getInstance().getDescription().getVersion(),
-                            Bukkit.getOnlinePlayers().size(),
-                            Melee.getInstance().getBooting()
-                    )
-            );
+        if (getServer(id) != null)
+            id = Converter.generateId();
 
-            String redisMessage = String.join("&%$",
-                    "global",
-                    "message",
-                    "<red>[Admin] <aqua>" + plugin.getServer().getServerName() + " <aqua>has <green>connected <aqua>with <green>"
-                            + (System.currentTimeMillis() - Melee.getInstance().getBooting()) + "ms.",
-                    "melee.admin"
-            );
+        saveServer(
+                new Server(
+                        id,
+                        plugin.getServer().getServerName(),
+                        plugin.getServer().getVersion(),
+                        Melee.getInstance().getDescription().getVersion(),
+                        Bukkit.getOnlinePlayers().size(),
+                        Melee.getInstance().getBooting()
+                )
+        );
 
-            try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-                jedis.publish(BroadcastSubscriber.update, redisMessage);
-            }
-        }
-
+        connected();
         startHeartbeat();
     }
 
@@ -51,14 +40,50 @@ public class MeleeServerManager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Server server = getServer(id);
-                if (server != null) {
-                    server.setHeartbeat(System.currentTimeMillis());
-                    server.setOnline(Bukkit.getOnlinePlayers().size());
-                    saveServer(server);
-                }
+                Server server = getServers().stream().filter(s -> s.getId().equalsIgnoreCase(id)).findFirst().get();
+                server.setHeartbeat(System.currentTimeMillis());
+                server.setOnline(Bukkit.getOnlinePlayers().size());
+                saveServer(server);
             }
         }.runTaskTimer(Melee.getInstance(), 0, 20 * 60);
+    }
+
+    public static void connected() {
+        String redisMessage = String.join("&%$",
+                "global",
+                "message",
+                "<hover:show_text:'<dark_gray>#id%<newline><green>version%'>"
+                        .replace("id%", id)
+                        .replace("version%", Melee.getInstance().getServer().getVersion()) +
+                        "<red>[Admin] <aqua>" + Melee.getInstance().getServer().getServerName() + " <aqua>has <green>connected <aqua>with <green>"
+                        + (System.currentTimeMillis() - Melee.getInstance().getBooting()) + "ms.",
+                "melee.admin"
+        );
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            jedis.publish(BroadcastSubscriber.update, redisMessage);
+        }
+    }
+
+    public static void disconnected(Server server) {
+        String redisMessage = String.join("&%$",
+                "global",
+                "message",
+                ("<hover:show_text:'<dark_gray>#id%" +
+                        "<newline><green>version%" +
+                        "<newline><red>Heartbeat of heartbeat% seconds" +
+                        "<newline><light_purple>Instance up for duration%'>")
+                        .replace("id%", server.getId())
+                        .replace("version%", server.getVersion())
+                        .replace("heartbeat%", String.valueOf(Converter.millisToSeconds(System.currentTimeMillis() - server.getHeartbeat())))
+                        .replace("duration%", Converter.millisToTime(System.currentTimeMillis() - server.getBooting())) +
+                        "<red>[Admin] <aqua>" + Melee.getInstance().getServer().getServerName() + " <aqua>has <red>disconnected.",
+                "melee.admin"
+        );
+
+        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
+            jedis.publish(BroadcastSubscriber.update, redisMessage);
+        }
     }
 
     public static Server getServer(String id) {
@@ -68,6 +93,7 @@ public class MeleeServerManager {
                 Server server = new Gson().fromJson(serverJson, Server.class);
                 if (Converter.millisToSeconds(System.currentTimeMillis() - server.getHeartbeat()) > 65) {
                     removeServer(server.getId());
+                    disconnected(server);
                     return null;
                 }
                 return server;
