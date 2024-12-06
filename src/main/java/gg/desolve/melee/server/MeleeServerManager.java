@@ -18,8 +18,7 @@ public class MeleeServerManager {
     private static String id = Converter.generateId();
 
     public MeleeServerManager(Plugin plugin) {
-        if (getServer(id) != null)
-            id = Converter.generateId();
+        id = id.substring(0, 3) + plugin.getServer().getServerName().substring(1, 4) + id.substring(3, 10);
 
         saveServer(
                 new Server(
