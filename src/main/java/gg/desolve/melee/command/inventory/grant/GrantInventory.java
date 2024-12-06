@@ -1,6 +1,5 @@
 package gg.desolve.melee.command.inventory.grant;
 
-import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -14,7 +13,6 @@ import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 

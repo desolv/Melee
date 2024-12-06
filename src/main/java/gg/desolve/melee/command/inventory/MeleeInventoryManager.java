@@ -2,14 +2,11 @@ package gg.desolve.melee.command.inventory;
 
 import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.InventoryManager;
 import fr.minuskube.inv.content.InventoryContents;
-import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Material;
 import gg.desolve.melee.common.Message;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;

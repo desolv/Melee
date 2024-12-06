@@ -4,10 +4,7 @@ import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import redis.clients.jedis.JedisPubSub;
-
-import java.util.UUID;
 
 @Getter
 public class BroadcastSubscriber extends JedisPubSub {
@@ -20,7 +17,7 @@ public class BroadcastSubscriber extends JedisPubSub {
         String scope = parts[0];
         String type = parts[1]; // command or message check
         String action = parts[2]; // command or message action
-        String extra = parts[3]; // permission type ; if global is everyone
+        String extra = parts[3]; // permission type ; if global is everyone for message
 
         if (scope.equalsIgnoreCase("global") || scope.equalsIgnoreCase(Bukkit.getServerName())) {
             if (type.equalsIgnoreCase("command")) {

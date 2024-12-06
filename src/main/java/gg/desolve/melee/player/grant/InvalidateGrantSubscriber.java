@@ -1,6 +1,5 @@
 package gg.desolve.melee.player.grant;
 
-import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import lombok.Getter;

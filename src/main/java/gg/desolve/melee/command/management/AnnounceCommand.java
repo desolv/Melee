@@ -3,7 +3,6 @@ package gg.desolve.melee.command.management;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.common.Message;
-import gg.desolve.melee.player.profile.Hunter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 

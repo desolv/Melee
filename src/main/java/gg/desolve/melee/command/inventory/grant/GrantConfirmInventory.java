@@ -1,27 +1,19 @@
 package gg.desolve.melee.command.inventory.grant;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.google.common.collect.ImmutableList;
-import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.Pagination;
-import fr.minuskube.inv.content.SlotIterator;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.command.inventory.MeleeInventoryManager;
-import gg.desolve.melee.common.Material;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class GrantConfirmInventory implements InventoryProvider {
 

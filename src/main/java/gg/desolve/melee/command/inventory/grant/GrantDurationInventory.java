@@ -14,9 +14,6 @@ import gg.desolve.melee.common.Material;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
-import gg.desolve.melee.server.MeleeServerManager;
-import gg.desolve.melee.server.Scope;
-import gg.desolve.melee.server.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GrantDurationInventory implements InventoryProvider {
 

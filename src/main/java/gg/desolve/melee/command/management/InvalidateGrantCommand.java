@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.*;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.grant.Grant;
-import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.grant.InvalidateGrantSubscriber;
 import gg.desolve.melee.player.profile.Hunter;

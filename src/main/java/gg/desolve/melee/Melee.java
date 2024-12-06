@@ -2,12 +2,10 @@ package gg.desolve.melee;
 
 import fr.minuskube.inv.InventoryManager;
 import gg.desolve.melee.command.MeleeCommandManager;
-import gg.desolve.melee.command.inventory.MeleeInventoryManager;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.MeleeRankManager;
-import gg.desolve.melee.server.BroadcastSubscriber;
 import gg.desolve.melee.server.MeleeServerManager;
 import gg.desolve.melee.server.Server;
 import gg.desolve.melee.storage.MeleeMongoManager;
@@ -18,7 +16,6 @@ import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import redis.clients.jedis.Jedis;
 
 public final class Melee extends JavaPlugin {
 
