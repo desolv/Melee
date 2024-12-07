@@ -41,7 +41,7 @@ public class MeleeCommandManager extends PaperCommandManager {
             loadCompletions();
 
             this.enableUnstableAPI("help");
-            this.getLocales().loadYamlLanguageFile("messages.yml", Locales.ENGLISH);
+            this.getLocales().loadYamlLanguageFile("acf-lang.yml", Locales.ENGLISH);
         } catch (Exception ex) {
             Melee.getInstance().getLogger().warning("There was a problem loading command manager.");
             ex.printStackTrace();
@@ -56,7 +56,8 @@ public class MeleeCommandManager extends PaperCommandManager {
                 new RankCommand(),
                 new InstanceCommand(),
                 new AnnounceCommand(),
-                new GrantCommand()
+                new GrantCommand(),
+                new RebootCommand()
         ).forEach(command -> {
             registerCommand(command);
             commands.add(command.getClass().getSimpleName());
@@ -104,6 +105,9 @@ public class MeleeCommandManager extends PaperCommandManager {
 
         getCommandCompletions().registerAsyncCompletion("durations", d ->
                 ImmutableList.of("permanent", "s", "m", "h", "d", "w", "M", "y"));
+
+        getCommandCompletions().registerAsyncCompletion("rebooting", d ->
+                ImmutableList.of("now", "s", "m", "h", "d", "w", "M", "y"));
 
         getCommandCompletions().registerAsyncCompletion("reasons", r ->
                 ImmutableList.of("Store", "Whitelist", "Won", "Promoted", "Demoted", "Famous", "Other"));
