@@ -54,7 +54,7 @@ public class GrantManualCommand extends BaseCommand {
         }
 
         long durations = duration.getDuration();
-        String scopeValue = scope.getValue();
+        String server = scope.getServer();
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
         Grant grant = new Grant(
@@ -64,7 +64,7 @@ public class GrantManualCommand extends BaseCommand {
                 System.currentTimeMillis(),
                 reason,
                 MeleeConfigManager.lang.getString("server_name"),
-                scopeValue,
+                server,
                 durations,
                 GrantType.ACTIVE
         );
@@ -87,7 +87,7 @@ public class GrantManualCommand extends BaseCommand {
                                         duration.isPermanent() ?
                                                 "forever" :
                                                 Converter.millisToTime(durations)))
-                        .replace("scope%", scopeValue)
+                        .replace("scope%", server)
                         .replace("reason%", reason)
         );
 
@@ -100,7 +100,7 @@ public class GrantManualCommand extends BaseCommand {
                                         "forever" :
                                         Converter.millisToTime(durations)
                 )
-                .replace("scope%", scopeValue);
+                .replace("scope%", server);
 
         String redisMessage = String.join("&%$",
                 hunter.getUuid().toString(),
@@ -108,7 +108,7 @@ public class GrantManualCommand extends BaseCommand {
                 String.valueOf(durations),
                 grant.getId(),
                 rank.getName(),
-                scopeValue,
+                server,
                 message
         );
 
