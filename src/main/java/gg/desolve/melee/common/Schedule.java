@@ -10,20 +10,20 @@ public class Schedule {
 
     private final transient Runnable runnable;
     private final String identity;
-    private final long millis;
+    private final long delay;
     private transient BukkitTask task;
 
-    public Schedule(String identity, Runnable runnable, long millis) {
+    public Schedule(String identity, Runnable runnable, long delay) {
         this.identity = identity;
         this.runnable = runnable;
-        this.millis = millis;
+        this.delay = delay;
     }
 
     public void start() {
         task = Bukkit.getScheduler().runTaskLaterAsynchronously(
                 Melee.getInstance(),
                 runnable,
-                millis / 50
+                delay / 50
         );
     }
 
