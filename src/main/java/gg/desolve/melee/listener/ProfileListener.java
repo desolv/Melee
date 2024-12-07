@@ -1,9 +1,12 @@
 package gg.desolve.melee.listener;
 
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.profile.Marker;
+import gg.desolve.melee.server.MeleeServerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -106,9 +109,20 @@ public class ProfileListener implements Listener {
                 .filter(marker -> marker.getAddress() != null && marker.getAddress().equalsIgnoreCase(hunter.getAddress()))
                 .findFirst()
                 .ifPresent(marker -> marker.setLogins(marker.getLogins() + 1));
-        hunter.setServer(Bukkit.getServerName());
+        hunter.setServer(MeleeConfigManager.lang.getString("server_name"));
         hunter.save();
         hunter.saveMongo();
+
+        if (hunter.hasPermission("melee.admin") && MeleeServerManager.getReboot().getDelay() > 0) {
+            Message.send(event.getPlayer(), "<green>Instance scheduled to reboot in schedule%."
+                    .replace("schedule%", Converter.millisToTime(
+                            (MeleeServerManager.getReboot().getAddedAt() + MeleeServerManager.getReboot().getDelay())
+                                    - System.currentTimeMillis()))
+            );
+        } else {
+            Message.send(event.getPlayer(), "<red>Instance is not scheduled to reboot.");
+        }
+
     }
 
     @EventHandler(
