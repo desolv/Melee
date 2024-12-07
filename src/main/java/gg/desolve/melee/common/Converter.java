@@ -50,17 +50,23 @@ public class Converter {
         long years = months / 12L;
 
         if (years > 0) {
-            return years + " year" + (years == 1 ? "" : "s");
+            return years + " year" + (years == 1 ? "" : "s") +
+                    (months % 12 > 0 ? ", " + (months % 12) + " month" + (months % 12 == 1 ? "" : "s") : "");
         } else if (months > 0) {
-            return months + " month" + (months == 1 ? "" : "s");
+            return months + " month" + (months == 1 ? "" : "s") +
+                    (weeks % 4 > 0 ? ", " + (weeks % 4) + " week" + (weeks % 4 == 1 ? "" : "s") : "");
         } else if (weeks > 0) {
-            return weeks + " week" + (weeks == 1 ? "" : "s");
+            return weeks + " week" + (weeks == 1 ? "" : "s") +
+                    (days % 7 > 0 ? ", " + (days % 7) + " day" + (days % 7 == 1 ? "" : "s") : "");
         } else if (days > 0) {
-            return days + " day" + (days == 1 ? "" : "s");
+            return days + " day" + (days == 1 ? "" : "s") +
+                    (hours % 24 > 0 ? ", " + (hours % 24) + " hour" + (hours % 24 == 1 ? "" : "s") : "");
         } else if (hours > 0) {
-            return hours + " hour" + (hours == 1 ? "" : "s");
+            return hours + " hour" + (hours == 1 ? "" : "s") +
+                    (minutes % 60 > 0 ? ", " + (minutes % 60) + " minute" + (minutes % 60 == 1 ? "" : "s") : "");
         } else if (minutes > 0) {
-            return minutes + " minute" + (minutes == 1 ? "" : "s");
+            return minutes + " minute" + (minutes == 1 ? "" : "s") +
+                    (seconds % 60 > 0 ? ", " + (seconds % 60) + " second" + (seconds % 60 == 1 ? "" : "s") : "");
         } else {
             return seconds + " second" + (seconds == 1 ? "" : "s");
         }
