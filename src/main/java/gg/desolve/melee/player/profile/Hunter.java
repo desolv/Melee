@@ -89,6 +89,14 @@ public class Hunter {
         return getGrant().getRank().getColor() + username;
     }
 
+    public String generateGrantId() {
+        String generateId;
+        do {
+            generateId = Converter.generateId();
+        } while (hasGrant(generateId) != null);
+        return generateId;
+    }
+
     public Grant getGrant() {
         if (!grant.getRank().isVisible())
             refreshGrant();

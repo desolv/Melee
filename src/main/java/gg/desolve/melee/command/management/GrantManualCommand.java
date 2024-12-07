@@ -58,7 +58,7 @@ public class GrantManualCommand extends BaseCommand {
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
         Grant grant = new Grant(
-                Converter.grantId(hunter),
+                hunter.generateGrantId(),
                 rank.getName(),
                 addedBy,
                 System.currentTimeMillis(),
