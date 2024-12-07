@@ -3,7 +3,10 @@ package gg.desolve.melee.server;
 import com.google.gson.Gson;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
+import gg.desolve.melee.common.Duration;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -15,15 +18,32 @@ import java.util.List;
 public class MeleeServerManager {
 
     @Getter
-    private static String id = Converter.generateId();
+    private static String id;
+
+    @Getter
+    public static String name;
+
+    @Getter
+    @Setter
+    public static Reboot reboot;
 
     public MeleeServerManager(Plugin plugin) {
-        id = id.substring(0, 3) + plugin.getServer().getServerName().substring(1, 4) + id.substring(3, 10);
+        id = Converter.generateId().substring(0, 3) +
+                MeleeConfigManager.lang.getString("server_name").substring(1, 4) +
+                Converter.generateId().substring(6, 10);
+
+        name = MeleeConfigManager.lang.getString("server_name");
+
+        reboot = new Reboot(
+                null,
+                System.currentTimeMillis(),
+                (Duration.fromString("24h").getValue() + 1000)
+        );
 
         saveServer(
                 new Server(
                         id,
-                        plugin.getServer().getServerName(),
+                        MeleeConfigManager.lang.getString("server_name"),
                         plugin.getServer().getVersion(),
                         Melee.getInstance().getDescription().getVersion(),
                         Bukkit.getOnlinePlayers().size(),
@@ -33,6 +53,7 @@ public class MeleeServerManager {
 
         connected();
         startHeartbeat();
+        reboot.start();
     }
 
     private void startHeartbeat() {
@@ -54,7 +75,7 @@ public class MeleeServerManager {
                 "<hover:show_text:'<dark_gray>#id%<newline><green>version%'>"
                         .replace("id%", id)
                         .replace("version%", Melee.getInstance().getServer().getVersion()) +
-                        "<red>[Admin] <aqua>" + Melee.getInstance().getServer().getServerName() + " <aqua>has <green>connected <aqua>with <green>"
+                        "<red>[Admin] <aqua>" + MeleeConfigManager.lang.getString("server_name") + " <aqua>has <green>connected <aqua>with <green>"
                         + (System.currentTimeMillis() - Melee.getInstance().getBooting()) + "ms.",
                 "melee.admin"
         );
@@ -76,7 +97,7 @@ public class MeleeServerManager {
                         .replace("version%", server.getVersion())
                         .replace("heartbeat%", String.valueOf(Converter.millisToSeconds(System.currentTimeMillis() - server.getHeartbeat())))
                         .replace("duration%", Converter.millisToTime(System.currentTimeMillis() - server.getBooting())) +
-                        "<red>[Admin] <aqua>" + Melee.getInstance().getServer().getServerName() + " <aqua>has <red>disconnected.",
+                        "<red>[Admin] <aqua>" + MeleeConfigManager.lang.getString("server_name") + " <aqua>has <red>disconnected.",
                 "melee.admin"
         );
 
