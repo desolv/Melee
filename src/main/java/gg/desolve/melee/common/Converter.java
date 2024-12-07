@@ -65,8 +65,7 @@ public class Converter {
             return hours + " hour" + (hours == 1 ? "" : "s") +
                     (minutes % 60 > 0 ? ", " + (minutes % 60) + " minute" + (minutes % 60 == 1 ? "" : "s") : "");
         } else if (minutes > 0) {
-            return minutes + " minute" + (minutes == 1 ? "" : "s") +
-                    (seconds % 60 > 0 ? ", " + (seconds % 60) + " second" + (seconds % 60 == 1 ? "" : "s") : "");
+            return minutes + " minute" + (minutes == 1 ? "" : "s");
         } else {
             return seconds + " second" + (seconds == 1 ? "" : "s");
         }
