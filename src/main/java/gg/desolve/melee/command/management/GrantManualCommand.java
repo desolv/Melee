@@ -53,7 +53,7 @@ public class GrantManualCommand extends BaseCommand {
             return;
         }
 
-        long durationValue = duration.getValue();
+        long durations = duration.getDuration();
         String scopeValue = scope.getValue();
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
@@ -65,7 +65,7 @@ public class GrantManualCommand extends BaseCommand {
                 reason,
                 MeleeConfigManager.lang.getString("server_name"),
                 scopeValue,
-                durationValue,
+                durations,
                 GrantType.ACTIVE
         );
 
@@ -84,9 +84,9 @@ public class GrantManualCommand extends BaseCommand {
                         .replace("duration%",
                                 (grant.isPermanent() ?
                                         "forever" :
-                                        durationValue == Integer.MAX_VALUE ?
+                                        duration.isPermanent() ?
                                                 "forever" :
-                                                Converter.millisToTime(durationValue)))
+                                                Converter.millisToTime(durations)))
                         .replace("scope%", scopeValue)
                         .replace("reason%", reason)
         );
@@ -96,16 +96,16 @@ public class GrantManualCommand extends BaseCommand {
                 .replace("duration%",
                         grant.isPermanent() ?
                                 "forever" :
-                                durationValue == Integer.MAX_VALUE ?
+                                duration.isPermanent() ?
                                         "forever" :
-                                        Converter.millisToTime(durationValue)
+                                        Converter.millisToTime(durations)
                 )
                 .replace("scope%", scopeValue);
 
         String redisMessage = String.join("&%$",
                 hunter.getUuid().toString(),
                 sender.getName(),
-                String.valueOf(durationValue),
+                String.valueOf(durations),
                 grant.getId(),
                 rank.getName(),
                 scopeValue,

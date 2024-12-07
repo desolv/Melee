@@ -37,7 +37,7 @@ public class MeleeServerManager {
         reboot = new Reboot(
                 null,
                 System.currentTimeMillis(),
-                (Duration.fromString("24h").getValue() + 1000)
+                (Duration.fromString("24h").getDuration() + 1000)
         );
 
         saveServer(

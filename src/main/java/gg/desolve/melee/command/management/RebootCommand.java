@@ -45,7 +45,7 @@ public class RebootCommand extends BaseCommand {
     @Syntax("<duration>")
     @Description("Postpones reboot by changing timing")
     public static void onPostpone(CommandSender sender, Duration duration) {
-        if (Converter.millisToHours(duration.getValue() + 1000) > 48) {
+        if (Converter.millisToHours(duration.getDuration() + 1000) > 48) {
             Message.send(sender, "<red>Reboot can only be lower or equal to 48 hours.");
             return;
         }
@@ -55,7 +55,7 @@ public class RebootCommand extends BaseCommand {
                 new Reboot(
                         sender instanceof Player ? ((Player) sender).getUniqueId() : null,
                         System.currentTimeMillis(),
-                        (duration.getValue() + 1000)
+                        (duration.getDuration() + 1000)
                 ));
         MeleeServerManager.getReboot().start();
 

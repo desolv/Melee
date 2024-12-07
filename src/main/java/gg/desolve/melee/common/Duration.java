@@ -8,15 +8,24 @@ import java.util.regex.Pattern;
 @Getter
 public class Duration {
 
-    private final long value;
+    private final String source;
+    private final boolean permanent;
+    private final long duration;
 
-    public Duration(long value) {
-        this.value = value;
+    public Duration(String source, boolean permanent, long duration) {
+        this.source = source;
+        this.permanent = permanent;
+        this.duration = duration;
     }
 
     public static Duration fromString(String source) {
-        if (source.equalsIgnoreCase("perm") || source.equalsIgnoreCase("permanent")) {
-            return new Duration(Integer.MAX_VALUE);
+        if (source.equalsIgnoreCase("perm")
+                || source.equalsIgnoreCase("permanent")) {
+            return new Duration(
+                    source,
+                    true,
+                    Integer.MAX_VALUE
+            );
         }
 
         long time = 0L;
@@ -51,6 +60,9 @@ public class Duration {
             }
         }
 
-        return time == 0 ? null : new Duration(time * 1000);
+        return time == 0 ? null : new Duration(
+                source,
+                false,
+                time * 1000);
     }
 }
