@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.grant.InvalidateGrantSubscriber;
@@ -52,7 +53,7 @@ public class InvalidateGrantCommand extends BaseCommand {
         grant.setRemovedAt(System.currentTimeMillis());
         grant.setRemovedBy(sender instanceof Player ? ((Player) sender).getUniqueId() : null);
         grant.setRemovedReason(reason);
-        grant.setRemovedOrigin(Bukkit.getServerName());
+        grant.setRemovedOrigin(MeleeConfigManager.lang.getString("server_name"));
         grant.setType(GrantType.REMOVED);
 
         if (!grant.isPermanent())

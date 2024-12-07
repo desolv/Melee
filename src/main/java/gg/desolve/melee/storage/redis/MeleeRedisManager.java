@@ -19,7 +19,7 @@ public class MeleeRedisManager {
             poolConfig.setMaxTotal(20);
             poolConfig.setBlockWhenExhausted(true);
 
-            jedisPool = new JedisPool(new MeleeConfigManager(plugin).getStorage().getString("redis.url"));
+            jedisPool = new JedisPool(MeleeConfigManager.storage.getString("redis.url"));
 
             Melee.getInstance().setRedisManager(this);
             plugin.getLogger().info("Merged Redis @ " + (System.currentTimeMillis() - millis) + "ms.");

@@ -1,6 +1,7 @@
 package gg.desolve.melee.player.rank;
 
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.configuration.Config;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Data;
 import lombok.Getter;
@@ -83,7 +84,7 @@ public class Rank {
 
     public static void load(String rank) {
         try {
-            FileConfiguration config = new MeleeConfigManager(Melee.getInstance()).getRank().getConfig();
+            FileConfiguration config = MeleeConfigManager.rank.getConfig();
 
             new Rank(
                     rank,
@@ -106,8 +107,8 @@ public class Rank {
 
     public void save() {
         try {
-            MeleeConfigManager configManager = new MeleeConfigManager(Melee.getInstance());
-            FileConfiguration config = configManager.getRank().getConfig();
+            Config rankConfig = MeleeConfigManager.rank;
+            FileConfiguration config = rankConfig.getConfig();
 
             config.set(name + ".priority", priority);
             config.set(name + ".display", display);
@@ -117,7 +118,7 @@ public class Rank {
             config.set(name + "." + (baseline ? "baseline" : "grantable"), baseline || grantable);
             config.set(name + ".visible", visible);
             config.set(name + ".permissions", permissions);
-            configManager.getRank().save();
+            rankConfig.save();
 
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem saving " + name + " rank.");

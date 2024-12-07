@@ -7,7 +7,7 @@ public class MeleeRankManager {
 
     public MeleeRankManager(Plugin plugin) {
         try {
-            new MeleeConfigManager(plugin).getRank().getConfig().getKeys(false)
+            MeleeConfigManager.rank.getConfig().getKeys(false)
                     .forEach(Rank::load);
         } catch (Exception e) {
             plugin.getLogger().warning("There was a problem loading ranks.");

@@ -6,15 +6,17 @@ import org.bukkit.plugin.Plugin;
 @Getter
 public class MeleeConfigManager {
 
-    private Config storage;
-    private Config rank;
-    private Config message;
+    public static Config storage;
+    public static Config rank;
+    public static Config acf;
+    public static Config lang;
 
     public MeleeConfigManager(Plugin plugin) {
         try {
             storage = new Config("storage.yml");
             rank = new Config("ranks.yml");
-            message = new Config("messages.yml");
+            acf = new Config("acf-lang.yml");
+            lang = new Config("language.yml");
         } catch (Exception e) {
             plugin.getLogger().warning("There was a problem loading configs.");
             e.printStackTrace();

@@ -8,6 +8,7 @@ import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.common.Schedule;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.rank.Rank;
@@ -98,7 +99,7 @@ public class Hunter {
     public void refreshGrant() {
         grant = grants.stream()
                 .filter(grant -> (grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
-                        && (grant.getScope().equalsIgnoreCase(Bukkit.getServerName()) || grant.getScope().equalsIgnoreCase("global")))
+                        && (grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || grant.getScope().equalsIgnoreCase("global")))
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
         if (!Melee.getInstance().isDisabling())
@@ -129,7 +130,7 @@ public class Hunter {
                     if (grant.hasExpired() && grant.getType().equals(GrantType.ACTIVE)) {
                         grant.setRemovedAt(System.currentTimeMillis());
                         grant.setRemovedReason("Automatic");
-                        grant.setRemovedOrigin(Bukkit.getServerName());
+                        grant.setRemovedOrigin(MeleeConfigManager.lang.getString("server_name"));
                         grant.setType(GrantType.EXPIRED);
                         save();
 
@@ -141,7 +142,7 @@ public class Hunter {
                             && Bukkit.getPlayer(uuid) != null
                             && !hasSchedule(grant.getId() + grant.getRank().getName())
                             && !grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 24
-                            && (grant.getScope().equalsIgnoreCase(Bukkit.getServerName()) || grant.getScope().equalsIgnoreCase("global"))
+                            && (grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || grant.getScope().equalsIgnoreCase("global"))
                     ) {
                         Runnable runnable = () -> {
                             if (username != null)
@@ -171,7 +172,7 @@ public class Hunter {
                             null,
                             System.currentTimeMillis(),
                             "Automatic",
-                            Bukkit.getServerName(),
+                            MeleeConfigManager.lang.getString("server_name"),
                             "global",
                             Integer.MAX_VALUE,
                             GrantType.ACTIVE
@@ -214,7 +215,7 @@ public class Hunter {
 
         grants.stream()
                 .filter(grant -> (grant.getType() == GrantType.ACTIVE)
-                        && (grant.getScope().equalsIgnoreCase(Bukkit.getServerName()) || grant.getScope().equalsIgnoreCase("global")))
+                        && (grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || grant.getScope().equalsIgnoreCase("global")))
                 .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(p -> {
 
                     String permission = p.startsWith("-") ? p.substring(1) : p;

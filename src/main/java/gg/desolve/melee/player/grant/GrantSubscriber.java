@@ -2,6 +2,7 @@ package gg.desolve.melee.player.grant;
 
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
+import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.profile.Hunter;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class GrantSubscriber extends JedisPubSub {
         Hunter hunter = Hunter.getHunter(UUID.fromString(uuid));
         Player player = Bukkit.getPlayer(hunter.getUuid());
 
-        if ((scope.equalsIgnoreCase("global") || Bukkit.getServerName().equalsIgnoreCase(scope))
+        if ((scope.equalsIgnoreCase("global") || MeleeConfigManager.lang.getString("server_name").equalsIgnoreCase(scope))
                 && (!scope.equalsIgnoreCase("global") && hunter.getServer().equals(scope))) {
             hunter.refreshGrant();
             hunter.refreshPermissions();
