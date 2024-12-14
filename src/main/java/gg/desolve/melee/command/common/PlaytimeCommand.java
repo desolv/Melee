@@ -19,7 +19,6 @@ public class PlaytimeCommand extends BaseCommand {
 
         Message.send(player,
                 "<green>Your total playtime is <yellow>playtime% <green>with <light_purple>logins% logins."
-                        .replace("player%", hunter.getUsernameColored())
                         .replace("playtime%", Converter.millisToTime(hunter.getPlaytime()))
                         .replace("logins%", String.valueOf(hunter.getLogins()))
         );
