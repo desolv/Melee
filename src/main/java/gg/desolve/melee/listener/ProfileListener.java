@@ -114,13 +114,20 @@ public class ProfileListener implements Listener {
         hunter.saveMongo();
 
         if (hunter.hasPermission("melee.admin") && MeleeServerManager.getReboot().getDelay() > 0) {
-            Message.send(event.getPlayer(), "<green>Instance scheduled to reboot in schedule%."
+            Message.send(event.getPlayer(),
+                    ((Converter.millisToSeconds(
+                            (MeleeServerManager.getReboot().getAddedAt() + MeleeServerManager.getReboot().getDelay())
+                                    - System.currentTimeMillis()) <= 60) ? "<red>" : "<green>") +
+                    "Instance scheduled to reboot in schedule%."
                     .replace("schedule%", Converter.millisToTime(
                             (MeleeServerManager.getReboot().getAddedAt() + MeleeServerManager.getReboot().getDelay())
                                     - System.currentTimeMillis()))
             );
         } else {
-            Message.send(event.getPlayer(), "<red>Instance is not scheduled to reboot.");
+            Message.send(event.getPlayer(),
+                    "<red>Instance was postponed to reboot time% ago."
+                            .replace("time%", Converter.millisToTime(System.currentTimeMillis() - MeleeServerManager.getReboot().getRemovedAt()))
+            );
         }
 
     }
