@@ -12,7 +12,7 @@ import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
-import gg.desolve.melee.server.scope.Scope;
+import gg.desolve.melee.server.Scope;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

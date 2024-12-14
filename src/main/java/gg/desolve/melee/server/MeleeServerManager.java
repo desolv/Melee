@@ -18,38 +18,32 @@ import java.util.List;
 public class MeleeServerManager {
 
     @Getter
-    private static String id;
+    private static String id = Converter.generateId().substring(0, 3) +
+            MeleeConfigManager.lang.getString("server_name").substring(1, 4) +
+            Converter.generateId().substring(6, 10);
 
     @Getter
-    public static String name;
+    public static String name = MeleeConfigManager.lang.getString("server_name");
 
     @Getter
     @Setter
-    public static Reboot reboot;
+    public static Reboot reboot = new Reboot(
+            null,
+            System.currentTimeMillis(),
+            null,
+            0L,
+            (Duration.fromString("24h").getDuration() + 1000)
+    );
 
     public MeleeServerManager(Plugin plugin) {
-        id = Converter.generateId().substring(0, 3) +
-                MeleeConfigManager.lang.getString("server_name").substring(1, 4) +
-                Converter.generateId().substring(6, 10);
-
-        name = MeleeConfigManager.lang.getString("server_name");
-
-        reboot = new Reboot(
-                null,
-                System.currentTimeMillis(),
-                (Duration.fromString("24h").getDuration() + 1000)
-        );
-
-        saveServer(
-                new Server(
+        saveServer(new Server(
                         id,
                         MeleeConfigManager.lang.getString("server_name"),
                         plugin.getServer().getVersion(),
                         Melee.getInstance().getDescription().getVersion(),
                         Bukkit.getOnlinePlayers().size(),
                         Melee.getInstance().getBooting()
-                )
-        );
+                ));
 
         connected();
         startHeartbeat();
@@ -129,7 +123,6 @@ public class MeleeServerManager {
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
             String serverJson = new Gson().toJson(server);
             jedis.set("server:" + server.getId(), serverJson);
-            jedis.sadd("servers", server.getId());
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem saving the server to Redis.");
             e.printStackTrace();
@@ -139,7 +132,6 @@ public class MeleeServerManager {
     public static void removeServer(String id) {
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
             jedis.del("server:" + id);
-            jedis.srem("servers", id);
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem removing the server from Redis.");
             e.printStackTrace();
@@ -149,9 +141,10 @@ public class MeleeServerManager {
     public static List<Server> getServers() {
         List<Server> servers = new ArrayList<>();
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            jedis.smembers("servers").forEach(s -> {
-                Server server = getServer(s);
-                if (server != null) servers.add(server);
+            jedis.keys("server:*").forEach(s -> {
+                String serverJson = jedis.get(s);
+                if (serverJson != null)
+                    servers.add(new Gson().fromJson(serverJson, Server.class));
             });
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem retrieving all servers from Redis.");

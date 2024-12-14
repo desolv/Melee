@@ -12,7 +12,6 @@ import gg.desolve.melee.common.Message;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import gg.desolve.melee.server.MeleeServerManager;
-import gg.desolve.melee.server.Scope;
 import gg.desolve.melee.server.Server;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -87,14 +86,6 @@ public class MeleeCommandManager extends PaperCommandManager {
                     Rank rank = Rank.getRank(popRank);
                     return Optional.ofNullable(rank).orElseThrow(() ->
                             new InvalidCommandArgument(Message.translate("<red>Rank matching <yellow>" + popRank + " <red>could not be found."), false));
-                });
-
-        getCommandContexts().registerContext(
-                Scope.class, c -> {
-                    String popScope = c.popFirstArg();
-                    Scope scope = Scope.fromString(popScope);
-                    return Optional.ofNullable(scope).orElseThrow(() ->
-                            new InvalidCommandArgument(Message.translate("<red>Scope matching <yellow>" + popScope + " <red>could not be found."), false));
                 });
     }
 
