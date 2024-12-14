@@ -15,13 +15,17 @@ public class Reboot {
 
     private final UUID addedBy;
     private final long addedAt;
+    private final UUID removedBy;
+    private final long removedAt;
     private final Runnable runnable;
     private final long delay;
     private BukkitRunnable task;
 
-    public Reboot(UUID addedBy, long addedAt, long delay) {
+    public Reboot(UUID addedBy, long addedAt, UUID removedBy, long removedAt, long delay) {
         this.addedBy = addedBy;
         this.addedAt = addedAt;
+        this.removedBy = removedBy;
+        this.removedAt = removedAt;
         this.runnable = Bukkit::shutdown;
         this.delay = delay;
     }
@@ -49,6 +53,9 @@ public class Reboot {
                 task = new BukkitRunnable() {
                     @Override
                     public void run() {
+                        if (delay == 0L)
+                            return;
+
                         Bukkit.getOnlinePlayers().forEach(player ->
                                 Message.send(player, "<red>Instance will be rebooting in " + Converter.millisToTime(interval) + "."));
 
