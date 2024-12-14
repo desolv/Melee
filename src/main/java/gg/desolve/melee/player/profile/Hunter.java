@@ -328,6 +328,18 @@ public class Hunter {
         }
     }
 
+    public static void saveAll() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            try {
+                Hunter hunter = Hunter.getHunter(player.getUniqueId());
+                hunter.setLastSeen(System.currentTimeMillis());
+                hunter.saveMongo();
+            } catch (Exception e) {
+                Melee.getInstance().getLogger().warning("There was a problem saving " + player.getName() + "' on disable.");
+            }
+        });
+    }
+
     public void expire() {
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
             String hunterJson = gson.toJson(this);
