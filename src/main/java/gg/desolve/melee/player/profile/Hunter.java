@@ -37,6 +37,7 @@ public class Hunter {
     private int logins;
     private Long firstSeen;
     private Long lastSeen;
+    private Long playtime;
     private String server;
     private String address;
     private boolean loaded;
@@ -67,7 +68,7 @@ public class Hunter {
         if (player != null) return new Hunter(player.getUniqueId(), player.getName());
 
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = jedis.get("hunter:username:" + username);
+            String hunterJson = jedis.get("hunter:" + Bukkit.getOfflinePlayer(username).getUniqueId());
             if (hunterJson != null) {
                 return new Hunter(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
             }
@@ -75,7 +76,10 @@ public class Hunter {
 
         Document hunterDoc = Melee.getInstance().getMongoManager().getMongoDatabase()
                 .getCollection("hunters")
-                .find(Filters.eq("username", username))
+                .find(
+                        Filters.eq(
+                                "uuid",
+                                Bukkit.getOfflinePlayer(username).getUniqueId().toString()))
                 .first();
 
         return hunterDoc != null ?
@@ -282,6 +286,7 @@ public class Hunter {
             this.logins = hunter.logins;
             this.firstSeen = hunter.firstSeen;
             this.lastSeen = hunter.lastSeen;
+            this.playtime = hunter.playtime;
             this.server = hunter.server;
             this.address = hunter.address;
             this.grants = hunter.grants != null ? hunter.grants : new ArrayList<>();
@@ -303,6 +308,7 @@ public class Hunter {
                 logins = document.getInteger("logins");
                 firstSeen = document.getLong("firstSeen");
                 lastSeen = document.getLong("lastSeen");
+                playtime = document.getLong("playtime");
                 server = document.getString("server");
                 address = document.getString("address");
                 Optional.ofNullable(document.getList("markers", Document.class))
@@ -360,6 +366,7 @@ public class Hunter {
             document.put("logins", logins);
             document.put("firstSeen", firstSeen);
             document.put("lastSeen", lastSeen);
+            document.put("playtime", playtime);
             document.put("server", server);
             document.put("address", address);
             document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));

@@ -6,6 +6,7 @@ import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.collect.ImmutableList;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.command.common.PlaytimeCommand;
 import gg.desolve.melee.command.management.*;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.common.Message;
@@ -57,7 +58,8 @@ public class MeleeCommandManager extends PaperCommandManager {
                 new InstanceCommand(),
                 new AnnounceCommand(),
                 new GrantCommand(),
-                new RebootCommand()
+                new RebootCommand(),
+                new PlaytimeCommand()
         ).forEach(command -> {
             registerCommand(command);
             commands.add(command.getClass().getSimpleName());

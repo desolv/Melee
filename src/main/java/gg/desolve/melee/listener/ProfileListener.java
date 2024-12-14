@@ -51,6 +51,9 @@ public class ProfileListener implements Listener {
 
             hunter.setLastSeen(System.currentTimeMillis());
 
+            if (hunter.getPlaytime() == null)
+                hunter.setPlaytime(0L);
+
             if (hunter.getAddress() == null || !hunter.getAddress().equalsIgnoreCase(event.getAddress().getHostAddress()))
                 hunter.setAddress(event.getAddress().getHostAddress());
 
@@ -140,6 +143,7 @@ public class ProfileListener implements Listener {
         event.setQuitMessage(null);
         Hunter hunter = Hunter.getHunter(event.getPlayer().getUniqueId());
 
+        hunter.setPlaytime(hunter.getPlaytime() + (System.currentTimeMillis() - hunter.getLastSeen()));
         hunter.setLastSeen(System.currentTimeMillis());
         hunter.setLoaded(false);
         hunter.expire();
