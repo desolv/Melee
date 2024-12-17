@@ -14,11 +14,12 @@ public class BroadcastSubscriber extends JedisPubSub {
 
     @Override
     public void onMessage(String channel, String message) {
-        String[] parts = message.split("&%\\$", 4);
+        String[] parts = message.split("&%\\$", 5);
         String scope = parts[0];
         String type = parts[1]; // command or message check
         String action = parts[2]; // command or message action
         String extra = parts[3]; // permission type ; if global is everyone for message
+        String staff = parts[4]; // is staff?
 
         if (scope.equalsIgnoreCase("global") || scope.equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name"))) {
             if (type.equalsIgnoreCase("command")) {
@@ -29,7 +30,13 @@ public class BroadcastSubscriber extends JedisPubSub {
                 } else {
                     Bukkit.getOnlinePlayers().stream()
                             .filter(player -> Hunter.getHunter(player.getUniqueId()).hasPermission(extra))
-                            .forEach(player -> Message.send(player, action));
+                            .forEach(player -> {
+                                if (Boolean.parseBoolean(staff)) {
+                                    Message.staff(player, extra, action);
+                                } else {
+                                    Message.send(player, action);
+                                }
+                            });
                 }
             }
         }

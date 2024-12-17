@@ -71,7 +71,8 @@ public class MeleeServerManager {
                         .replace("version%", Melee.getInstance().getServer().getVersion()) +
                         "<red>[Admin] <aqua>" + MeleeConfigManager.lang.getString("server_name") + " <aqua>has <green>connected <aqua>with <green>"
                         + (System.currentTimeMillis() - Melee.getInstance().getBooting()) + "ms.",
-                "melee.admin"
+                "melee.admin",
+                "true"
         );
 
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
@@ -92,7 +93,8 @@ public class MeleeServerManager {
                         .replace("heartbeat%", String.valueOf(Converter.millisToSeconds(System.currentTimeMillis() - server.getHeartbeat())))
                         .replace("duration%", Converter.millisToTime(System.currentTimeMillis() - server.getBooting())) +
                         "<red>[Admin] <aqua>" + MeleeConfigManager.lang.getString("server_name") + " <aqua>has <red>disconnected.",
-                "melee.admin"
+                "melee.admin",
+                "true"
         );
 
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {

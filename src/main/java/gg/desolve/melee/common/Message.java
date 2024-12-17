@@ -1,6 +1,7 @@
 package gg.desolve.melee.common;
 
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.player.profile.Hunter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
@@ -29,6 +30,11 @@ public class Message {
 
         message = message.replace("<newline>", "\n");
         sender.sendMessage(MiniMessage.miniMessage().stripTags(message));
+    }
+
+    public static void staff(Player player, String permission, String message) {
+        if (Hunter.getHunter(player.getUniqueId()).hasPermission(permission) /*&& / Add toggleable staff messages logic here*/)
+            send(player, message);
     }
 
 }

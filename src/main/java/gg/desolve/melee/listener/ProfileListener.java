@@ -116,8 +116,8 @@ public class ProfileListener implements Listener {
         hunter.save();
         hunter.saveMongo();
 
-        if (hunter.hasPermission("melee.admin") && MeleeServerManager.getReboot().getDelay() > 0) {
-            Message.send(event.getPlayer(),
+        if (MeleeServerManager.getReboot().getDelay() > 0) {
+            Message.staff(event.getPlayer(), "melee.admin",
                     ((Converter.millisToSeconds(
                             (MeleeServerManager.getReboot().getAddedAt() + MeleeServerManager.getReboot().getDelay())
                                     - System.currentTimeMillis()) <= 60) ? "<red>" : "<green>") +
@@ -126,15 +126,14 @@ public class ProfileListener implements Listener {
                             (MeleeServerManager.getReboot().getAddedAt() + MeleeServerManager.getReboot().getDelay())
                                     - System.currentTimeMillis())));
         } else {
-            Message.send(event.getPlayer(),
+            Message.staff(event.getPlayer(), "melee.admin",
                     "<red>Instance was invalidated to reboot time% ago."
                             .replace("time%", Converter.millisToTime(System.currentTimeMillis() - MeleeServerManager.getReboot().getRemovedAt())));
         }
 
-        if (hunter.hasPermission("melee.admin"))
-            Message.send(event.getPlayer(),
-                    "<gray>Instance has been online for time%."
-                            .replace("time%", Converter.millisToTime(System.currentTimeMillis() - Melee.getInstance().getBooting())));
+        Message.staff(event.getPlayer(), "melee.admin",
+                "<gray>Instance has been online for time%."
+                        .replace("time%", Converter.millisToTime(System.currentTimeMillis() - Melee.getInstance().getBooting())));
     }
 
     @EventHandler(
