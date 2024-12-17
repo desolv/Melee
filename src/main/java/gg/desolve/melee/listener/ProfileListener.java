@@ -124,15 +124,17 @@ public class ProfileListener implements Listener {
                     "Instance scheduled to reboot in schedule%."
                     .replace("schedule%", Converter.millisToTime(
                             (MeleeServerManager.getReboot().getAddedAt() + MeleeServerManager.getReboot().getDelay())
-                                    - System.currentTimeMillis()))
-            );
+                                    - System.currentTimeMillis())));
         } else {
             Message.send(event.getPlayer(),
-                    "<red>Instance was postponed to reboot time% ago."
-                            .replace("time%", Converter.millisToTime(System.currentTimeMillis() - MeleeServerManager.getReboot().getRemovedAt()))
-            );
+                    "<red>Instance was invalidated to reboot time% ago."
+                            .replace("time%", Converter.millisToTime(System.currentTimeMillis() - MeleeServerManager.getReboot().getRemovedAt())));
         }
 
+        if (hunter.hasPermission("melee.admin"))
+            Message.send(event.getPlayer(),
+                    "<gray>Instance has been online for time%."
+                            .replace("time%", Converter.millisToTime(System.currentTimeMillis() - Melee.getInstance().getBooting())));
     }
 
     @EventHandler(
