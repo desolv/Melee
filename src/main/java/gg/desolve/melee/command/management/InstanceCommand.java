@@ -24,9 +24,12 @@ public class InstanceCommand extends BaseCommand {
                         + MeleeServerManager.getServers().stream()
                         .map(server ->
                                 "<click:run_command:/instance>" +
-                                "<hover:show_text:'<yellow>Hosting a total of online% players"
+                                ("<hover:show_text:'<green>version%" +
+                                "<newline><red>Heartbeat of heartbeat% seconds" +
+                                "<newline><yellow>Currently online% online players'>")
+                                        .replace("version%", server.getVersion())
+                                        .replace("heartbeat%", String.valueOf(Converter.millisToSeconds(System.currentTimeMillis() - server.getHeartbeat())))
                                         .replace("online%", String.valueOf(server.getOnline())) +
-                                "<newline><newline><green>Click to update instances'>" +
                                 "<newline><aqua>@server% vmelee% version% <dark_gray>#id%"
                                         .replace("server%", server.getName())
                                         .replace("melee%", server.getMelee())
