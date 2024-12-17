@@ -24,8 +24,8 @@ public class RebootCommand extends BaseCommand {
         help.showHelp();
     }
 
-    @Subcommand("remove")
-    @CommandPermission("melee.command.reboot|melee.command.reboot.remove")
+    @Subcommand("invalidate")
+    @CommandPermission("melee.command.reboot|melee.command.reboot.invalidate")
     @Description("Postpones reboot by removing it")
     public static void onRemove(CommandSender sender) {
         if (MeleeServerManager.getReboot().getDelay() == 0L) {
