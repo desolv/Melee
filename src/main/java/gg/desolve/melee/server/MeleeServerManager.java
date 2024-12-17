@@ -142,9 +142,9 @@ public class MeleeServerManager {
         List<Server> servers = new ArrayList<>();
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
             jedis.keys("server:*").forEach(s -> {
-                String serverJson = jedis.get(s);
-                if (serverJson != null)
-                    servers.add(new Gson().fromJson(serverJson, Server.class));
+                Server server = getServer(s.replace("server:", ""));
+                if (server != null)
+                    servers.add(server);
             });
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem retrieving all servers from Redis.");
