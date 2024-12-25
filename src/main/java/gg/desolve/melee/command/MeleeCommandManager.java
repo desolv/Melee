@@ -8,8 +8,10 @@ import com.google.common.collect.ImmutableList;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.command.common.PlaytimeCommand;
 import gg.desolve.melee.command.management.*;
+import gg.desolve.melee.command.moderation.BanCommand;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.common.Message;
+import gg.desolve.melee.common.Reason;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.Rank;
 import gg.desolve.melee.server.MeleeServerManager;
@@ -59,7 +61,8 @@ public class MeleeCommandManager extends PaperCommandManager {
                 new AnnounceCommand(),
                 new GrantCommand(),
                 new RebootCommand(),
-                new PlaytimeCommand()
+                new PlaytimeCommand(),
+                new BanCommand()
         ).forEach(command -> {
             registerCommand(command);
             commands.add(command.getClass().getSimpleName());
@@ -98,6 +101,14 @@ public class MeleeCommandManager extends PaperCommandManager {
                     return Optional.ofNullable(scope).orElseThrow(() ->
                             new InvalidCommandArgument(Message.translate("<red>Scope matching <yellow>" + popScope + " <red>could not be found."), false));
                 });
+
+        getCommandContexts().registerContext(
+                Reason.class, c -> {
+                    String popReason = c.popFirstArg();
+                    Reason reason = Reason.fromString(popReason);
+                    return Optional.of(reason).orElseThrow(() ->
+                            new InvalidCommandArgument(Message.translate("<red>Reason matching <yellow>" + popReason + " <red>could not be found."), false));
+                });
     }
 
     private void loadCompletions() {
@@ -121,6 +132,9 @@ public class MeleeCommandManager extends PaperCommandManager {
                                 .stream()
                                 .map(Server::getName)
                 ).collect(Collectors.toList()));
+
+        getCommandCompletions().registerAsyncCompletion("type", r ->
+                ImmutableList.of("-s", "-silent", "-p", "-public"));
     }
 
     @Override

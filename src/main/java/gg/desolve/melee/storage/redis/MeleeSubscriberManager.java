@@ -3,6 +3,7 @@ package gg.desolve.melee.storage.redis;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.InvalidateGrantSubscriber;
+import gg.desolve.melee.player.punishment.PunishmentSubscriber;
 import gg.desolve.melee.server.BroadcastSubscriber;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
@@ -24,7 +25,8 @@ public class MeleeSubscriberManager {
             Arrays.asList(
                     new GrantSubscriber(),
                     new InvalidateGrantSubscriber(),
-                    new BroadcastSubscriber()
+                    new BroadcastSubscriber(),
+                    new PunishmentSubscriber()
             ).forEach(subscriber -> {
                 String channel;
                 try {
