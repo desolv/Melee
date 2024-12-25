@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 public class GrantSubscriber extends JedisPubSub {
 
-    public static final String update = "grantUpdate";
+    public static final String update = "GrantSubscriber";
 
     @Override
     public void onMessage(String channel, String message) {

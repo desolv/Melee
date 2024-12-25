@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 public class InvalidateGrantSubscriber extends JedisPubSub {
 
-    public static final String update = "invalidateGrantUpdate";
+    public static final String update = "InvalidateGrantSubscriber";
 
     @Override
     public void onMessage(String channel, String message) {

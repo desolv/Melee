@@ -10,7 +10,7 @@ import redis.clients.jedis.JedisPubSub;
 @Getter
 public class BroadcastSubscriber extends JedisPubSub {
 
-    public static final String update = "broadcastUpdate";
+    public static final String update = "BroadcastSubscriber";
 
     @Override
     public void onMessage(String channel, String message) {
