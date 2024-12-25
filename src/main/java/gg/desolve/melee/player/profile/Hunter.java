@@ -32,8 +32,6 @@ public class Hunter {
     @Getter
     private transient final MongoCollection<Document> hunter_collections = Melee.getInstance().getMongoManager().getMongoDatabase().getCollection("hunters");
 
-    private transient final Gson gson = new Gson();
-
     private final UUID uuid;
     private String username;
     private int logins;
@@ -334,7 +332,7 @@ public class Hunter {
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
             String hunterJson = jedis.get("hunter:" + uuid.toString());
             if (hunterJson != null) {
-                hunter = gson.fromJson(hunterJson, Hunter.class);
+                hunter = Melee.getInstance().gson.fromJson(hunterJson, Hunter.class);
             }
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem loading " + username + "'s redis.");
@@ -389,7 +387,7 @@ public class Hunter {
 
     public void save() {
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = gson.toJson(this);
+            String hunterJson = Melee.getInstance().gson.toJson(this);
             jedis.set("hunter:" + uuid.toString(), hunterJson);
         } catch (Exception e) {
             Melee.getInstance().getLogger().warning("There was a problem saving " + username + "'s redis.");
@@ -413,7 +411,7 @@ public class Hunter {
 
     public void expire() {
         try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = gson.toJson(this);
+            String hunterJson = Melee.getInstance().gson.toJson(this);
             String key = "hunter:" + uuid.toString();
             jedis.set(key, hunterJson);
             jedis.expire(key, 300);

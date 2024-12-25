@@ -1,5 +1,6 @@
 package gg.desolve.melee;
 
+import com.google.gson.Gson;
 import fr.minuskube.inv.InventoryManager;
 import gg.desolve.commons.config.Config;
 import gg.desolve.commons.config.ConfigurationManager;
@@ -16,8 +17,6 @@ import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Map;
-
 public final class Melee extends JavaPlugin {
 
     @Getter
@@ -25,6 +24,9 @@ public final class Melee extends JavaPlugin {
 
     @Getter
     public ConfigurationManager configurationManager;
+
+    @Getter
+    public final Gson gson = new Gson();
 
     @Getter
     @Setter
