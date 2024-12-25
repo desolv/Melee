@@ -3,7 +3,6 @@ package gg.desolve.melee.listener;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.profile.Marker;
 import gg.desolve.melee.player.punishment.Punishment;
@@ -82,7 +81,7 @@ public class ProfileListener implements Listener {
                     .findFirst();
 
             if (punishment.isPresent()) {
-                if (punishment.get().getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || punishment.get().getScope().equalsIgnoreCase("global")) {
+                if (punishment.get().getScope().equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name")) || punishment.get().getScope().equalsIgnoreCase("global")) {
                     event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
                     event.setKickMessage(punishment.get().getMessage());
                     return;
@@ -130,7 +129,7 @@ public class ProfileListener implements Listener {
                 .filter(marker -> marker.getAddress() != null && marker.getAddress().equalsIgnoreCase(hunter.getAddress()))
                 .findFirst()
                 .ifPresent(marker -> marker.setLogins(marker.getLogins() + 1));
-        hunter.setServer(MeleeConfigManager.lang.getString("server_name"));
+        hunter.setServer(Melee.getInstance().getConfig("language.yml").getString("server_name"));
         hunter.save();
         hunter.saveMongo();
 

@@ -2,3 +2,4 @@ name: Melee
 version: '1.5'
 main: gg.desolve.melee.Melee
 api-version: '1.13'
+depend: [Commons]

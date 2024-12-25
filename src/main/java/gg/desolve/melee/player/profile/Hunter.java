@@ -8,7 +8,6 @@ import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.common.Schedule;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.punishment.Punishment;
@@ -125,7 +124,7 @@ public class Hunter {
     public void refreshGrant() {
         grant = grants.stream()
                 .filter(grant -> (grant.getType() == GrantType.ACTIVE && grant.getRank().isVisible())
-                        && (grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || grant.getScope().equalsIgnoreCase("global")))
+                        && (grant.getScope().equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name")) || grant.getScope().equalsIgnoreCase("global")))
                 .sorted(Comparator.comparingInt(grant -> -grant.getRank().getPriority()))
                 .findFirst().get();
         if (!Melee.getInstance().isDisabling())
@@ -170,7 +169,7 @@ public class Hunter {
                     if (grant.hasExpired() && grant.getType().equals(GrantType.ACTIVE)) {
                         grant.setRemovedAt(System.currentTimeMillis());
                         grant.setRemovedReason("Automatic");
-                        grant.setRemovedOrigin(MeleeConfigManager.lang.getString("server_name"));
+                        grant.setRemovedOrigin(Melee.getInstance().getConfig("language.yml").getString("server_name"));
                         grant.setType(GrantType.EXPIRED);
                         save();
 
@@ -182,7 +181,7 @@ public class Hunter {
                             && Bukkit.getPlayer(uuid) != null
                             && !hasSchedule(grant.getId() + grant.getRank().getName())
                             && !grant.isPermanent() && Converter.millisToHours(grant.getDuration() + 1000) <= 24
-                            && (grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || grant.getScope().equalsIgnoreCase("global"))
+                            && (grant.getScope().equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name")) || grant.getScope().equalsIgnoreCase("global"))
                     ) {
                         Runnable runnable = () -> {
                             if (username != null)
@@ -212,7 +211,7 @@ public class Hunter {
                             null,
                             System.currentTimeMillis(),
                             "Automatic",
-                            MeleeConfigManager.lang.getString("server_name"),
+                            Melee.getInstance().getConfig("language.yml").getString("server_name"),
                             "global",
                             Integer.MAX_VALUE,
                             GrantType.ACTIVE
@@ -232,14 +231,14 @@ public class Hunter {
                     if (punishment.hasExpired() && punishment.getType().equals(PunishmentType.ACTIVE)) {
                         punishment.setRemovedAt(System.currentTimeMillis());
                         punishment.setRemovedReason("Automatic");
-                        punishment.setRemovedOrigin(MeleeConfigManager.lang.getString("server_name"));
+                        punishment.setRemovedOrigin(Melee.getInstance().getConfig("language.yml").getString("server_name"));
                         punishment.setType(PunishmentType.EXPIRED);
                         save();
                     } else if (!punishment.hasExpired()
                             && Bukkit.getPlayer(uuid) != null
                             && !hasSchedule(punishment.getId() + punishment.getStyle().toString())
                             && !punishment.isPermanent() && Converter.millisToHours(punishment.getDuration() + 1000) <= 24
-                            && (punishment.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || punishment.getScope().equalsIgnoreCase("global"))
+                            && (punishment.getScope().equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name")) || punishment.getScope().equalsIgnoreCase("global"))
                     ) {
                         Runnable runnable = () -> {
                             if (username != null)
@@ -288,7 +287,7 @@ public class Hunter {
 
         grants.stream()
                 .filter(grant -> (grant.getType() == GrantType.ACTIVE)
-                        && (grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || grant.getScope().equalsIgnoreCase("global")))
+                        && (grant.getScope().equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name")) || grant.getScope().equalsIgnoreCase("global")))
                 .forEach(grant -> grant.getRank().getPermissionsAndInherited().forEach(p -> {
 
                     String permission = p.startsWith("-") ? p.substring(1) : p;

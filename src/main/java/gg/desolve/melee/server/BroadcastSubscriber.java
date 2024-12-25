@@ -1,7 +1,7 @@
 package gg.desolve.melee.server;
 
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Message;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.profile.Hunter;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -21,7 +21,7 @@ public class BroadcastSubscriber extends JedisPubSub {
         String extra = parts[3]; // permission type ; if global is everyone for message
         String staff = parts[4]; // is staff?
 
-        if (scope.equalsIgnoreCase("global") || scope.equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name"))) {
+        if (scope.equalsIgnoreCase("global") || scope.equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name"))) {
             if (type.equalsIgnoreCase("command")) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), action);
             } else if (type.equalsIgnoreCase("message")) {

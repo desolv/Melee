@@ -1,8 +1,9 @@
 package gg.desolve.melee;
 
 import fr.minuskube.inv.InventoryManager;
+import gg.desolve.commons.config.Config;
+import gg.desolve.commons.config.ConfigurationManager;
 import gg.desolve.melee.command.MeleeCommandManager;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.MeleeRankManager;
@@ -15,10 +16,15 @@ import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Map;
+
 public final class Melee extends JavaPlugin {
 
     @Getter
     public static Melee instance;
+
+    @Getter
+    public ConfigurationManager configurationManager;
 
     @Getter
     @Setter
@@ -45,7 +51,9 @@ public final class Melee extends JavaPlugin {
         instance = this;
         booting = System.currentTimeMillis();
 
-        new MeleeConfigManager(this);
+        configurationManager.initialize(Melee.getInstance(), "language.yml", "storage.yml");
+
+
         new MeleeMongoManager(this, booting);
         new MeleeRedisManager(this, booting);
         new MeleeServerManager(this);
@@ -68,4 +76,7 @@ public final class Melee extends JavaPlugin {
         redisManager.getJedisPool().close();
     }
 
+    public Config getConfig(String name) {
+        return configurationManager.getConfig(Melee.getInstance(), name);
+    }
 }

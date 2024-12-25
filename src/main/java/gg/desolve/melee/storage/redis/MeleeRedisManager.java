@@ -1,7 +1,6 @@
 package gg.desolve.melee.storage.redis;
 
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 import redis.clients.jedis.Jedis;
@@ -19,7 +18,7 @@ public class MeleeRedisManager {
             poolConfig.setMaxTotal(20);
             poolConfig.setBlockWhenExhausted(true);
 
-            jedisPool = new JedisPool(MeleeConfigManager.storage.getString("redis.url"));
+            jedisPool = new JedisPool(Melee.getInstance().getConfig("storage.yml").getString("redis.url"));
 
             Melee.getInstance().setRedisManager(this);
             plugin.getLogger().info("Merged Redis @ " + (System.currentTimeMillis() - millis) + "ms.");

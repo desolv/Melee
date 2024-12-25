@@ -1,12 +1,7 @@
 package gg.desolve.melee.player.punishment;
 
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
-import gg.desolve.melee.common.Message;
-import gg.desolve.melee.configuration.MeleeConfigManager;
-import gg.desolve.melee.player.grant.Grant;
-import gg.desolve.melee.player.grant.GrantType;
-import gg.desolve.melee.player.rank.Rank;
-import gg.desolve.melee.server.MeleeServerManager;
 import lombok.Data;
 import org.bson.Document;
 
@@ -57,14 +52,14 @@ public class Punishment {
 
     public String getMessage() {
         return (switch (style) {
-            case BLACKLIST -> MeleeConfigManager.lang.getString("punishment.blacklist");
-            case MUTE -> MeleeConfigManager.lang.getString("punishment.mute");
-            case WARN -> MeleeConfigManager.lang.getString("punishment.warn");
-            case KICK -> MeleeConfigManager.lang.getString("punishment.kick");
-            case BAN -> isPermanent() ? MeleeConfigManager.lang.getString("punishment.ban-permanent")
-                    : MeleeConfigManager.lang.getString("punishment.ban-temporary");
+            case BLACKLIST -> Melee.getInstance().getConfig("language.yml").getString("punishment.blacklist");
+            case MUTE -> Melee.getInstance().getConfig("language.yml").getString("punishment.mute");
+            case WARN -> Melee.getInstance().getConfig("language.yml").getString("punishment.warn");
+            case KICK -> Melee.getInstance().getConfig("language.yml").getString("punishment.kick");
+            case BAN -> isPermanent() ? Melee.getInstance().getConfig("language.yml").getString("punishment.ban-permanent")
+                    : Melee.getInstance().getConfig("language.yml").getString("punishment.ban-temporary");
         })
-                .replace("appeal%", MeleeConfigManager.lang.getString("punishment.appeal"))
+                .replace("appeal%", Melee.getInstance().getConfig("language.yml").getString("punishment.appeal"))
                 .replace("reason%", addedReason)
                 .replace("duration%", isPermanent() ? "permanently" : "temporarily")
                 .replace("time%", getRemaining());

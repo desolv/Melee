@@ -7,10 +7,6 @@ import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.common.Message;
 import gg.desolve.melee.common.Reason;
-import gg.desolve.melee.configuration.MeleeConfigManager;
-import gg.desolve.melee.player.grant.Grant;
-import gg.desolve.melee.player.grant.GrantSubscriber;
-import gg.desolve.melee.player.grant.GrantType;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.punishment.Punishment;
 import gg.desolve.melee.player.punishment.PunishmentStyle;
@@ -64,7 +60,7 @@ public class BanCommand extends BaseCommand {
                 addedBy,
                 System.currentTimeMillis(),
                 reasons.getReason(),
-                MeleeConfigManager.lang.getString("server_name"),
+                Melee.getInstance().getConfig("language.yml").getString("server_name"),
                 server,
                 durations,
                 PunishmentType.ACTIVE

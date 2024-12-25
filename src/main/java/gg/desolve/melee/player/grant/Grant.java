@@ -1,6 +1,6 @@
 package gg.desolve.melee.player.grant;
 
-import gg.desolve.melee.configuration.MeleeConfigManager;
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.player.rank.Rank;
 import lombok.Data;
 import org.bson.Document;
@@ -63,14 +63,14 @@ public class Grant {
                 rank == null ? GrantType.REMOVED : GrantType.string(document.getString("type"))
         );
 
-        if ((grant.getScope().equalsIgnoreCase("global") && grant.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")))
+        if ((grant.getScope().equalsIgnoreCase("global") && grant.getScope().equalsIgnoreCase(Melee.getInstance().getConfig("language.yml").getString("server_name")))
                 && grant.getType().equals(GrantType.ACTIVE)
                 && Rank.getRank(document.getString("rank")) == null) {
             grant.setType(GrantType.REMOVED);
             grant.setRemovedBy(null);
             grant.setRemovedAt(System.currentTimeMillis());
             grant.setRemovedReason("Automatic Deletion");
-            grant.setRemovedOrigin(MeleeConfigManager.lang.getString("server_name"));
+            grant.setRemovedOrigin(Melee.getInstance().getConfig("language.yml").getString("server_name"));
             return grant;
         }
 

@@ -6,7 +6,6 @@ import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Duration;
 import gg.desolve.melee.common.Message;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantSubscriber;
 import gg.desolve.melee.player.grant.GrantType;
@@ -63,7 +62,7 @@ public class GrantManualCommand extends BaseCommand {
                 addedBy,
                 System.currentTimeMillis(),
                 reason,
-                MeleeConfigManager.lang.getString("server_name"),
+                Melee.getInstance().getConfig("language.yml").getString("server_name"),
                 server,
                 durations,
                 GrantType.ACTIVE

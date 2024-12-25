@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.common.Converter;
 import gg.desolve.melee.common.Duration;
-import gg.desolve.melee.configuration.MeleeConfigManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -19,11 +18,11 @@ public class MeleeServerManager {
 
     @Getter
     private static String id = Converter.generateId().substring(0, 3) +
-            MeleeConfigManager.lang.getString("server_name").substring(1, 4) +
+            Melee.getInstance().getConfig("language.yml").getString("server_name").substring(1, 4) +
             Converter.generateId().substring(6, 10);
 
     @Getter
-    public static String name = MeleeConfigManager.lang.getString("server_name");
+    public static String name = Melee.getInstance().getConfig("language.yml").getString("server_name");
 
     @Getter
     @Setter
@@ -38,7 +37,7 @@ public class MeleeServerManager {
     public MeleeServerManager(Plugin plugin) {
         saveServer(new Server(
                         id,
-                        MeleeConfigManager.lang.getString("server_name"),
+                        Melee.getInstance().getConfig("language.yml").getString("server_name"),
                         plugin.getServer().getVersion(),
                         Melee.getInstance().getDescription().getVersion(),
                         Bukkit.getOnlinePlayers().size(),
@@ -69,7 +68,7 @@ public class MeleeServerManager {
                 "<hover:show_text:'<dark_gray>#id%<newline><green>version%'>"
                         .replace("id%", id)
                         .replace("version%", Melee.getInstance().getServer().getVersion()) +
-                        "<red>[Admin] <aqua>" + MeleeConfigManager.lang.getString("server_name") + " <aqua>has <green>connected <aqua>with <green>"
+                        "<red>[Admin] <aqua>" + Melee.getInstance().getConfig("language.yml").getString("server_name") + " <aqua>has <green>connected <aqua>with <green>"
                         + (System.currentTimeMillis() - Melee.getInstance().getBooting()) + "ms.",
                 "melee.admin",
                 "true"
@@ -92,7 +91,7 @@ public class MeleeServerManager {
                         .replace("version%", server.getVersion())
                         .replace("heartbeat%", String.valueOf(Converter.millisToSeconds(System.currentTimeMillis() - server.getHeartbeat())))
                         .replace("duration%", Converter.millisToTime(System.currentTimeMillis() - server.getBooting())) +
-                        "<red>[Admin] <aqua>" + MeleeConfigManager.lang.getString("server_name") + " <aqua>has <red>disconnected.",
+                        "<red>[Admin] <aqua>" + Melee.getInstance().getConfig("language.yml").getString("server_name") + " <aqua>has <red>disconnected.",
                 "melee.admin",
                 "true"
         );
