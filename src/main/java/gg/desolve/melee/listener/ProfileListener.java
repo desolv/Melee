@@ -6,6 +6,9 @@ import gg.desolve.melee.common.Message;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.profile.Marker;
+import gg.desolve.melee.player.punishment.Punishment;
+import gg.desolve.melee.player.punishment.PunishmentStyle;
+import gg.desolve.melee.player.punishment.PunishmentType;
 import gg.desolve.melee.server.MeleeServerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -69,6 +72,21 @@ public class ProfileListener implements Listener {
                                 System.currentTimeMillis(),
                                 System.currentTimeMillis()
                         ));
+            }
+
+            Optional<Punishment> punishment = hunter.getPunishments().stream()
+                    .filter(p -> p.getType().equals(PunishmentType.ACTIVE)
+                            && p.getStyle() != PunishmentStyle.MUTE
+                            && p.getStyle() != PunishmentStyle.WARN
+                            && p.getStyle() != PunishmentStyle.KICK)
+                    .findFirst();
+
+            if (punishment.isPresent()) {
+                if (punishment.get().getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || punishment.get().getScope().equalsIgnoreCase("global")) {
+                    event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+                    event.setKickMessage(punishment.get().getMessage());
+                    return;
+                }
             }
 
             hunter.setLoaded(true);
