@@ -11,6 +11,9 @@ import gg.desolve.melee.common.Schedule;
 import gg.desolve.melee.configuration.MeleeConfigManager;
 import gg.desolve.melee.player.grant.Grant;
 import gg.desolve.melee.player.grant.GrantType;
+import gg.desolve.melee.player.punishment.Punishment;
+import gg.desolve.melee.player.punishment.PunishmentStyle;
+import gg.desolve.melee.player.punishment.PunishmentType;
 import gg.desolve.melee.player.rank.Rank;
 import lombok.Data;
 import lombok.Getter;
@@ -43,6 +46,7 @@ public class Hunter {
     private boolean loaded;
     private Grant grant;
     private List<Grant> grants;
+    private List<Punishment> punishments;
     private List<Marker> markers;
     private List<Schedule> schedules;
 
@@ -51,11 +55,13 @@ public class Hunter {
         this.username = username;
         this.schedules = new ArrayList<>();
         this.grants = new ArrayList<>();
+        this.punishments = new ArrayList<>();
         this.markers = new ArrayList<>();
 
         load();
         evaluateGrants();
         refreshGrant();
+        evaluatePunishments();
         save();
     }
 
@@ -101,6 +107,14 @@ public class Hunter {
         return generateId;
     }
 
+    public String generatePunishmentId() {
+        String generateId;
+        do {
+            generateId = Converter.generateId();
+        } while (hasPunishment(generateId) != null);
+        return generateId;
+    }
+
     public Grant getGrant() {
         if (!grant.getRank().isVisible())
             refreshGrant();
@@ -128,6 +142,20 @@ public class Hunter {
     public Grant hasGrant(String id) {
         return grants.stream()
                 .filter(grant -> grant.getId().equals(id) && grant.getType().equals(GrantType.ACTIVE))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Punishment hasPunishment(PunishmentStyle style) {
+        return punishments.stream()
+                .filter(p -> p.getStyle().equals(style) && p.getType().equals(PunishmentType.ACTIVE))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Punishment hasPunishment(String id) {
+        return punishments.stream()
+                .filter(punishment -> punishment.getId().equals(id) && punishment.getType().equals(PunishmentType.ACTIVE))
                 .findFirst()
                 .orElse(null);
     }
@@ -191,6 +219,39 @@ public class Hunter {
                     );
                     grants.add(grant);
                     return grant;
+                });
+    }
+
+    public void evaluatePunishments() {
+        punishments.stream()
+                .filter(punishment ->
+                        (punishment.getType() == PunishmentType.ACTIVE)
+                                && !punishment.isPermanent()
+                )
+                .forEach(punishment -> {
+                    if (punishment.hasExpired() && punishment.getType().equals(PunishmentType.ACTIVE)) {
+                        punishment.setRemovedAt(System.currentTimeMillis());
+                        punishment.setRemovedReason("Automatic");
+                        punishment.setRemovedOrigin(MeleeConfigManager.lang.getString("server_name"));
+                        punishment.setType(PunishmentType.EXPIRED);
+                        save();
+                    } else if (!punishment.hasExpired()
+                            && Bukkit.getPlayer(uuid) != null
+                            && !hasSchedule(punishment.getId() + punishment.getStyle().toString())
+                            && !punishment.isPermanent() && Converter.millisToHours(punishment.getDuration() + 1000) <= 24
+                            && (punishment.getScope().equalsIgnoreCase(MeleeConfigManager.lang.getString("server_name")) || punishment.getScope().equalsIgnoreCase("global"))
+                    ) {
+                        Runnable runnable = () -> {
+                            if (username != null)
+                                evaluatePunishments();
+                        };
+
+                        addSchedule(
+                                punishment.getId() + punishment.getStyle().toString(),
+                                runnable,
+                                punishment.getDuration() + 1000
+                        );
+                    }
                 });
     }
 
@@ -290,6 +351,7 @@ public class Hunter {
             this.server = hunter.server;
             this.address = hunter.address;
             this.grants = hunter.grants != null ? hunter.grants : new ArrayList<>();
+            this.punishments = hunter.punishments != null ? hunter.punishments : new ArrayList<>();
             this.markers = hunter.markers != null ? hunter.markers : new ArrayList<>();
             this.schedules = hunter.schedules != null ? hunter.schedules : new ArrayList<>();
             this.loaded = hunter.loaded;
@@ -315,6 +377,8 @@ public class Hunter {
                         .ifPresent(m -> m.forEach(marker -> markers.add(Marker.load(marker))));
                 Optional.ofNullable(document.getList("grants", Document.class))
                         .ifPresent(g -> g.forEach(grant -> grants.add(Grant.load(grant))));
+                Optional.ofNullable(document.getList("punishments", Document.class))
+                        .ifPresent(p -> p.forEach(punishment -> punishments.add(Punishment.load(punishment))));
                 save();
             }
 
@@ -338,7 +402,9 @@ public class Hunter {
         Bukkit.getOnlinePlayers().forEach(player -> {
             try {
                 Hunter hunter = Hunter.getHunter(player.getUniqueId());
+                hunter.setPlaytime(hunter.getPlaytime() + (System.currentTimeMillis() - hunter.getLastSeen()));
                 hunter.setLastSeen(System.currentTimeMillis());
+                hunter.setLoaded(false);
                 hunter.saveMongo();
             } catch (Exception e) {
                 Melee.getInstance().getLogger().warning("There was a problem saving " + player.getName() + "' on disable.");
@@ -371,6 +437,7 @@ public class Hunter {
             document.put("address", address);
             document.put("markers", markers.stream().map(Marker::save).collect(Collectors.toList()));
             document.put("grants", grants.stream().map(Grant::save).collect(Collectors.toList()));
+            document.put("punishments", punishments.stream().map(Punishment::save).collect(Collectors.toList()));
 
             hunter_collections.replaceOne(
                     Filters.eq(
