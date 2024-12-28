@@ -70,12 +70,9 @@ public class Hunter {
         Player player = Bukkit.getPlayer(username);
         if (player != null) return new Hunter(player.getUniqueId(), player.getName());
 
-        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = jedis.get("hunter:" + Bukkit.getOfflinePlayer(username).getUniqueId());
-            if (hunterJson != null) {
-                return new Hunter(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
-            }
-        }
+        String hunterJson = Melee.getInstance().getRedisManager().get("hunter:" + Bukkit.getOfflinePlayer(username).getUniqueId());
+        if (hunterJson != null)
+            return new Hunter(Bukkit.getOfflinePlayer(username).getUniqueId(), username);
 
         Document hunterDoc = Melee.getInstance().getMongoManager().getMongoDatabase()
                 .getCollection("hunters")
@@ -329,15 +326,9 @@ public class Hunter {
     public void load() {
         Hunter hunter = null;
 
-        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = jedis.get("hunter:" + uuid.toString());
-            if (hunterJson != null) {
-                hunter = Melee.getInstance().gson.fromJson(hunterJson, Hunter.class);
-            }
-        } catch (Exception e) {
-            Melee.getInstance().getLogger().warning("There was a problem loading " + username + "'s redis.");
-            e.printStackTrace();
-        }
+        String hunterJson = Melee.getInstance().getRedisManager().get("hunter:" + uuid.toString());
+        if (hunterJson != null)
+            hunter = Melee.getInstance().gson.fromJson(hunterJson, Hunter.class);
 
         if (hunter != null) {
             this.username = hunter.username;
@@ -386,13 +377,9 @@ public class Hunter {
     }
 
     public void save() {
-        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = Melee.getInstance().gson.toJson(this);
-            jedis.set("hunter:" + uuid.toString(), hunterJson);
-        } catch (Exception e) {
-            Melee.getInstance().getLogger().warning("There was a problem saving " + username + "'s redis.");
-            e.printStackTrace();
-        }
+        Melee.getInstance().getRedisManager().set(
+                "hunter:" + uuid.toString(),
+                Melee.getInstance().gson.toJson(this));
     }
 
     public static void saveAll() {
@@ -410,15 +397,10 @@ public class Hunter {
     }
 
     public void expire() {
-        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            String hunterJson = Melee.getInstance().gson.toJson(this);
-            String key = "hunter:" + uuid.toString();
-            jedis.set(key, hunterJson);
-            jedis.expire(key, 300);
-        } catch (Exception e) {
-            Melee.getInstance().getLogger().warning("There was a problem expiring " + username + "'s redis.");
-            e.printStackTrace();
-        }
+        Melee.getInstance().getRedisManager().set(
+                "hunter:" + uuid.toString(),
+                Melee.getInstance().gson.toJson(this),
+                300);
     }
 
     public void saveMongo() {

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fr.minuskube.inv.InventoryManager;
 import gg.desolve.commons.config.Config;
 import gg.desolve.commons.config.ConfigurationManager;
+import gg.desolve.commons.redis.RedisManager;
 import gg.desolve.melee.command.MeleeCommandManager;
 import gg.desolve.melee.listener.MeleeListenerManager;
 import gg.desolve.melee.player.profile.Hunter;
@@ -26,15 +27,14 @@ public final class Melee extends JavaPlugin {
     public ConfigurationManager configurationManager;
 
     @Getter
+    public RedisManager redisManager;
+
+    @Getter
     public final Gson gson = new Gson();
 
     @Getter
     @Setter
     private MeleeMongoManager mongoManager;
-
-    @Getter
-    @Setter
-    private MeleeRedisManager redisManager;
 
     @Getter
     private BukkitAudiences adventure;
@@ -53,7 +53,8 @@ public final class Melee extends JavaPlugin {
         instance = this;
         booting = System.currentTimeMillis();
 
-        configurationManager.initialize(Melee.getInstance(), "language.yml", "storage.yml");
+        configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");
+        redisManager = new RedisManager();
 
 
         new MeleeMongoManager(this, booting);
@@ -75,10 +76,10 @@ public final class Melee extends JavaPlugin {
         Hunter.saveAll();
         MeleeServerManager.removeServer(MeleeServerManager.getId());
         mongoManager.getMongoClient().close();
-        redisManager.getJedisPool().close();
+        redisManager.close();
     }
 
     public Config getConfig(String name) {
-        return configurationManager.getConfig(Melee.getInstance(), name);
+        return configurationManager.getConfig(name);
     }
 }
