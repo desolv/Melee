@@ -2,6 +2,7 @@ package gg.desolve.melee;
 
 import com.google.gson.Gson;
 import fr.minuskube.inv.InventoryManager;
+import gg.desolve.commons.Commons;
 import gg.desolve.commons.config.Config;
 import gg.desolve.commons.config.ConfigurationManager;
 import gg.desolve.commons.redis.RedisManager;
@@ -11,7 +12,6 @@ import gg.desolve.melee.player.profile.Hunter;
 import gg.desolve.melee.player.rank.MeleeRankManager;
 import gg.desolve.melee.server.MeleeServerManager;
 import gg.desolve.melee.storage.MeleeMongoManager;
-import gg.desolve.melee.storage.redis.MeleeRedisManager;
 import gg.desolve.melee.storage.redis.MeleeSubscriberManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,11 +54,10 @@ public final class Melee extends JavaPlugin {
         booting = System.currentTimeMillis();
 
         configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");
-        redisManager = new RedisManager();
+        redisManager = Commons.getInstance().getRedisManager();
 
 
         new MeleeMongoManager(this, booting);
-        new MeleeRedisManager(this, booting);
         new MeleeServerManager(this);
         new MeleeRankManager(this);
         new MeleeListenerManager(this);
