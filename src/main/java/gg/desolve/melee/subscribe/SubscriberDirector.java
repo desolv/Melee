@@ -1,6 +1,7 @@
 package gg.desolve.melee.subscribe;
 
 import gg.desolve.melee.grant.GrantSubscriber;
+import gg.desolve.melee.grant.InvalidateGrantSubscriber;
 import gg.desolve.melee.profile.ProfileSubscriber;
 import gg.desolve.melee.rank.RankSubscriber;
 import gg.desolve.mithril.Mithril;
@@ -23,7 +24,8 @@ public class SubscriberDirector {
         List<JedisPubSub> subscriberList = Arrays.asList(
                 new ProfileSubscriber(),
                 new RankSubscriber(),
-                new GrantSubscriber()
+                new GrantSubscriber(),
+                new InvalidateGrantSubscriber()
         );
 
         subscriberList.forEach(subscriber ->
