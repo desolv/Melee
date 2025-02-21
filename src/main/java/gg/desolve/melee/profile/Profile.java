@@ -59,6 +59,14 @@ public class Profile {
                         && grant.getType().equals(GrantType.ACTIVE));
     }
 
+    public Grant getActiveGrant(Rank rank) {
+        return grants.stream()
+                .filter(grant -> grant.getRank().getName().equals(rank.getName())
+                        && grant.getType().equals(GrantType.ACTIVE))
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean hasPermission(String permission) {
         Player player = Bukkit.getPlayer(uuid);
 
