@@ -1,21 +1,14 @@
 package gg.desolve.melee;
 
-import com.google.gson.Gson;
-import fr.minuskube.inv.InventoryManager;
-import gg.desolve.commons.Commons;
-import gg.desolve.commons.config.Config;
-import gg.desolve.commons.config.ConfigurationManager;
-import gg.desolve.commons.redis.RedisManager;
-import gg.desolve.melee.command.MeleeCommandManager;
-import gg.desolve.melee.listener.MeleeListenerManager;
-import gg.desolve.melee.player.profile.Hunter;
-import gg.desolve.melee.player.rank.MeleeRankManager;
-import gg.desolve.melee.server.MeleeServerManager;
-import gg.desolve.melee.storage.MeleeMongoManager;
-import gg.desolve.melee.storage.redis.MeleeSubscriberManager;
+import gg.desolve.melee.command.CommandDirector;
+import gg.desolve.melee.listener.ListenerDirector;
+import gg.desolve.melee.profile.ProfileManager;
+import gg.desolve.melee.rank.RankManager;
+import gg.desolve.melee.subscribe.SubscriberDirector;
+import gg.desolve.mithril.command.CommandManager;
+import gg.desolve.mithril.config.Config;
+import gg.desolve.mithril.config.ConfigurationManager;
 import lombok.Getter;
-import lombok.Setter;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Melee extends JavaPlugin {
@@ -27,58 +20,42 @@ public final class Melee extends JavaPlugin {
     public ConfigurationManager configurationManager;
 
     @Getter
-    public RedisManager redisManager;
+    public CommandManager commandManager;
 
     @Getter
-    public final Gson gson = new Gson();
+    public CommandDirector commandDirector;
 
     @Getter
-    @Setter
-    private MeleeMongoManager mongoManager;
+    public ProfileManager profileManager;
 
     @Getter
-    private BukkitAudiences adventure;
+    public RankManager rankManager;
 
     @Getter
-    private InventoryManager inventoryManager;
+    public ListenerDirector listenerDirector;
 
     @Getter
-    private boolean isDisabling = false;
-
-    @Getter
-    private long booting;
+    public SubscriberDirector subscriberDirector;
 
     @Override
     public void onEnable() {
         instance = this;
-        booting = System.currentTimeMillis();
 
-        configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");
-        redisManager = Commons.getInstance().getRedisManager();
-
-
-        new MeleeMongoManager(this, booting);
-        new MeleeServerManager(this);
-        new MeleeRankManager(this);
-        new MeleeListenerManager(this);
-        new MeleeCommandManager(this);
-        new MeleeSubscriberManager(this);
-
-        this.adventure = BukkitAudiences.create(this);
-        this.inventoryManager = new InventoryManager(this);
-        inventoryManager.init();
+        configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");;
+        commandManager = new CommandManager(this, "melee.*");
+        commandDirector = new CommandDirector(commandManager);
+        profileManager = new ProfileManager();
+        rankManager = new RankManager();
+        listenerDirector = new ListenerDirector();
+        subscriberDirector = new SubscriberDirector();
     }
 
     @Override
     public void onDisable() {
-        isDisabling = true;
-        Hunter.saveAll();
-        MeleeServerManager.removeServer(MeleeServerManager.getId());
-        mongoManager.getMongoClient().close();
-        redisManager.close();
+        profileManager.save();
     }
 
-    public Config getConfig(String name) {
-        return configurationManager.getConfig(name);
+    public Config getLanguageConfig() {
+        return configurationManager.getConfig("language.yml");
     }
 }

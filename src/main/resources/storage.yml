@@ -1,4 +1,4 @@
-mongodb:
+mongo:
   url: ''
   database: ''
 

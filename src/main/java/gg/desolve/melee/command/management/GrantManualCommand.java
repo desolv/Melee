@@ -3,19 +3,18 @@ package gg.desolve.melee.command.management;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.common.Converter;
-import gg.desolve.melee.common.Duration;
-import gg.desolve.melee.common.Message;
-import gg.desolve.melee.player.grant.Grant;
-import gg.desolve.melee.player.grant.GrantSubscriber;
-import gg.desolve.melee.player.grant.GrantType;
-import gg.desolve.melee.player.profile.Hunter;
-import gg.desolve.melee.player.rank.Rank;
-import gg.desolve.melee.server.Scope;
-import org.bukkit.Bukkit;
+import gg.desolve.melee.grant.Grant;
+import gg.desolve.melee.grant.GrantType;
+import gg.desolve.melee.profile.Profile;
+import gg.desolve.melee.profile.ProfileManager;
+import gg.desolve.melee.rank.Rank;
+import gg.desolve.mithril.Mithril;
+import gg.desolve.mithril.relevance.Converter;
+import gg.desolve.mithril.relevance.Duration;
+import gg.desolve.mithril.relevance.Message;
+import gg.desolve.mithril.relevance.Scope;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import redis.clients.jedis.Jedis;
 
 import java.util.UUID;
 
@@ -23,97 +22,69 @@ import java.util.UUID;
 public class GrantManualCommand extends BaseCommand {
 
     @Default
-    @CommandCompletion("@players @ranks @scopes @durations @reasons")
+    @CommandCompletion("@players @ranks @durations @scopes @nothing")
     @CommandPermission("melee.command.grantmanual")
-    @Syntax("<player> <rank> <scope> <duration> [reason]")
-    @Description("Manually grant to a player")
-    public static void execute(CommandSender sender, Hunter hunter, Rank rank, Scope scope, Duration duration, @Optional @Default("Other") String reason) {
-        if (rank.isBaseline()) {
-            Message.send(sender, "<red>You cannot grant the default rank.");
-            return;
-        }
+    @Syntax("(player) (rank) (duration) (scope) [reason]")
+    @Description("Manually grant to players")
+    public static void execute(CommandSender sender, Profile profile, Rank rank, Duration duration, @Optional @Default("global") Scope scope, @Optional @Default("Other") String reason) {
+        ProfileManager profileManager = Melee.getInstance().getProfileManager();
 
-        if (sender instanceof Player) {
-            Hunter granter = Hunter.getHunter(((Player) sender).getUniqueId());
+        if ((sender instanceof Player) && !profile.hasPermission("melee.*")) {
+            boolean cannotGrant = !rank.isGrantable();
+            Profile granter = profileManager.retrieve(((Player) sender).getUniqueId());
+            boolean isHigherRank = Melee.getInstance().getRankManager().compare(rank, granter.getGrant().getRank());
 
-            if (!granter.hasPermission("melee.*") && !rank.isGrantable()) {
-                Message.send(sender, "<red>You cannot grant this rank.");
-                return;
-            }
-
-            if (!granter.hasPermission("melee.*") && Rank.rankIsHigherThanRank(rank, granter.getGrant().getRank())) {
-                Message.send(sender, "<red>You cannot grant ranks higher than yours.");
+            if (cannotGrant || isHigherRank) {
+                Message.send(sender, cannotGrant ?
+                        "<red>You cannot grant this rank." :
+                        "<red>You cannot grant ranks higher than yours.");
                 return;
             }
         }
 
-        if (hunter.hasGrant(rank) != null) {
-            Message.send(sender, rank.getDisplayColored() + " <red>rank is present for " + hunter.getUsernameColored() + ".");
+        if (!profile.hasGrant(rank)) {
+            Message.send(sender, rank.getDisplayColored() + " <red>rank is present for " + profile.getUsernameColored() + ".");
             return;
         }
 
-        long durations = duration.getDuration();
-        String server = scope.getServer();
         UUID addedBy = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
 
         Grant grant = new Grant(
-                hunter.generateGrantId(),
+                Converter.generateId(),
                 rank.getName(),
                 addedBy,
                 System.currentTimeMillis(),
                 reason,
-                Melee.getInstance().getConfig("language.yml").getString("server_name"),
-                server,
-                durations,
+                Mithril.getInstance().getInstanceManager().getInstance().getName(),
+                scope.getUnformatted(),
+                duration.duration(),
                 GrantType.ACTIVE
         );
 
-        hunter.getGrants().add(grant);
-        hunter.refreshGrant();
+        profile.getGrants().add(grant);
+        profile.save();
 
-        Player player = Bukkit.getPlayer(hunter.getUuid());
-
-        if (player != null) hunter.refreshPermissions();
-        hunter.save();
-
-        Message.send(sender,
-                "<green>You've granted the rank% <green>rank to player% <green>lasting <yellow>duration% <green>on scope <light_purple>scope%."
+        Message.send(sender, "<green>You've granted the rank% <green>rank to player% <green>on scope <light_purple>scope%."
                         .replace("rank%", rank.getDisplayColored())
-                        .replace("player%", hunter.getUsernameColored())
-                        .replace("duration%",
-                                (grant.isPermanent() ?
-                                        "forever" :
-                                        duration.isPermanent() ?
-                                                "forever" :
-                                                Converter.millisToTime(durations)))
-                        .replace("scope%", server)
-                        .replace("reason%", reason)
-        );
+                        .replace("player%", profile.getUsernameColored())
+                        .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
+                        .replace("scope%", scope.getFormat())
+                        .replace("reason%", reason));
 
-        String message = "<green>You've been granted rank% <green>rank <green>lasting <yellow>duration% <green>on scope <light_purple>scope%."
+        String grantedMessage = "<green>You've been granted the rank% <green>rank <gray>for duration%."
                 .replace("rank%", rank.getDisplayColored())
-                .replace("duration%",
-                        grant.isPermanent() ?
-                                "forever" :
-                                duration.isPermanent() ?
-                                        "forever" :
-                                        Converter.millisToTime(durations)
-                )
-                .replace("scope%", server);
+                .replace("player%", profile.getUsernameColored())
+                .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
+                .replace("scope%", scope.getFormat())
+                .replace("reason%", reason);
 
         String redisMessage = String.join("&%$",
-                hunter.getUuid().toString(),
-                sender.getName(),
-                String.valueOf(durations),
-                grant.getId(),
-                rank.getName(),
-                server,
-                message
+                String.valueOf(profile.getUuid()),
+                scope.getUnformatted(),
+                grantedMessage
         );
 
-        try (Jedis jedis = Melee.getInstance().getRedisManager().getConnection()) {
-            jedis.publish(GrantSubscriber.update, redisMessage);
-        }
-
+        Mithril.getInstance().getRedisManager().publish("Grant", redisMessage);
     }
+
 }

@@ -1,11 +1,9 @@
-server_name: "melee"
-display_name: "Melee"
-
-punishment:
-  blacklist: "<red>Your account has been blacklisted from server%<newline><red>Reason: <gray>reason%<newline>appeal%"
-  ban-permanently: "<red>Your account has been permanently suspended from server%<newline><red>Reason: <gray>reason%<newline>appeal%"
-  ban-temporarily: "<red>Your account has been temporarily suspended from server% for <gray>time%<newline><red>Reason: <gray>reason%<newline>appeal%"
-  kick: "<red>You've been expelled from server%<newline><red>Reason: <gray>reason%"
-  mute: "<hover:show_text:'<yellow>With the reason of reason%'><red>You've been muted <gray>for duration%."
-  warn: "<red>You've been warned <gray>for reason%."
-  appeal: "If you believe this is unjustified, appeal this punishment at n/a"
+acf-core:
+  help_page_information: "- Showing page &f{page} of &f{totalpages} (&a{results} results)."
+  help_no_results: "&cError: No more results."
+  help_header: "&f=== &bShowing help for &f{commandprefix}{command}&f ==="
+  help_format: "&b{command} &f{parameters} &a{separator} {description}"
+  help_detailed_header: "&f=== &bShowing detailed help for &f{commandprefix}{command}&f ==="
+  help_detailed_command_format: "&b{command} &f{parameters} &a{separator} {description}"
+  help_detailed_parameter_format: "&f{syntaxorname}: &a{description}"
+  help_search_header: "&f=== &bSearch results for &f{commandprefix}{command} {search}&f ==="
