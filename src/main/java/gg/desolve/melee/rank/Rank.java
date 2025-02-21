@@ -58,6 +58,28 @@ public class Rank {
         return Arrays.stream(permission.split("\\|")).anyMatch(permissions::contains);
     }
 
+    public String getWoolColored() {
+        return switch (color.toLowerCase()
+                .replace("<", "")
+                .replace(">", "")) {
+            case "dark_red" -> "RED";
+            case "red" -> "RED";
+            case "gold", "yellow" -> "YELLOW";
+            case "dark_green" -> "GREEN";
+            case "green" -> "LIME";
+            case "aqua", "dark_aqua" -> "CYAN";
+            case "blue" -> "BLUE";
+            case "dark_blue" -> "BLUE";
+            case "light_purple" -> "MAGENTA";
+            case "dark_purple" -> "PURPLE";
+            case "white" -> "WHITE";
+            case "gray" -> "LIGHT_GRAY";
+            case "dark_gray" -> "GRAY";
+            case "black" -> "BLACK";
+            default -> "WHITE";
+        };
+    }
+
     public void save() {
         RankManager rankManager = Melee.getInstance().getRankManager();
         rankManager.save(this);
