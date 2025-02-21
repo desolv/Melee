@@ -1,4 +1,9 @@
+server:
+  server_display: "Desolve"
+  plugin_prefix: "<aqua><bold>Melee <gray>»</bold> "
+
 acf-core:
+  invalid_syntax: "&bUsage: &a{command} &f{syntax}"
   help_page_information: "- Showing page &f{page} of &f{totalpages} (&a{results} results)."
   help_no_results: "&cError: No more results."
   help_header: "&f=== &bShowing help for &f{commandprefix}{command}&f ==="

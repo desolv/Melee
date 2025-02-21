@@ -42,7 +42,7 @@ public class GrantManualCommand extends BaseCommand {
             }
         }
 
-        if (!profile.hasGrant(rank)) {
+        if (profile.hasGrant(rank)) {
             Message.send(sender, rank.getDisplayColored() + " <red>rank is present for " + profile.getUsernameColored() + ".");
             return;
         }
@@ -78,10 +78,21 @@ public class GrantManualCommand extends BaseCommand {
                 .replace("scope%", scope.getFormat())
                 .replace("reason%", reason);
 
+        String broadcastMessage = "prefix% granter% <green>has granted player% <green>the rank% <green>rank on scope <light_purple>scope%."
+                .replace("granter%", (sender instanceof Player ?
+                        profileManager.retrieve(((Player) sender).getUniqueId()).getUsernameColored()
+                        : "<red>Console"))
+                .replace("player%", profile.getUsernameColored())
+                .replace("rank%", rank.getDisplayColored())
+                .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
+                .replace("scope%", scope.getFormat())
+                .replace("reason%", reason);
+
         String redisMessage = String.join("&%$",
                 String.valueOf(profile.getUuid()),
                 scope.getUnformatted(),
-                grantedMessage
+                grantedMessage,
+                broadcastMessage
         );
 
         Mithril.getInstance().getRedisManager().publish("Grant", redisMessage);

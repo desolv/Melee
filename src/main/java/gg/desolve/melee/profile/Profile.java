@@ -47,7 +47,7 @@ public class Profile {
     }
 
     public boolean hasScope(String scope) {
-        List<String> scopes = Arrays.asList(scope.split(","));
+        List<String> scopes = Arrays.asList(scope.split("\\|"));
 
         return scopes.contains("global") ||
                 scopes.contains(Mithril.getInstance().getInstanceManager().getInstance().getName());

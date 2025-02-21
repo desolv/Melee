@@ -16,8 +16,9 @@ public class GrantSubscriber extends JedisPubSub {
     public void onMessage(String channel, String message) {
         String[] parts = message.split("&%\\$");
         UUID uuid = UUID.fromString(parts[0]);
-        List<String> scopes = Arrays.asList(parts[1].split(","));
-        String msg = parts[2];
+        List<String> scopes = Arrays.asList(parts[1].split("\\|"));
+        String grantedMessage = parts[2];
+        String broadcastMessage = parts[3];
 
         if (!scopes.contains(Mithril.getInstance().getInstanceManager().getInstance().getName())
                 && !scopes.contains("global"))
@@ -26,6 +27,7 @@ public class GrantSubscriber extends JedisPubSub {
         Melee.getInstance().getProfileManager().getRecords().remove(uuid);
         Melee.getInstance().getProfileManager().retrieve(uuid);
 
-        Message.send(Bukkit.getPlayer(uuid), msg);
+        Message.send(Bukkit.getPlayer(uuid), grantedMessage);
+        Mithril.getInstance().getInstanceManager().broadcast(broadcastMessage + "&%$melee.admin|melee.*");
     }
 }
