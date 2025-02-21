@@ -8,6 +8,7 @@ import gg.desolve.melee.subscribe.SubscriberDirector;
 import gg.desolve.mithril.command.CommandManager;
 import gg.desolve.mithril.config.Config;
 import gg.desolve.mithril.config.ConfigurationManager;
+import gg.desolve.mithril.relevance.Message;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,11 +42,16 @@ public final class Melee extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");;
+        configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");
+
+        Message.setPrefix(getLanguageConfig().getString("server.plugin_prefix"));
+
         commandManager = new CommandManager(this, "melee.*");
         commandDirector = new CommandDirector(commandManager);
+
         profileManager = new ProfileManager();
         rankManager = new RankManager();
+
         listenerDirector = new ListenerDirector();
         subscriberDirector = new SubscriberDirector();
     }
