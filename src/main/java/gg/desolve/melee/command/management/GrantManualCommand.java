@@ -73,15 +73,11 @@ public class GrantManualCommand extends BaseCommand {
 
         String grantedMessage = "<green>You've been granted the rank% <green>rank <gray>for duration%."
                 .replace("rank%", rank.getDisplayColored())
-                .replace("player%", profile.getUsernameColored())
                 .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
                 .replace("scope%", scope.getFormat())
                 .replace("reason%", reason);
 
-        String broadcastMessage = "prefix% granter% <green>has granted player% <green>the rank% <green>rank on scope <light_purple>scope%."
-                .replace("granter%", (sender instanceof Player ?
-                        profileManager.retrieve(((Player) sender).getUniqueId()).getUsernameColored()
-                        : "<red>Console"))
+        String broadcastMessage = "prefix% rank% <green>rank has been granted to player% <green>on scope <light_purple>scope%."
                 .replace("player%", profile.getUsernameColored())
                 .replace("rank%", rank.getDisplayColored())
                 .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
