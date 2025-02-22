@@ -1,4 +1,4 @@
-package gg.desolve.melee.inventory;
+package gg.desolve.melee.inventory.rank;
 
 import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;
@@ -25,7 +25,7 @@ public class RankInventory implements InventoryProvider {
             .id("rankInventory")
             .provider(new RankInventory())
             .size(3, 9)
-            .title("Rank Management")
+            .title("Rank Metadata")
             .manager(Mithril.getInstance().getInventoryManager())
             .build();
 
@@ -41,7 +41,7 @@ public class RankInventory implements InventoryProvider {
         List<ClickableItem> ranks = new ArrayList<>();
 
         Melee.getInstance().getRankManager().sorted().forEach(rank -> {
-            XMaterial material = XMaterial.matchXMaterial(rank.getWoolColored() + "_WOOL")
+            XMaterial material = XMaterial.matchXMaterial(Material.getSkull(rank.getColor()) + "_WOOL")
                     .orElse(XMaterial.WHITE_WOOL);
 
             ItemStack rankStack = material.parseItem();
@@ -49,15 +49,12 @@ public class RankInventory implements InventoryProvider {
 
             rankMeta.setDisplayName(Message.translate(rank.getNameColored()));
             rankMeta.setLore(Stream.of(
-                    "<gray>Priority: <white>" + rank.getPriority(),
-                    "<gray>Display Name: <white>" + rank.getDisplayColored(),
-                    "<gray>Color: " + rank.getColor() + "this",
-                    "<gray>Prefix: " + rank.getPrefix() + "You"
-                    /*
-                    TODO: Add separate gui for managing metadata such as inherits/permissions etc
-                    " ",
+                    "<white>Priority: <aqua>" + rank.getPriority(),
+                    "<white>Display Name: <white>" + rank.getDisplayColored(),
+                    "<white>Color: " + rank.getColor() + "this",
+                    "<white>Prefix: " + rank.getPrefix() + "You",
+                    "<white>",
                     "<yellow>Click to modify metadata"
-                    */
             ).map(Message::translate).toList());
 
             rankStack.setItemMeta(rankMeta);
