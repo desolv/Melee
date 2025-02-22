@@ -3,7 +3,7 @@ package gg.desolve.melee.command.management;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
-import gg.desolve.melee.inventory.RankInventory;
+import gg.desolve.melee.inventory.rank.RankInventory;
 import org.bukkit.entity.Player;
 
 @CommandAlias("rank")
@@ -17,10 +17,10 @@ public class RankCommand extends BaseCommand {
         help.showHelp();
     }
 
-    @Subcommand("list")
-    @CommandPermission("melee.command.rank|melee.command.rank.list")
-    @Description("Retrieve ranks on GUI")
-    public static void onList(Player player) {
+    @Subcommand("metadata")
+    @CommandPermission("melee.command.rank|melee.command.rank.metadata")
+    @Description("Modify ranks metadata on GUI")
+    public static void onMetadata(Player player) {
         RankInventory.INVENTORY.open(player);
     }
 
