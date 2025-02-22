@@ -39,8 +39,8 @@ public class RankManager {
                 .orElse(null);
 
         if (rank != null) {
-            records.put(rankName, rank);
             rank.setTimestamp(System.currentTimeMillis());
+            records.put(rankName, rank);
         }
 
         return rank;
@@ -107,13 +107,12 @@ public class RankManager {
             primary = retrieve().stream()
                     .filter(Rank::isPrimary)
                     .findFirst()
-                    .orElseGet(() -> {
-                        Rank rank = create("Default");
-                        rank.setPrimary(true);
-                        rank.setGrantable(false);
-                        save(rank);
-                        return rank;
-                    });
+                    .orElseGet(() -> create("Default"));
+
+        primary.setPrimary(true);
+        primary.setGrantable(false);
+        primary.setVisible(true);
+        save(primary);
 
         return primary;
     }
