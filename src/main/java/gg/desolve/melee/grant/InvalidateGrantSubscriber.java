@@ -6,8 +6,6 @@ import gg.desolve.mithril.relevance.Message;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.JedisPubSub;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class InvalidateGrantSubscriber extends JedisPubSub {

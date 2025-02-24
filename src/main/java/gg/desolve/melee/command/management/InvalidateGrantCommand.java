@@ -9,14 +9,9 @@ import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.profile.ProfileManager;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
-import gg.desolve.mithril.relevance.Converter;
-import gg.desolve.mithril.relevance.Duration;
 import gg.desolve.mithril.relevance.Message;
-import gg.desolve.mithril.relevance.Scope;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 @CommandAlias("invalidategrant")
 public class InvalidateGrantCommand extends BaseCommand {
