@@ -65,12 +65,12 @@ public class RankModifyInheritsInventory implements InventoryProvider {
             ).map(Message::translate).toList());
             stack.setItemMeta(meta);
             inherits.add(ClickableItem.of(stack, r -> {
-                List<String> inhts = new ArrayList<>(rank.getInherits());
-                inhts.remove(inheritRank);
-                rank.setInherits(inhts);
+                rank.setInherits(rank.getInherits().stream()
+                        .filter(i -> !i.equalsIgnoreCase(inheritRank))
+                        .toList());
                 rank.save();
                 getInventory(profile, rank).open(player);
-                Melee.getInstance().getRankManager().publish(rank, "refresh");
+                Melee.getInstance().getRankManager().publish(rank, "none");
             }));
         });
 

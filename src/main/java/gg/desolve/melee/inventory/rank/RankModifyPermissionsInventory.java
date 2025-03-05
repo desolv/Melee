@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
@@ -61,9 +62,9 @@ public class RankModifyPermissionsInventory implements InventoryProvider {
             ).map(Message::translate).toList());
             stack.setItemMeta(meta);
             permissions.add(ClickableItem.of(stack, r -> {
-                List<String> perms = new ArrayList<>(rank.getPermissions());
-                perms.remove(permission);
-                rank.setPermissions(perms);
+                rank.setPermissions(rank.getPermissions().stream()
+                        .filter(i -> !i.equalsIgnoreCase(permission))
+                        .toList());
                 rank.save();
                 getInventory(profile, rank).open(player);
             }));
