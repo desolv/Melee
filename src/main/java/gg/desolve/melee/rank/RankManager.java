@@ -76,7 +76,7 @@ public class RankManager {
     public void delete(Rank rank) {
         Mithril.getInstance().getMongoManager().getMongoDatabase().getCollection("ranks")
                 .deleteOne(Filters.eq("name", rank.getName()));
-        publish(rank, "delete");
+        publish(rank, "refresh");
     }
 
     public List<Rank> retrieve() {
