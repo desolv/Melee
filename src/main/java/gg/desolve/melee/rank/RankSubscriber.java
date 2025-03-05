@@ -15,7 +15,7 @@ public class RankSubscriber extends JedisPubSub {
 
         Melee.getInstance().getRankManager().getRecords().remove(rank);
 
-        if (type.equals("delete"))
+        if (type.equals("refresh"))
             Bukkit.getOnlinePlayers().forEach(player -> {
                 Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
                 profile.refreshGrants();
