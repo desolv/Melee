@@ -30,16 +30,18 @@ public class Profile {
     private String address;
     private boolean loaded;
     private transient long timestamp;
+    private transient String process;
     private Grant grant;
     private List<Grant> grants;
     private List<Socket> sockets;
-    private transient Map<String, Schedule> schedules = new HashMap<>();
+    private transient Map<String, Schedule> schedules;
 
     public Profile(UUID uuid, String username) {
         this.uuid = uuid;
         this.username = username;
         this.grants = new ArrayList<>();
         this.sockets = new ArrayList<>();
+        this.schedules = new HashMap<>();
     }
 
     public String getUsernameColored() {
@@ -59,12 +61,28 @@ public class Profile {
                         && grant.getType().equals(GrantType.ACTIVE));
     }
 
+    public void setRankProcess(Rank rank, String process) {
+        Player player = Bukkit.getPlayer(uuid);
+        player.closeInventory();
+
+        Message.send(player, "<yellow>Enter a new " + process + " for " + rank.getNameColored() + " <yellow>rank (Type 'cancel' to abort)");
+        this.process = "rank:" + rank.getName() + ":" + process;
+    }
+
     public Grant getActiveGrant(Rank rank) {
         return grants.stream()
                 .filter(grant -> grant.getRank().getName().equals(rank.getName())
                         && grant.getType().equals(GrantType.ACTIVE))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<String> getAllPermissions() {
+        return grants.stream()
+                .filter(grant -> grant.getType() == GrantType.ACTIVE)
+                .flatMap(grant -> grant.getRank().getPermissions().stream())
+                .distinct()
+                .toList();
     }
 
     public boolean hasPermission(String permission) {
@@ -125,14 +143,17 @@ public class Profile {
                 .map(PermissionAttachmentInfo::getAttachment)
                 .filter(Objects::nonNull)
                 .filter(att -> att.getPlugin() != null && att.getPlugin().equals(Melee.getInstance()))
-                .forEach(player::removeAttachment);
+                .forEach(att -> {
+                    if (player.getEffectivePermissions().stream().anyMatch(info -> info.getAttachment() == att))
+                        player.removeAttachment(att);
+                });
 
         PermissionAttachment attachment = player.addAttachment(Melee.getInstance());
 
         grants.stream()
                 .filter(grant -> (grant.getType() == GrantType.ACTIVE) && hasScope(grant.getScope()))
                 .map(grant -> grant.getRank().getPermissions())
-                .flatMap(Collection::stream) // Flatten permissions list
+                .flatMap(Collection::stream)
                 .distinct() // Avoid duplicates
                 .forEach(permission -> {
                     boolean isNegative = permission.startsWith("-");
