@@ -7,8 +7,8 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import gg.desolve.melee.Melee;
 import gg.desolve.melee.profile.Profile;
+import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
 import gg.desolve.mithril.relevance.Material;
 import gg.desolve.mithril.relevance.Message;
@@ -20,15 +20,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class RankInventory implements InventoryProvider {
+public class RankModifyPermissionsInventory implements InventoryProvider {
 
-    public static final SmartInventory INVENTORY = SmartInventory.builder()
-            .id("rankInventory")
-            .provider(new RankInventory())
-            .size(3, 9)
-            .title("Rank Metadata")
-            .manager(Mithril.getInstance().getInventoryManager())
-            .build();
+    private final Profile profile;
+    private final Rank rank;
+
+    public RankModifyPermissionsInventory(Profile profile, Rank rank) {
+        this.profile = profile;
+        this.rank = rank;
+    }
+
+    public static SmartInventory getInventory(Profile profile, Rank rank) {
+        return SmartInventory.builder()
+                .id("rankModifyPermissionsInventory")
+                .provider(new RankModifyPermissionsInventory(profile, rank))
+                .size(3, 9)
+                .title(Message.translate("Modifying Permissions"))
+                .manager(Mithril.getInstance().getInventoryManager())
+                .build();
+    }
 
     @Override
     public void init(Player player, InventoryContents contents) {
@@ -38,34 +48,43 @@ public class RankInventory implements InventoryProvider {
         glassStack.setItemMeta(glassMeta);
         contents.fillRow(0, ClickableItem.empty(glassStack));
 
-        Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
         Pagination pagination = contents.pagination();
-        List<ClickableItem> ranks = new ArrayList<>();
+        List<ClickableItem> permissions = new ArrayList<>();
 
-        Melee.getInstance().getRankManager().sorted().forEach(rank -> {
-            XMaterial material = XMaterial.matchXMaterial(Material.getWool(rank.getColor()) + "_WOOL")
-                    .orElse(XMaterial.WHITE_WOOL);
-
-            ItemStack rankStack = material.parseItem();
-            ItemMeta rankMeta = rankStack.getItemMeta();
-
-            rankMeta.setDisplayName(Message.translate(rank.getNameColored()));
-            rankMeta.setLore(Stream.of(
-                    "<gray>Priority: <aqua>" + rank.getPriority(),
-                    "<gray>Display Name: " + rank.getDisplayColored(),
-                    "<gray>Color: " + rank.getColor() + "this",
-                    "<gray>Prefix: " + rank.getPrefix() + "You",
-                    "<gray>",
-                    "<yellow>Click to modify metadata"
+        rank.getPermissions().forEach(permission -> {
+            ItemStack stack = XMaterial.PAPER.parseItem();
+            ItemMeta meta = stack.getItemMeta();
+            meta.setDisplayName(Message.translate("<aqua>" + permission));
+            meta.setLore(Stream.of(
+                    "<white>",
+                    "<yellow>Click to remove permission"
             ).map(Message::translate).toList());
-
-            rankStack.setItemMeta(rankMeta);
-            ranks.add(ClickableItem.of(rankStack, r -> RankModifyInventory.getInventory(profile, rank).open(player)));
+            stack.setItemMeta(meta);
+            permissions.add(ClickableItem.of(stack, r -> {
+                List<String> perms = new ArrayList<>(rank.getPermissions());
+                perms.remove(permission);
+                rank.setPermissions(perms);
+                rank.save();
+                getInventory(profile, rank).open(player);
+            }));
         });
 
-        pagination.setItemsPerPage(7);
-        pagination.setItems(ranks.toArray(new ClickableItem[0]));
+        pagination.setItemsPerPage(18);
+        pagination.setItems(permissions.toArray(new ClickableItem[0]));
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
+
+
+        ItemStack addStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyMDk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZTAyNzgwMTQyZjcxNiJ9fX0=");
+        ItemMeta addMeta = addStack.getItemMeta();
+        addMeta.setDisplayName(Message.translate("<green>Add Permission"));
+        addMeta.setLore(Stream.of(
+                "<gray>Permissions define what actions",
+                "<gray>a player can do",
+                "<gray>",
+                "<yellow>Click to add permission"
+        ).map(Message::translate).toList());
+        addStack.setItemMeta(addMeta);
+        contents.set(0, 4, ClickableItem.of(addStack, r -> profile.setRankProcess(rank, "permission")));
 
         if (!pagination.isFirst()) {
             ItemStack previousStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
@@ -78,7 +97,7 @@ public class RankInventory implements InventoryProvider {
 
             contents.set(0, 0, ClickableItem.of(
                     previousStack,
-                    e -> INVENTORY.open(player, pagination.previous().getPage())
+                    e -> getInventory(profile, rank).open(player, pagination.previous().getPage())
             ));
         }
 
@@ -93,7 +112,7 @@ public class RankInventory implements InventoryProvider {
 
             contents.set(0, 8, ClickableItem.of(
                     nextStack,
-                    e -> INVENTORY.open(player, pagination.next().getPage())
+                    e -> getInventory(profile, rank).open(player, pagination.next().getPage())
             ));
         }
     }
