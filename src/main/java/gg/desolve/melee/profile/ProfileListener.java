@@ -85,6 +85,7 @@ public class ProfileListener implements Listener {
                 .findFirst()
                 .ifPresent(s -> s.setLogins(s.getLogins() + 1));
         profile.setServer(Mithril.getInstance().getInstanceManager().getInstance().getId());
+        profile.refreshGrants();
 
         profile.save();
     }
