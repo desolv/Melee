@@ -54,7 +54,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 "<gray>but its used for identification",
                 "<gray>- " + rank.getNameColored(),
                 "<gray>",
-                "<yellow>Click to modify display name"
+                "<yellow>Click to modify name"
         ).map(Message::translate).toList());
         nameStack.setItemMeta(nameMeta);
 
