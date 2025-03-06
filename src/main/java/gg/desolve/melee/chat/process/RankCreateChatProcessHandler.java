@@ -1,7 +1,7 @@
 package gg.desolve.melee.chat.process;
 
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.inventory.rank.RankInventory;
+import gg.desolve.melee.inventory.rank.metadata.MetadataInventory;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.melee.rank.RankManager;
 import gg.desolve.mithril.relevance.Message;
@@ -37,6 +37,6 @@ public class RankCreateChatProcessHandler {
         newRank.save();
 
         Message.send(player, "<green>Created " + message + " <green>rank.");
-        RankInventory.INVENTORY.open(player);
+        MetadataInventory.INVENTORY.open(player);
     }
 }

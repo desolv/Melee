@@ -1,4 +1,4 @@
-package gg.desolve.melee.inventory.rank;
+package gg.desolve.melee.inventory.rank.metadata;
 
 import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;
@@ -7,7 +7,6 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
-import gg.desolve.melee.Melee;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
@@ -21,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class RankModifyPermissionsInventory implements InventoryProvider {
+public class MetadataModifyPermissionsInventory implements InventoryProvider {
 
     private final Profile profile;
     private final Rank rank;
 
-    public RankModifyPermissionsInventory(Profile profile, Rank rank) {
+    public MetadataModifyPermissionsInventory(Profile profile, Rank rank) {
         this.profile = profile;
         this.rank = rank;
     }
@@ -34,7 +33,7 @@ public class RankModifyPermissionsInventory implements InventoryProvider {
     public static SmartInventory getInventory(Profile profile, Rank rank) {
         return SmartInventory.builder()
                 .id("rankModifyPermissionsInventory")
-                .provider(new RankModifyPermissionsInventory(profile, rank))
+                .provider(new MetadataModifyPermissionsInventory(profile, rank))
                 .size(3, 9)
                 .title(Message.translate("Modifying Permissions"))
                 .manager(Mithril.getInstance().getInventoryManager())

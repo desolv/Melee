@@ -1,4 +1,4 @@
-package gg.desolve.melee.inventory.rank;
+package gg.desolve.melee.inventory.rank.metadata;
 
 import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;
@@ -17,12 +17,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.stream.Stream;
 
-public class RankModifyInventory implements InventoryProvider {
+public class MetadataModifyInventory implements InventoryProvider {
 
     private final Profile profile;
     private final Rank rank;
 
-    public RankModifyInventory(Profile profile, Rank rank) {
+    public MetadataModifyInventory(Profile profile, Rank rank) {
         this.profile = profile;
         this.rank = Melee.getInstance().getRankManager().retrieve(rank.getName());
     }
@@ -30,7 +30,7 @@ public class RankModifyInventory implements InventoryProvider {
     public static SmartInventory getInventory(Profile profile, Rank rank) {
         return SmartInventory.builder()
                 .id("rankModifyInventory")
-                .provider(new RankModifyInventory(profile, rank))
+                .provider(new MetadataModifyInventory(profile, rank))
                 .size(3, 9)
                 .title(Message.translate("Modifying " + rank.getNameColored()))
                 .manager(Mithril.getInstance().getInventoryManager())
@@ -175,7 +175,7 @@ public class RankModifyInventory implements InventoryProvider {
                 "<yellow>Click to modify permissions"
         ).map(Message::translate).toList());
         permissionsStack.setItemMeta(permissionsMeta);
-        contents.set(1, 0, ClickableItem.of(permissionsStack, r -> RankModifyPermissionsInventory.getInventory(profile, rank).open(player)));
+        contents.set(1, 0, ClickableItem.of(permissionsStack, r -> MetadataModifyPermissionsInventory.getInventory(profile, rank).open(player)));
 
         ItemStack inheritsStack = XMaterial.COMPARATOR.parseItem();
         ItemMeta inheritsMeta = inheritsStack.getItemMeta();
@@ -188,7 +188,7 @@ public class RankModifyInventory implements InventoryProvider {
                 "<yellow>Click to modify inherits"
         ).map(Message::translate).toList());
         inheritsStack.setItemMeta(inheritsMeta);
-        contents.set(2, 0, ClickableItem.of(inheritsStack, r -> RankModifyInheritsInventory.getInventory(profile, rank).open(player)));
+        contents.set(2, 0, ClickableItem.of(inheritsStack, r -> MetadataModifyInheritsInventory.getInventory(profile, rank).open(player)));
     }
 
     @Override

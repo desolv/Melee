@@ -1,9 +1,9 @@
 package gg.desolve.melee.chat.process;
 
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.inventory.rank.RankModifyInheritsInventory;
-import gg.desolve.melee.inventory.rank.RankModifyInventory;
-import gg.desolve.melee.inventory.rank.RankModifyPermissionsInventory;
+import gg.desolve.melee.inventory.rank.metadata.MetadataModifyInheritsInventory;
+import gg.desolve.melee.inventory.rank.metadata.MetadataModifyInventory;
+import gg.desolve.melee.inventory.rank.metadata.MetadataModifyPermissionsInventory;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.relevance.Message;
@@ -105,13 +105,13 @@ public class RankChatProcessHandler {
 
         switch (process) {
             case "permission":
-                RankModifyPermissionsInventory.getInventory(profile, rank).open(player);
+                MetadataModifyPermissionsInventory.getInventory(profile, rank).open(player);
                 break;
             case "inherit":
-                RankModifyInheritsInventory.getInventory(profile, rank).open(player);
+                MetadataModifyInheritsInventory.getInventory(profile, rank).open(player);
                 break;
             default:
-                RankModifyInventory.getInventory(profile, rank).open(player);
+                MetadataModifyInventory.getInventory(profile, rank).open(player);
                 break;
         }
     }
