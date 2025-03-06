@@ -67,6 +67,20 @@ public class RankInventory implements InventoryProvider {
         pagination.setItems(ranks.toArray(new ClickableItem[0]));
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
+
+        ItemStack addStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyMDk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZTAyNzgwMTQyZjcxNiJ9fX0=");
+        ItemMeta addMeta = addStack.getItemMeta();
+        addMeta.setDisplayName(Message.translate("<green>Create"));
+        addMeta.setLore(Stream.of(
+                "<gray>Create a plain rank without",
+                "<gray>any attributes",
+                "<white>",
+                "<yellow>Click to create a rank"
+        ).map(Message::translate).toList());
+        addStack.setItemMeta(addMeta);
+        contents.set(0, 4, ClickableItem.of(addStack, r -> profile.setRankCreateProcess()));
+
+
         if (!pagination.isFirst()) {
             ItemStack previousStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
             ItemMeta previousMeta = previousStack.getItemMeta();

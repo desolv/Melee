@@ -69,6 +69,14 @@ public class Profile {
         this.process = "rank:" + rank.getName() + ":" + process;
     }
 
+    public void setRankCreateProcess() {
+        Player player = Bukkit.getPlayer(uuid);
+        player.closeInventory();
+
+        Message.send(player, "<yellow>Enter a name for the new rank (Type 'cancel' to abort)");
+        this.process = "create";
+    }
+
     public Grant getActiveGrant(Rank rank) {
         return grants.stream()
                 .filter(grant -> grant.getRank().getName().equals(rank.getName())

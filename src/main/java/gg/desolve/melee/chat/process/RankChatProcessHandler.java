@@ -1,4 +1,4 @@
-package gg.desolve.melee.chat;
+package gg.desolve.melee.chat.process;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.inventory.rank.RankModifyInheritsInventory;
