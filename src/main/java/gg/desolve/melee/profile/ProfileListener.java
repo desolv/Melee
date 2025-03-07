@@ -69,7 +69,8 @@ public class ProfileListener implements Listener {
     }
 
     @EventHandler(
-            priority = EventPriority.HIGHEST
+            priority = EventPriority.HIGHEST,
+            ignoreCancelled = true
     )
     public void onPlayerJoin(PlayerJoinEvent event) {
         Profile profile = Melee.getInstance().getProfileManager().retrieve(event.getPlayer().getUniqueId());
