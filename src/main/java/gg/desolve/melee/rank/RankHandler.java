@@ -81,7 +81,7 @@ public class RankHandler {
                 }
 
                 List<String> inherits = new ArrayList<>(rank.getInherits());
-                if (inherits.contains(inherit.getName().toLowerCase())) {
+                if (inherits.contains(inherit.getName())) {
                     Message.send(player, inherit.getDisplayColored() + " <red>rank is present.");
                     return;
                 }
