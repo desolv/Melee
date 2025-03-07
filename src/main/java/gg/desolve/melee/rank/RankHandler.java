@@ -1,24 +1,23 @@
-package gg.desolve.melee.chat.process;
+package gg.desolve.melee.rank;
 
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.inventory.rank.metadata.MetadataModifyInheritsInventory;
 import gg.desolve.melee.inventory.rank.metadata.MetadataModifyInventory;
 import gg.desolve.melee.inventory.rank.metadata.MetadataModifyPermissionsInventory;
 import gg.desolve.melee.profile.Profile;
-import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.relevance.Message;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RankChatProcessHandler {
+public class RankHandler {
 
     private final Profile profile;
     private final Rank rank;
     private final String process;
 
-    public RankChatProcessHandler(Profile profile, Rank rank, String process) {
+    public RankHandler(Profile profile, Rank rank, String process) {
         this.profile = profile;
         this.rank = rank;
         this.process = process;
