@@ -6,6 +6,7 @@ import gg.desolve.melee.Melee;
 import gg.desolve.melee.command.management.GrantManualCommand;
 import gg.desolve.melee.command.management.InvalidateGrantCommand;
 import gg.desolve.melee.command.management.RankCommand;
+import gg.desolve.melee.command.management.UserCommand;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
@@ -40,7 +41,8 @@ public class CommandDirector {
         List<BaseCommand> commandList = Arrays.asList(
                 new GrantManualCommand(),
                 new InvalidateGrantCommand(),
-                new RankCommand()
+                new RankCommand(),
+                new UserCommand()
         );
 
         commandList.forEach(commandManager::registerCommand);
