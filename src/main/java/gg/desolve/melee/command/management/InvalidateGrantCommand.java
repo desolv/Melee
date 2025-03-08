@@ -10,6 +10,7 @@ import gg.desolve.melee.profile.ProfileManager;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
 import gg.desolve.mithril.relevance.Message;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,12 +25,12 @@ public class InvalidateGrantCommand extends BaseCommand {
     public static void execute(CommandSender sender, Profile profile, Rank rank, @Optional @Default("Other") String reason) {
         ProfileManager profileManager = Melee.getInstance().getProfileManager();
 
-        if ((sender instanceof Player) && !profile.hasPermission("melee.*")) {
+        if ((sender instanceof Player)) {
             boolean cannotGrant = !rank.isGrantable();
             Profile granter = profileManager.retrieve(((Player) sender).getUniqueId());
             boolean isHigherRank = Melee.getInstance().getRankManager().compare(rank, granter.getGrant().getRank());
 
-            if (cannotGrant || isHigherRank) {
+            if (cannotGrant || isHigherRank && !granter.hasPermission("melee.*")) {
                 Message.send(sender, cannotGrant ?
                         "<red>You cannot invalidate this rank." :
                         "<red>You cannot invalidate ranks higher than yours.");

@@ -29,12 +29,12 @@ public class GrantManualCommand extends BaseCommand {
     public static void execute(CommandSender sender, Profile profile, Rank rank, Duration duration, @Optional @Default("global") Scope scope, @Optional @Default("Other") String reason) {
         ProfileManager profileManager = Melee.getInstance().getProfileManager();
 
-        if ((sender instanceof Player) && !profile.hasPermission("melee.*")) {
+        if ((sender instanceof Player)) {
             boolean cannotGrant = !rank.isGrantable();
             Profile granter = profileManager.retrieve(((Player) sender).getUniqueId());
             boolean isHigherRank = Melee.getInstance().getRankManager().compare(rank, granter.getGrant().getRank());
 
-            if (cannotGrant || isHigherRank) {
+            if (cannotGrant || isHigherRank && !granter.hasPermission("melee.*")) {
                 Message.send(sender, cannotGrant ?
                         "<red>You cannot grant this rank." :
                         "<red>You cannot grant ranks higher than yours.");
