@@ -22,25 +22,24 @@ public class RankManager {
 
     public RankManager() {
         primary();
+        deposit();
     }
 
     public Rank retrieve(String rankName) {
-        Rank rankCache = records.get(rankName);
-        if (rankCache != null && System.currentTimeMillis() - rankCache.getTimestamp() < (3600 * 1000))
-            return rankCache;
+        Rank rank = records.get(rankName);
 
-        return reclaim(rankName);
-    }
+        if (rank != null)
+            return rank;
 
-    public Rank reclaim(String rankName) {
-        Rank rank = retrieve().stream()
-                .filter(r -> r.getName().equalsIgnoreCase(rankName))
-                .findFirst()
-                .orElse(null);
+        rank = Mithril.getInstance().getMongoManager().getMongoDatabase()
+                .getCollection("ranks")
+                .find(Filters.eq("name", rankName))
+                .map(rankDocument -> gson.fromJson(rankDocument.toJson(), Rank.class))
+                .first();
 
         if (rank != null) {
             rank.setTimestamp(System.currentTimeMillis());
-            records.put(rankName, rank);
+            records.put(rank.getName(), rank);
         }
 
         return rank;
@@ -66,25 +65,31 @@ public class RankManager {
     }
 
     public void save(Rank rank) {
-        Mithril.getInstance().getMongoManager().getMongoDatabase().getCollection("ranks")
-                .replaceOne(
+        Mithril.getInstance().getMongoManager().runAsyncMongoTask(db ->
+                db.getCollection("ranks").replaceOne(
                         Filters.eq("name", rank.getName()),
                         Document.parse(gson.toJson(rank)),
-                        new ReplaceOptions().upsert(true));
+                        new ReplaceOptions().upsert(true)));
     }
 
     public void delete(Rank rank) {
-        Mithril.getInstance().getMongoManager().getMongoDatabase().getCollection("ranks")
-                .deleteOne(Filters.eq("name", rank.getName()));
+        Mithril.getInstance().getMongoManager().runAsyncMongoTask(db ->
+                db.getCollection("ranks")
+                        .deleteOne(Filters.eq("name", rank.getName())));
         publish(rank, "refresh");
     }
 
     public List<Rank> retrieve() {
-        return Mithril.getInstance().getMongoManager().getMongoDatabase()
+        return records.values().stream().toList();
+    }
+
+    public void deposit() {
+       Mithril.getInstance().getMongoManager().getMongoDatabase()
                 .getCollection("ranks")
                 .find()
                 .map(rankDocument -> gson.fromJson(rankDocument.toJson(), Rank.class))
-                .into(new ArrayList<>());
+                .into(new ArrayList<>())
+               .forEach(rank -> records.put(rank.getName().toLowerCase(), rank));
     }
 
     public List<Rank> sorted() {
