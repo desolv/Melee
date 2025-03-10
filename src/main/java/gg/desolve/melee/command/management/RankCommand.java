@@ -5,10 +5,12 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.inventory.rank.metadata.MetadataInventory;
-import gg.desolve.melee.inventory.rank.modify.ModifyRankInventory;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.melee.rank.RankManager;
+import gg.desolve.mithril.Mithril;
 import gg.desolve.mithril.relevance.Message;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 @CommandAlias("rank")
@@ -33,11 +35,11 @@ public class RankCommand extends BaseCommand {
     @CommandPermission("melee.command.rank|melee.command.rank.create")
     @Description("Create new rank")
     @Syntax("<name>")
-    public static void onCreate(Player player, @Single String name) {
+    public static void onCreate(CommandSender sender, @Single String name) {
         RankManager rankManager = Melee.getInstance().getRankManager();
         Rank rank = rankManager.retrieve(name);
         if (rank != null) {
-            Message.send(player, rank.getDisplayColored() + " <red>rank is present.");
+            Message.send(sender, rank.getDisplayColored() + " <red>rank is present.");
             return;
         }
 
@@ -47,9 +49,37 @@ public class RankCommand extends BaseCommand {
         newRank.setVisible(false);
         newRank.save();
 
-        Message.send(player, "<green>Created " + newRank.getDisplayColored() + " <green>rank (check rank metadata).");
+        Message.send(sender, "<green>Created " + newRank.getDisplayColored() + " <green>rank (check rank metadata).");
     }
 
+    @Subcommand("confirm")
+    @CommandCompletion("@ranks")
+    @CommandPermission("melee.command.rank|melee.command.rank.confirm")
+    @Syntax("(rank)")
+    @Description("Confirm pending deletion for a rank")
+    public static void onConfirm(CommandSender sender, Rank rank) {
+        if (!(sender instanceof ConsoleCommandSender)) {
+            Message.send(sender, "<red>Console only command.");
+            return;
+        }
 
+        if (!rank.isPending() || rank.isPrimary()) {
+            Message.send(sender, "<red>Unable to confirm pending deletion for " + rank.getNameColored() + " <red>rank.");
+            return;
+        }
 
+        String name = rank.getNameColored();
+        Melee.getInstance().getRankManager().delete(rank);
+
+        Message.send(sender, "<green>Deleted " + name + " <green>rank.");
+        String broadcastMessage = "prefix% rank% <green>rank has been deleted."
+                .replace("rank%", name);
+
+        String redisMessage = String.join("&%$",
+                broadcastMessage,
+                "melee.*|melee.admin"
+        );
+
+        Mithril.getInstance().getRedisManager().publish("Broadcast", redisMessage);
+    }
 }
