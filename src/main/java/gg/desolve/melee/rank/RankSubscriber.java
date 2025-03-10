@@ -13,7 +13,7 @@ public class RankSubscriber extends JedisPubSub {
         String rank = parts[0];
         String type = parts[1];
 
-        Melee.getInstance().getRankManager().getRecords().remove(rank);
+        Melee.getInstance().getRankManager().getRecords().remove(rank.toLowerCase());
 
         if (type.equals("refresh"))
             Bukkit.getOnlinePlayers().forEach(player -> {
