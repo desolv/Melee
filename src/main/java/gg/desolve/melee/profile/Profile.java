@@ -179,26 +179,32 @@ public class Profile {
                     Integer.MAX_VALUE,
                     GrantType.ACTIVE));
 
+        grants.removeIf(grant -> {
+            boolean isNull = grant.getRank() == null;
+
+            if (isNull) {
+                Message.send(player, "<white>" + grant.getSimple() + " <green>rank has been removed.");
+                return true;
+            }
+
+            return false;
+        });
+
         grants.stream()
                 .filter(grant -> {
                     if (grant.getType().equals(GrantType.EXPIRED) || grant.getType().equals(GrantType.REMOVED)) return false;
 
                     boolean isPermanent = grant.isPermanent();
                     boolean hasExpired = grant.hasExpired();
-                    boolean hasRank = grant.getRank() != null;
                     boolean hasSchedule = hasSchedule(grant.getId() + grant.getRank().getName());
 
-                    if ((!isPermanent && hasExpired) || !hasRank) {
+                    if (!isPermanent && hasExpired) {
                         grant.setRemovedAt(System.currentTimeMillis());
                         grant.setRemovedReason("Automatic");
                         grant.setRemovedOrigin(Mithril.getInstance().getInstanceManager().getInstance().getName());
                         grant.setType(GrantType.EXPIRED);
 
-                        String rankMessage = hasRank
-                                ? grant.getRank().getDisplayColored() + " <green>rank has expired."
-                                : "<white>" + grant.getSimple() + " <green>rank has been removed.";
-
-                        Message.send(player, rankMessage);
+                        Message.send(player, grant.getRank().getDisplayColored() + " <green>rank has expired.");
                         return false;
                     }
 
