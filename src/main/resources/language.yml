@@ -1,6 +1,6 @@
 server:
   server_display: "Desolve"
-  plugin_prefix: "<aqua><bold>Melee <gray>»</bold> "
+  plugin_prefix: "<aqua><bold>Melee <gray>»</bold>"
 
 acf-core:
   invalid_syntax: "&bUsage: &a{command} &f{syntax}"
