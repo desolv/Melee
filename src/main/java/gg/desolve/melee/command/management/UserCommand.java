@@ -3,18 +3,11 @@ package gg.desolve.melee.command.management;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
-import gg.desolve.melee.Melee;
 import gg.desolve.melee.grant.GrantType;
-import gg.desolve.melee.inventory.rank.metadata.MetadataInventory;
-import gg.desolve.melee.inventory.rank.modify.ModifyInventory;
 import gg.desolve.melee.profile.Profile;
-import gg.desolve.melee.rank.Rank;
-import gg.desolve.melee.rank.RankManager;
-import gg.desolve.mithril.Mithril;
 import gg.desolve.mithril.relevance.Converter;
 import gg.desolve.mithril.relevance.Message;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @CommandAlias("user")
 public class UserCommand extends BaseCommand {
@@ -38,7 +31,7 @@ public class UserCommand extends BaseCommand {
                         "<newline><white>UUID: <dark_gray>" + profile.getUuid() +
                         "<newline><white>Logins: <aqua>" + profile.getLogins() +
                         "<newline><white>First Seen: <aqua>" + Converter.date(profile.getFirstSeen()) +
-                        "<newline><white>Last Seen: <aqua>" + Converter.time(System.currentTimeMillis() - profile.getLastSeen()) + "ago" +
+                        "<newline><white>Last Seen: <aqua>" + Converter.time(System.currentTimeMillis() - profile.getLastSeen()) + " ago" +
                         "<newline><white>Grants: <aqua>" + String.join("<white>, <white>", profile.getGrants().stream()
                                 .filter(grant -> grant.getType() == GrantType.ACTIVE)
                                 .map(grant -> (!grant.isPermanent() ? "<white>*" : "") + grant.getRank().getNameColored()).toList()) +
