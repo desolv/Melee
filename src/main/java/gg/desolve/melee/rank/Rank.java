@@ -21,6 +21,7 @@ public class Rank {
     private boolean primary;
     private List<String> permissions;
     private transient long timestamp;
+    private transient boolean pending;
 
     public Rank(String name, int priority, String display, String prefix, String color, List<String> inherits, boolean grantable, boolean visible, boolean primary, List<String> permissions) {
         this.name = name;
@@ -61,6 +62,6 @@ public class Rank {
     public void save() {
         RankManager rankManager = Melee.getInstance().getRankManager();
         rankManager.save(this);
-        rankManager.publish(this, "none");
+        rankManager.publish(this, "");
     }
 }
