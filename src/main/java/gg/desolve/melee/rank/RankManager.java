@@ -21,12 +21,15 @@ public class RankManager {
     private static final Gson gson = new Gson();
 
     public RankManager() {
-        primary();
         deposit();
+        primary();
     }
 
     public Rank retrieve(String rankName) {
-        Rank rank = records.get(rankName);
+        Rank rank = retrieve().stream()
+                .filter(r -> r.getName().equalsIgnoreCase(rankName))
+                .findFirst()
+                .orElse(null);
 
         if (rank != null)
             return rank;
@@ -65,17 +68,16 @@ public class RankManager {
     }
 
     public void save(Rank rank) {
-        Mithril.getInstance().getMongoManager().runAsyncMongoTask(db ->
-                db.getCollection("ranks").replaceOne(
+        Mithril.getInstance().getMongoManager().getMongoDatabase().getCollection("ranks")
+                .replaceOne(
                         Filters.eq("name", rank.getName()),
                         Document.parse(gson.toJson(rank)),
-                        new ReplaceOptions().upsert(true)));
+                        new ReplaceOptions().upsert(true));
     }
 
     public void delete(Rank rank) {
-        Mithril.getInstance().getMongoManager().runAsyncMongoTask(db ->
-                db.getCollection("ranks")
-                        .deleteOne(Filters.eq("name", rank.getName())));
+        Mithril.getInstance().getMongoManager().getMongoDatabase().getCollection("ranks")
+                .deleteOne(Filters.eq("name", rank.getName()));
         publish(rank, "refresh");
     }
 
@@ -89,7 +91,10 @@ public class RankManager {
                 .find()
                 .map(rankDocument -> gson.fromJson(rankDocument.toJson(), Rank.class))
                 .into(new ArrayList<>())
-               .forEach(rank -> records.put(rank.getName().toLowerCase(), rank));
+               .forEach(rank -> {
+                   rank.setTimestamp(System.currentTimeMillis());
+                   records.put(rank.getName().toLowerCase(), rank);
+               });
     }
 
     public List<Rank> sorted() {
@@ -103,16 +108,10 @@ public class RankManager {
     }
 
     public Rank primary() {
-        Rank primary = records.values().stream()
+        Rank primary = retrieve().stream()
                 .filter(Rank::isPrimary)
                 .findFirst()
-                .orElse(null);
-
-        if (primary == null)
-            primary = retrieve().stream()
-                    .filter(Rank::isPrimary)
-                    .findFirst()
-                    .orElseGet(() -> create("Default"));
+                .orElseGet(() -> create("Default"));
 
         primary.setPrimary(true);
         primary.setGrantable(false);
