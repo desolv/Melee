@@ -70,7 +70,6 @@ public class MetadataModifyInheritsInventory implements InventoryProvider {
                         .toList());
                 rank.save();
                 getInventory(profile, rank).open(player);
-                Melee.getInstance().getRankManager().publish(rank, "none");
             }));
         });
 

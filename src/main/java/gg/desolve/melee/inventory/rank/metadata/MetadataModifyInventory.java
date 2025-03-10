@@ -50,15 +50,13 @@ public class MetadataModifyInventory implements InventoryProvider {
         ItemMeta nameMeta = nameStack.getItemMeta();
         nameMeta.setDisplayName(Message.translate("<green>Name"));
         nameMeta.setLore(Stream.of(
-                "<gray>Self explanatory its the rank name",
-                "<gray>but its used for identification",
+                "<gray>Self explanatory its the name but",
+                "<gray>its used for identification",
                 "<gray>- " + rank.getNameColored(),
                 "<gray>",
                 "<yellow>Click to modify name"
         ).map(Message::translate).toList());
         nameStack.setItemMeta(nameMeta);
-
-        // TODO: Make sure to update globally
         contents.set(1, 2, ClickableItem.empty(nameStack));
 
         ItemStack displayStack = XMaterial.WRITABLE_BOOK.parseItem();
@@ -189,6 +187,28 @@ public class MetadataModifyInventory implements InventoryProvider {
         ).map(Message::translate).toList());
         inheritsStack.setItemMeta(inheritsMeta);
         contents.set(2, 0, ClickableItem.of(inheritsStack, r -> MetadataModifyInheritsInventory.getInventory(profile, rank).open(player)));
+
+        ItemStack deleteStack = XMaterial.BARRIER.parseItem();
+        ItemMeta deleteMeta = deleteStack.getItemMeta();
+        deleteMeta.setDisplayName(Message.translate(!rank.isPending() ? "<red>Delete" : "<yellow>Pending"));
+        deleteMeta.setLore(Stream.of(
+                rank.isPending() ?
+                        "<gray>Under pending deletion, console" : "<gray>It will delete the rank locally and",
+                rank.isPending() ?
+                        "<gray>will have to confirm before deletion" : "<gray>from the database",
+                "<gray>",
+                rank.isPending() ?
+                        "<red>Unable to delete since is pending" :
+                        (rank.isPrimary() ? "<red>Unable to delete since is primary" : "<yellow>Click to delete the rank")
+        ).map(Message::translate).toList());
+        deleteStack.setItemMeta(deleteMeta);
+        contents.set(2, 4, (rank.isPending() || rank.isPrimary()) ?
+                ClickableItem.empty(deleteStack) :
+                ClickableItem.of(deleteStack, r -> {
+                    rank.setPending(true);
+                    getInventory(profile, rank).open(player);
+                })
+        );
     }
 
     @Override
