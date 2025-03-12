@@ -72,14 +72,10 @@ public class RankCommand extends BaseCommand {
         Melee.getInstance().getRankManager().delete(rank);
 
         Message.send(sender, "<green>Deleted " + name + " <green>rank.");
+
         String broadcastMessage = "prefix% rank% <green>rank has been deleted."
                 .replace("rank%", name);
 
-        String redisMessage = String.join("&%$",
-                broadcastMessage,
-                "melee.*|melee.admin"
-        );
-
-        Mithril.getInstance().getRedisManager().publish("Broadcast", redisMessage);
+        Mithril.getInstance().getInstanceManager().broadcast(broadcastMessage + "&%$melee.*|melee.admin");
     }
 }

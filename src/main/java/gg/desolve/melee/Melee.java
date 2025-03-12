@@ -44,7 +44,7 @@ public final class Melee extends JavaPlugin {
 
         configurationManager = new ConfigurationManager(this, "language.yml", "storage.yml");
 
-        Message.setPrefix(getLanguageConfig().getString("server.plugin_prefix"));
+        Message.setPrefix(getLanguageConfig().getString("server.prefix"));
 
         commandManager = new CommandManager(this, "melee.*");
         commandDirector = new CommandDirector(commandManager);

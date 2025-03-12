@@ -9,8 +9,8 @@ import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.profile.ProfileManager;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
+import gg.desolve.mithril.config.Config;
 import gg.desolve.mithril.relevance.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,7 +39,9 @@ public class InvalidateGrantCommand extends BaseCommand {
         }
 
         if (!profile.hasGrant(rank)) {
-            Message.send(sender, rank.getDisplayColored() + " <red>rank is not present for " + profile.getUsernameColored() + ".");
+            Message.send(sender, "rank% <red>rank is not present for username%."
+                    .replace("rank%", rank.getDisplayColored())
+                    .replace("username%", profile.getUsernameColored()));
             return;
         }
 
@@ -55,16 +57,18 @@ public class InvalidateGrantCommand extends BaseCommand {
 
         profile.save();
 
-        Message.send(sender, "<green>You've invalidated the rank% <green>rank from player%."
+        Config languageConfig = Melee.getInstance().getLanguageConfig();
+
+        Message.send(sender, languageConfig.getString("invalidategrant-command.granter")
                 .replace("rank%", rank.getDisplayColored())
                 .replace("player%", profile.getUsernameColored())
                 .replace("reason%", reason));
 
-        String invalidateMessage = "<green>rank% <green>rank <green>has been removed."
+        String invalidateMessage = languageConfig.getString("invalidategrant-command.target")
                 .replace("rank%", rank.getDisplayColored())
                 .replace("reason%", reason);
 
-        String broadcastMessage = "prefix% rank% <green>rank has been invalidated from player%."
+        String broadcastMessage = languageConfig.getString("invalidategrant-command.broadcast")
                 .replace("player%", profile.getUsernameColored())
                 .replace("rank%", rank.getDisplayColored())
                 .replace("reason%", reason);

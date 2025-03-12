@@ -9,6 +9,7 @@ import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.profile.ProfileManager;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
+import gg.desolve.mithril.config.Config;
 import gg.desolve.mithril.relevance.Converter;
 import gg.desolve.mithril.relevance.Duration;
 import gg.desolve.mithril.relevance.Message;
@@ -43,7 +44,9 @@ public class GrantManualCommand extends BaseCommand {
         }
 
         if (profile.hasGrant(rank)) {
-            Message.send(sender, rank.getDisplayColored() + " <red>rank is present for " + profile.getUsernameColored() + ".");
+            Message.send(sender, "rank% <red>rank is present for username%."
+                    .replace("rank%", rank.getDisplayColored())
+                    .replace("username%", profile.getUsernameColored()));
             return;
         }
 
@@ -64,20 +67,22 @@ public class GrantManualCommand extends BaseCommand {
         profile.getGrants().add(grant);
         profile.save();
 
-        Message.send(sender, "<green>You've granted the rank% <green>rank to player% <green>on scope <light_purple>scope%."
+        Config languageConfig = Melee.getInstance().getLanguageConfig();
+
+        Message.send(sender, languageConfig.getString("grantmanual-command.granter")
                         .replace("rank%", rank.getDisplayColored())
                         .replace("player%", profile.getUsernameColored())
                         .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
                         .replace("scope%", scope.getFormat())
                         .replace("reason%", reason));
 
-        String grantedMessage = "<green>You've been granted the rank% <green>rank <gray>for duration%."
+        String grantedMessage = languageConfig.getString("grantmanual-command.target")
                 .replace("rank%", rank.getDisplayColored())
                 .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))
                 .replace("scope%", scope.getFormat())
                 .replace("reason%", reason);
 
-        String broadcastMessage = "prefix% rank% <green>rank has been granted to player% <green>on scope <light_purple>scope%."
+        String broadcastMessage = languageConfig.getString("grantmanual-command.broadcast")
                 .replace("player%", profile.getUsernameColored())
                 .replace("rank%", rank.getDisplayColored())
                 .replace("duration%", (grant.isPermanent() ? "forever" : Converter.time(duration.duration())))

@@ -131,7 +131,7 @@ public class CommandDirector {
                 Mithril.getInstance().getInstanceManager().retrieve().stream().map(Instance::getName).toList());
 
         commandManager.getCommandCompletions().registerAsyncCompletion("durations", s ->
-                Arrays.asList(Mithril.getInstance().getLanguageConfig().getString("server.durations").split("\\|")));
+                Arrays.asList(Mithril.getInstance().getLanguageConfig().getString("server.timing").split("\\|")));
     }
 }
 

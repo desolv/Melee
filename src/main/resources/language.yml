@@ -1,6 +1,15 @@
 server:
-  server_display: "Desolve"
-  plugin_prefix: "<aqua><bold>Melee <gray>»</bold>"
+  prefix: "<aqua><bold>Melee <gray>»</bold>"
+
+grantmanual-command:
+  granter: "<green>You've granted the rank% <green>rank to player% <green>on scope <light_purple>scope%."
+  target: "<green>You've been granted the rank% <green>rank <gray>for duration%."
+  broadcast: "prefix% rank% <green>rank has been granted to player% <green>on scope <light_purple>scope%."
+
+invalidategrant-command:
+  granter: "<green>You've invalidated the rank% <green>rank from player%."
+  target: "<green>rank% <green>rank <green>has been removed."
+  broadcast: "prefix% rank% <green>rank has been invalidated from player%."
 
 acf-core:
   invalid_syntax: "&bUsage: &a{command} &f{syntax}"
