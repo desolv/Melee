@@ -1,4 +1,4 @@
-package gg.desolve.melee.inventory.rank.metadata;
+package gg.desolve.melee.inventory.metadata;
 
 import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;
@@ -9,7 +9,6 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.profile.Profile;
-import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
 import gg.desolve.mithril.relevance.Material;
 import gg.desolve.mithril.relevance.Message;
@@ -21,25 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class MetadataModifyInheritsInventory implements InventoryProvider {
+public class MetadataInventory implements InventoryProvider {
 
-    private final Profile profile;
-    private final Rank rank;
-
-    public MetadataModifyInheritsInventory(Profile profile, Rank rank) {
-        this.profile = profile;
-        this.rank = rank;
-    }
-
-    public static SmartInventory getInventory(Profile profile, Rank rank) {
-        return SmartInventory.builder()
-                .id("rankModifyInheritsInventory")
-                .provider(new MetadataModifyInheritsInventory(profile, rank))
-                .size(3, 9)
-                .title(Message.translate("Modifying Inherits"))
-                .manager(Mithril.getInstance().getInventoryManager())
-                .build();
-    }
+    public static final SmartInventory INVENTORY = SmartInventory.builder()
+            .id("rankInventory")
+            .provider(new MetadataInventory())
+            .size(3, 9)
+            .title("Rank Metadata")
+            .manager(Mithril.getInstance().getInventoryManager())
+            .build();
 
     @Override
     public void init(Player player, InventoryContents contents) {
@@ -49,46 +38,34 @@ public class MetadataModifyInheritsInventory implements InventoryProvider {
         glassStack.setItemMeta(glassMeta);
         contents.fillRow(0, ClickableItem.empty(glassStack));
 
+        Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
         Pagination pagination = contents.pagination();
-        List<ClickableItem> inherits = new ArrayList<>();
+        List<ClickableItem> ranks = new ArrayList<>();
 
-        rank.getInherits().forEach(inheritRank -> {
-            Rank inherit = Melee.getInstance().getRankManager().retrieve(inheritRank);
-            XMaterial material = XMaterial.matchXMaterial(Material.getWool(inherit.getColor()) + "_WOOL")
+        Melee.getInstance().getRankManager().sorted().forEach(rank -> {
+            XMaterial material = XMaterial.matchXMaterial(Material.getWool(rank.getColor()) + "_WOOL")
                     .orElse(XMaterial.WHITE_WOOL);
-            ItemStack stack = material.parseItem();
-            ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(Message.translate(inherit.getNameColored()));
-            meta.setLore(Stream.of(
-                    "<white>",
-                    "<yellow>Click to remove inherit"
+
+            ItemStack rankStack = material.parseItem();
+            ItemMeta rankMeta = rankStack.getItemMeta();
+
+            rankMeta.setDisplayName(Message.translate(rank.getNameColored()));
+            rankMeta.setLore(Stream.of(
+                    "<gray>Priority: <aqua>" + rank.getPriority(),
+                    "<gray>Display Name: " + rank.getDisplayColored(),
+                    "<gray>Color: " + rank.getColor() + "this",
+                    "<gray>Prefix: " + rank.getPrefix() + "You",
+                    "<gray>",
+                    "<yellow>Click to modify metadata"
             ).map(Message::translate).toList());
-            stack.setItemMeta(meta);
-            inherits.add(ClickableItem.of(stack, r -> {
-                rank.setInherits(rank.getInherits().stream()
-                        .filter(i -> !i.equalsIgnoreCase(inheritRank))
-                        .toList());
-                rank.save();
-                getInventory(profile, rank).open(player);
-            }));
+
+            rankStack.setItemMeta(rankMeta);
+            ranks.add(ClickableItem.of(rankStack, r -> MetadataModifyInventory.getInventory(profile, rank).open(player)));
         });
 
         pagination.setItemsPerPage(18);
-        pagination.setItems(inherits.toArray(new ClickableItem[0]));
+        pagination.setItems(ranks.toArray(new ClickableItem[0]));
         pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-
-        ItemStack addStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyMDk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZTAyNzgwMTQyZjcxNiJ9fX0=");
-        ItemMeta addMeta = addStack.getItemMeta();
-        addMeta.setDisplayName(Message.translate("<green>Add Inherit"));
-        addMeta.setLore(Stream.of(
-                "<gray>Ranks that this rank will inherit",
-                "<gray>attributes from",
-                "<white>",
-                "<yellow>Click to add inherit"
-        ).map(Message::translate).toList());
-        addStack.setItemMeta(addMeta);
-        contents.set(0, 4, ClickableItem.of(addStack, r -> profile.setRankProcess(rank, "inherit")));
 
         if (!pagination.isFirst()) {
             ItemStack previousStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
@@ -101,7 +78,7 @@ public class MetadataModifyInheritsInventory implements InventoryProvider {
 
             contents.set(0, 0, ClickableItem.of(
                     previousStack,
-                    e -> getInventory(profile, rank).open(player, pagination.previous().getPage())
+                    e -> INVENTORY.open(player, pagination.previous().getPage())
             ));
         }
 
@@ -116,7 +93,7 @@ public class MetadataModifyInheritsInventory implements InventoryProvider {
 
             contents.set(0, 8, ClickableItem.of(
                     nextStack,
-                    e -> getInventory(profile, rank).open(player, pagination.next().getPage())
+                    e -> INVENTORY.open(player, pagination.next().getPage())
             ));
         }
     }

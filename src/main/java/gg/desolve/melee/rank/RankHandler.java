@@ -1,9 +1,9 @@
 package gg.desolve.melee.rank;
 
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.inventory.rank.metadata.MetadataModifyInheritsInventory;
-import gg.desolve.melee.inventory.rank.metadata.MetadataModifyInventory;
-import gg.desolve.melee.inventory.rank.metadata.MetadataModifyPermissionsInventory;
+import gg.desolve.melee.inventory.metadata.MetadataModifyInheritsInventory;
+import gg.desolve.melee.inventory.metadata.MetadataModifyInventory;
+import gg.desolve.melee.inventory.metadata.MetadataModifyPermissionsInventory;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.mithril.relevance.Message;
 import org.bukkit.entity.Player;

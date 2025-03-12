@@ -1,4 +1,4 @@
-package gg.desolve.melee.inventory.rank.metadata;
+package gg.desolve.melee.inventory.metadata;
 
 import com.cryptomorin.xseries.XMaterial;
 import fr.minuskube.inv.ClickableItem;

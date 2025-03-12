@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.inventory.rank.metadata.MetadataInventory;
+import gg.desolve.melee.inventory.metadata.MetadataInventory;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.melee.rank.RankManager;
 import gg.desolve.mithril.Mithril;
