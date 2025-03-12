@@ -86,7 +86,8 @@ public class RankManager {
     }
 
     public void deposit() {
-       Mithril.getInstance().getMongoManager().getMongoDatabase()
+        records.clear();
+        Mithril.getInstance().getMongoManager().getMongoDatabase()
                 .getCollection("ranks")
                 .find()
                 .map(rankDocument -> gson.fromJson(rankDocument.toJson(), Rank.class))

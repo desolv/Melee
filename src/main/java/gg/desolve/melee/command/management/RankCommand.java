@@ -48,10 +48,12 @@ public class RankCommand extends BaseCommand {
         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 
         Rank newRank = rankManager.create(name);
+        newRank.setGrantable(false);
         newRank.setVisible(false);
         newRank.save();
+        Melee.getInstance().getRankManager().deposit();
 
-        Message.send(sender, "<green>Created " + newRank.getDisplayColored() + " <green>rank (check rank metadata).");
+        Message.send(sender, "<green>Created " + newRank.getDisplayColored() + " <green>rank!");
     }
 
     @Subcommand("confirm")

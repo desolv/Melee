@@ -53,10 +53,22 @@ public class RankHandler {
                 rank.setColor(message);
                 break;
             case "grantable":
-                rank.setGrantable(Boolean.parseBoolean(message));
+                try {
+                    boolean grantable = Boolean.parseBoolean(message);
+                    rank.setGrantable(grantable);
+                } catch (NumberFormatException ex) {
+                    Message.send(player, "<red>Invalid boolean entered for grantable.");
+                    return;
+                }
                 break;
             case "visible":
-                rank.setVisible(Boolean.parseBoolean(message));
+                try {
+                    boolean visible = Boolean.parseBoolean(message);
+                    rank.setVisible(visible);
+                } catch (NumberFormatException ex) {
+                    Message.send(player, "<red>Invalid boolean entered for visible.");
+                    return;
+                }
                 break;
             case "permission":
                 if (message.contains(" ")) {
