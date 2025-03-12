@@ -62,6 +62,6 @@ public class Rank {
     public void save() {
         RankManager rankManager = Melee.getInstance().getRankManager();
         rankManager.save(this);
-        rankManager.publish(this, "");
+        rankManager.publish(this, "/");
     }
 }
