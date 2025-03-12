@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import gg.desolve.melee.Melee;
 import gg.desolve.melee.inventory.metadata.MetadataInventory;
+import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.melee.rank.RankManager;
 import gg.desolve.mithril.Mithril;
@@ -28,7 +29,8 @@ public class RankCommand extends BaseCommand {
     @CommandPermission("melee.command.rank|melee.command.rank.metadata")
     @Description("Modify ranks metadata on GUI")
     public static void onMetadata(Player player) {
-        MetadataInventory.INVENTORY.open(player);
+        Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
+        MetadataInventory.getInventory(profile).open(player);
     }
 
     @Subcommand("create")

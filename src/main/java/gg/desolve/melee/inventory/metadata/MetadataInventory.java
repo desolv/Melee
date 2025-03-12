@@ -8,6 +8,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import gg.desolve.melee.Melee;
+import gg.desolve.melee.inventory.grant.GrantInventory;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.mithril.Mithril;
 import gg.desolve.mithril.relevance.Material;
@@ -22,13 +23,21 @@ import java.util.stream.Stream;
 
 public class MetadataInventory implements InventoryProvider {
 
-    public static final SmartInventory INVENTORY = SmartInventory.builder()
-            .id("rankInventory")
-            .provider(new MetadataInventory())
-            .size(3, 9)
-            .title("Rank Metadata")
-            .manager(Mithril.getInstance().getInventoryManager())
-            .build();
+    private final Profile profile;
+
+    public MetadataInventory(Profile profile) {
+        this.profile = profile;
+    }
+
+    public static SmartInventory getInventory(Profile profile) {
+        return SmartInventory.builder()
+                .id("rankInventory")
+                .provider(new MetadataInventory(profile))
+                .size(3, 9)
+                .title("Rank Metadata")
+                .manager(Mithril.getInstance().getInventoryManager())
+                .build();
+    }
 
     @Override
     public void init(Player player, InventoryContents contents) {
@@ -38,7 +47,6 @@ public class MetadataInventory implements InventoryProvider {
         glassStack.setItemMeta(glassMeta);
         contents.fillRow(0, ClickableItem.empty(glassStack));
 
-        Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
         Pagination pagination = contents.pagination();
         List<ClickableItem> ranks = new ArrayList<>();
 
@@ -53,8 +61,8 @@ public class MetadataInventory implements InventoryProvider {
             rankMeta.setLore(Stream.of(
                     "<gray>Priority: <aqua>" + rank.getPriority(),
                     "<gray>Display Name: " + rank.getDisplayColored(),
-                    "<gray>Color: " + rank.getColor() + "this",
-                    "<gray>Prefix: " + rank.getPrefix() + "You",
+                    "<gray>Permissions: <aqua>" + (rank.getPermissions().isEmpty() ? "&cNone" : rank.getPermissions().size()),
+                    "<gray>Inherits: <aqua>" + (rank.getInherits().isEmpty() ? "&cNone" : rank.getInherits().size()),
                     "<gray>",
                     "<yellow>Click to modify metadata"
             ).map(Message::translate).toList());
@@ -78,7 +86,7 @@ public class MetadataInventory implements InventoryProvider {
 
             contents.set(0, 0, ClickableItem.of(
                     previousStack,
-                    e -> INVENTORY.open(player, pagination.previous().getPage())
+                    e -> getInventory(profile).open(player, pagination.previous().getPage())
             ));
         }
 
@@ -93,7 +101,7 @@ public class MetadataInventory implements InventoryProvider {
 
             contents.set(0, 8, ClickableItem.of(
                     nextStack,
-                    e -> INVENTORY.open(player, pagination.next().getPage())
+                    e -> getInventory(profile).open(player, pagination.next().getPage())
             ));
         }
     }
