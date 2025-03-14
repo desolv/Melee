@@ -3,10 +3,7 @@ package gg.desolve.melee.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.InvalidCommandArgument;
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.command.management.GrantManualCommand;
-import gg.desolve.melee.command.management.InvalidateGrantCommand;
-import gg.desolve.melee.command.management.RankCommand;
-import gg.desolve.melee.command.management.UserCommand;
+import gg.desolve.melee.command.management.*;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
@@ -42,7 +39,8 @@ public class CommandDirector {
                 new GrantManualCommand(),
                 new InvalidateGrantCommand(),
                 new RankCommand(),
-                new UserCommand()
+                new UserCommand(),
+                new GrantCommand()
         );
 
         commandList.forEach(commandManager::registerCommand);
@@ -131,7 +129,10 @@ public class CommandDirector {
                 Mithril.getInstance().getInstanceManager().retrieve().stream().map(Instance::getName).toList());
 
         commandManager.getCommandCompletions().registerAsyncCompletion("durations", s ->
-                Arrays.asList(Mithril.getInstance().getLanguageConfig().getString("server.timing").split("\\|")));
+                Arrays.asList(Melee.getInstance().getLanguageConfig().getString("server.timing").split("\\|")));
+
+        commandManager.getCommandCompletions().registerAsyncCompletion("reasons", s ->
+                Arrays.asList(Melee.getInstance().getLanguageConfig().getString("server.reasons").split("\\|")));
     }
 }
 

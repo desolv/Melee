@@ -61,6 +61,14 @@ public class Profile {
                         && grant.getType().equals(GrantType.ACTIVE));
     }
 
+    public void setGrantProcess(Rank rank, String duration, String scope, String reason, String process) {
+        Player player = Bukkit.getPlayer(uuid);
+        player.closeInventory();
+
+        Message.send(player, "<yellow>Enter custom " + process + " for " + rank.getNameColored() + " <yellow>grant (Type 'cancel' to abort)");
+        this.process = "grant:" + rank.getName() + ":" + duration + ":" + scope + ":" + reason + ":" + process;
+    }
+
     public void setRankProcess(Rank rank, String process) {
         Player player = Bukkit.getPlayer(uuid);
         player.closeInventory();

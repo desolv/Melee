@@ -1,8 +1,11 @@
 package gg.desolve.melee.chat;
 
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.rank.RankHandler;
+import gg.desolve.melee.inventory.grant.GrantHandler;
+import gg.desolve.melee.inventory.metadata.MetadataHandler;
 import gg.desolve.melee.profile.Profile;
+import gg.desolve.melee.rank.Rank;
+import gg.desolve.mithril.relevance.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,11 +23,25 @@ public class ChatListener implements Listener {
         if (profile.getProcess() != null && !profile.getProcess().isEmpty()) {
             event.setCancelled(true);
 
-            String[] parts = profile.getProcess().split(":", 3);
+            String[] parts = profile.getProcess().split(":");
             profile.setProcess("");
 
-            if (parts[0].equalsIgnoreCase("rank"))
-                new RankHandler(profile, Melee.getInstance().getRankManager().retrieve(parts[1]), parts[2]).process(player, message);
+            if (message.equalsIgnoreCase("cancel")) {
+                Message.send(player, "<red>Modification process cancelled.");
+                return;
+            }
+
+            Rank rank = Melee.getInstance().getRankManager().retrieve(parts[1]);
+
+            switch (parts[0]) {
+                case "rank":
+                    new MetadataHandler(profile, rank, parts[2]).process(player, message);
+                    break;
+                case "grant":
+                    new GrantHandler(profile, rank, parts[2], parts[3], parts[4], parts[5]).process(player, message);
+                    break;
+            }
+
         }
     }
 
