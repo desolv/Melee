@@ -65,7 +65,7 @@ public class GrantConfirmInventory implements InventoryProvider {
         confirmMeta.setDisplayName(Message.translate("<bold><green>Confirm"));
         confirmMeta.setLore(Stream.of(
                 "<gray>By pressing this you will grant",
-                "<gray>the selected grant",
+                "<gray>the selected rank",
                 "<gray>",
                 acknowledged ? "<yellow>Click to confirm" : "<red>Grant is not acknowledged"
         ).map(Message::translate).toList());
@@ -99,8 +99,8 @@ public class GrantConfirmInventory implements InventoryProvider {
                 "<gray>Grants: <green>" + profile.getGrants().stream().filter(grant -> grant.getType() == GrantType.ACTIVE).toList().size(),
                 "<gray>",
                 Melee.getInstance().getRankManager().compare(profile.getGrant().getRank(), rank) ?
-                        rank.getNameColored() + "<red> will not become primary" :
-                        rank.getNameColored() + "<green> will become primary"
+                        rank.getNameColored() + "<red> will not become highest" :
+                        rank.getNameColored() + "<green> will become highest"
         ).map(Message::translate).toList());
         profileStack.setItemMeta(profileMeta);
         contents.set(1, 0, ClickableItem.empty(profileStack));

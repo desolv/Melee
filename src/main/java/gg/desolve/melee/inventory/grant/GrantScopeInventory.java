@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import gg.desolve.melee.Melee;
 import gg.desolve.melee.profile.Profile;
 import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.Mithril;
@@ -68,9 +69,7 @@ public class GrantScopeInventory implements InventoryProvider {
 
                     meta.setDisplayName(Message.translate("<white>" + instance));
                     stack.setItemMeta(meta);
-                    instances.add(ClickableItem.of(stack, r ->
-                            GrantReasonInventory.getInventory(profile, rank, duration, instance).open(player)
-                    ));
+                    instances.add(ClickableItem.of(stack, r -> GrantReasonInventory.getInventory(profile, rank, duration, instance).open(player)));
                 });
 
 
@@ -86,7 +85,10 @@ public class GrantScopeInventory implements InventoryProvider {
                 "<gray>grant"
         ).map(Message::translate).toList());
         scopeStack.setItemMeta(scopeMeta);
-        contents.set(0, 3, ClickableItem.of(scopeStack, r -> profile.setGrantProcess(rank, duration, "", "","scope")));
+        contents.set(0, 3, ClickableItem.of(scopeStack, r -> {
+            Profile executer = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
+            executer.setGrantProcess(player.getUniqueId(), profile.getUuid(), rank, duration, "","scope");
+        }));
 
         ItemStack globalStack = XMaterial.COMPASS.parseItem();
         ItemMeta globalMeta = globalStack.getItemMeta();

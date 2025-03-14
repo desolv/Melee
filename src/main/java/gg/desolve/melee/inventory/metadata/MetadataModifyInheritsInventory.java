@@ -88,7 +88,7 @@ public class MetadataModifyInheritsInventory implements InventoryProvider {
                 "<yellow>Click to add inherit"
         ).map(Message::translate).toList());
         addStack.setItemMeta(addMeta);
-        contents.set(0, 4, ClickableItem.of(addStack, r -> profile.setRankProcess(rank, "inherit")));
+        contents.set(0, 4, ClickableItem.of(addStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "inherit")));
 
         if (!pagination.isFirst()) {
             ItemStack previousStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");

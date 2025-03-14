@@ -11,14 +11,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.UUID;
+
 public class ChatListener implements Listener {
 
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
         String message = event.getMessage();
+        Profile profile = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
 
         if (profile.getProcess() != null && !profile.getProcess().isEmpty()) {
             event.setCancelled(true);
@@ -31,14 +33,15 @@ public class ChatListener implements Listener {
                 return;
             }
 
-            Rank rank = Melee.getInstance().getRankManager().retrieve(parts[1]);
+            Rank rank = Melee.getInstance().getRankManager().retrieve(parts[2]);
 
             switch (parts[0]) {
                 case "rank":
-                    new MetadataHandler(profile, rank, parts[2]).process(player, message);
+                    new MetadataHandler(profile, rank, parts[3]).process(player, message);
                     break;
                 case "grant":
-                    new GrantHandler(profile, rank, parts[2], parts[3], parts[4], parts[5]).process(player, message);
+                    Profile targetProfile = Melee.getInstance().getProfileManager().retrieve(UUID.fromString(parts[1]));
+                    new GrantHandler(targetProfile, rank, parts[3], parts[4], parts[5]).process(player, message);
                     break;
             }
 

@@ -80,7 +80,10 @@ public class GrantDurationInventory implements InventoryProvider {
                 "<gray>grant"
         ).map(Message::translate).toList());
         durationStack.setItemMeta(durationMeta);
-        contents.set(0, 3, ClickableItem.of(durationStack, r -> profile.setGrantProcess(rank, "", "", "", "duration")));
+        contents.set(0, 3, ClickableItem.of(durationStack, r -> {
+            Profile executer = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
+            executer.setGrantProcess(player.getUniqueId(), profile.getUuid(), rank, "", "", "duration");
+        }));
 
         ItemStack permanentStack = XMaterial.COMPASS.parseItem();
         ItemMeta permanentMeta = permanentStack.getItemMeta();

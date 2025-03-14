@@ -84,7 +84,10 @@ public class GrantReasonInventory implements InventoryProvider {
                 "<gray>grant"
         ).map(Message::translate).toList());
         reasonStack.setItemMeta(reasonMeta);
-        contents.set(0, 3, ClickableItem.of(reasonStack, r -> profile.setGrantProcess(rank, duration, scope, "","reason")));
+        contents.set(0, 3, ClickableItem.of(reasonStack, r -> {
+            Profile executer = Melee.getInstance().getProfileManager().retrieve(player.getUniqueId());
+            executer.setGrantProcess(player.getUniqueId(), profile.getUuid(), rank, duration, scope,"reason");
+        }));
 
         ItemStack otherStack = XMaterial.COMPASS.parseItem();
         ItemMeta otherMeta = otherStack.getItemMeta();

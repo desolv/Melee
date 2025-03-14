@@ -14,15 +14,13 @@ public class GrantHandler {
     private final Rank rank;
     private final String duration;
     private final String scope;
-    private final String reason;
     private final String process;
 
-    public GrantHandler(Profile profile, Rank rank, String duration, String scope, String reason, String process) {
+    public GrantHandler(Profile profile, Rank rank, String duration, String scope, String process) {
         this.profile = profile;
         this.rank = rank;
         this.duration = duration;
         this.scope = scope;
-        this.reason = reason;
         this.process = process;
     }
 
@@ -38,10 +36,10 @@ public class GrantHandler {
                 GrantScopeInventory.getInventory(profile, rank, message).open(player);
                 break;
             case "scope":
-                GrantReasonInventory.getInventory(profile, rank, duration, scope).open(player);
+                GrantReasonInventory.getInventory(profile, rank, duration, message).open(player);
                 break;
             case "reason":
-                GrantConfirmInventory.getInventory(profile, rank, duration, scope, reason).open(player);
+                GrantConfirmInventory.getInventory(profile, rank, duration, scope, message).open(player);
                 break;
         }
 

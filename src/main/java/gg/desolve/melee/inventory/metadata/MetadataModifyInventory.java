@@ -70,7 +70,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 "<yellow>Click to modify display name"
         ).map(Message::translate).toList());
         displayStack.setItemMeta(displayMeta);
-        contents.set(1, 3, ClickableItem.of(displayStack, r -> profile.setRankProcess(rank, "display")));
+        contents.set(1, 3, ClickableItem.of(displayStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "display")));
 
         ItemStack priorityStack = XMaterial.GOLD_INGOT.parseItem();
         ItemMeta priorityMeta = priorityStack.getItemMeta();
@@ -83,7 +83,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 "<yellow>Click to modify priority"
         ).map(Message::translate).toList());
         priorityStack.setItemMeta(priorityMeta);
-        contents.set(1, 4, ClickableItem.of(priorityStack, r -> profile.setRankProcess(rank, "priority")));
+        contents.set(1, 4, ClickableItem.of(priorityStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "priority")));
 
         ItemStack prefixStack = XMaterial.OAK_SIGN.parseItem();
         ItemMeta prefixMeta = prefixStack.getItemMeta();
@@ -96,7 +96,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 "<yellow>Click to modify prefix"
         ).map(Message::translate).toList());
         prefixStack.setItemMeta(prefixMeta);
-        contents.set(1, 5, ClickableItem.of(prefixStack, r -> profile.setRankProcess(rank, "prefix")));
+        contents.set(1, 5, ClickableItem.of(prefixStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "prefix")));
 
         ItemStack colorStack = XMaterial.RED_DYE.parseItem();
         ItemMeta colorMeta = colorStack.getItemMeta();
@@ -109,7 +109,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 "<yellow>Click to modify color"
         ).map(Message::translate).toList());
         colorStack.setItemMeta(colorMeta);
-        contents.set(1, 6, ClickableItem.of(colorStack, r -> profile.setRankProcess(rank, "color")));
+        contents.set(1, 6, ClickableItem.of(colorStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "color")));
 
         ItemStack primaryStack = XMaterial.NETHER_STAR.parseItem();
         ItemMeta primaryMeta = primaryStack.getItemMeta();
@@ -135,7 +135,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 rank.isPrimary() ? "<red>Unable to modify since is primary" : "<yellow>Click to modify grantable"
         ).map(Message::translate).toList());
         grantableStack.setItemMeta(grantableMeta);
-        contents.set(1, 8, ClickableItem.of(grantableStack, r -> profile.setRankProcess(rank, "grantable")));
+        contents.set(1, 8, ClickableItem.of(grantableStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "grantable")));
 
         ItemStack visibleStack = XMaterial.PRISMARINE_SHARD.parseItem();
         ItemMeta visibleMeta = visibleStack.getItemMeta();
@@ -148,7 +148,7 @@ public class MetadataModifyInventory implements InventoryProvider {
                 rank.isPrimary() ? "<red>Unable to modify since is primary" : "<yellow>Click to modify visible"
         ).map(Message::translate).toList());
         visibleStack.setItemMeta(visibleMeta);
-        contents.set(2, 2, ClickableItem.of(visibleStack, r -> profile.setRankProcess(rank, "visible")));
+        contents.set(2, 2, ClickableItem.of(visibleStack, r -> profile.setRankProcess(player.getUniqueId(), rank, "visible")));
 
         ItemStack timestampStack = XMaterial.FIRE_CHARGE.parseItem();
         ItemMeta timestampMeta = timestampStack.getItemMeta();

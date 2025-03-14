@@ -61,19 +61,25 @@ public class Profile {
                         && grant.getType().equals(GrantType.ACTIVE));
     }
 
-    public void setGrantProcess(Rank rank, String duration, String scope, String reason, String process) {
-        Player player = Bukkit.getPlayer(uuid);
-        player.closeInventory();
+    public void setGrantProcess(UUID executorUUID, UUID targetUUID, Rank rank, String duration, String scope, String process) {
+        Player executor = Bukkit.getPlayer(executorUUID);
+        if (executor == null)
+            return;
 
-        Message.send(player, "<yellow>Enter custom " + process + " for " + rank.getNameColored() + " <yellow>grant (Type 'cancel' to abort)");
-        this.process = "grant:" + rank.getName() + ":" + duration + ":" + scope + ":" + reason + ":" + process;
+        executor.closeInventory();
+        Message.send(executor, "<yellow>Enter custom " + process + " for " + rank.getNameColored() + " <yellow>grant (Type 'cancel' to abort)");
+
+        this.process = "grant:" + targetUUID + ":" + rank.getName() + ":" + duration + ":" + scope + ":" + process;
     }
 
-    public void setRankProcess(Rank rank, String process) {
-        Player player = Bukkit.getPlayer(uuid);
-        player.closeInventory();
+    public void setRankProcess(UUID executorUUID, Rank rank, String process) {
+        Player executor = Bukkit.getPlayer(executorUUID);
+        if (executor == null)
+            return;
 
-        Message.send(player, "<yellow>Enter a new " + process + " for " + rank.getNameColored() + " <yellow>rank (Type 'cancel' to abort)");
+        executor.closeInventory();
+        Message.send(executor, "<yellow>Enter a new " + process + " for " + rank.getNameColored() + " <yellow>rank (Type 'cancel' to abort)");
+
         this.process = "rank:" + rank.getName() + ":" + process;
     }
 
