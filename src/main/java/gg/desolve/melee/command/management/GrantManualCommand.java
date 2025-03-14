@@ -23,7 +23,7 @@ import java.util.UUID;
 public class GrantManualCommand extends BaseCommand {
 
     @Default
-    @CommandCompletion("@players @ranks @durations @scopes @nothing")
+    @CommandCompletion("@players @ranks @durations @scopes @reasons @nothing")
     @CommandPermission("melee.command.grantmanual")
     @Syntax("(player) (rank) (duration) (scope) [reason]")
     @Description("Manually grant to players")

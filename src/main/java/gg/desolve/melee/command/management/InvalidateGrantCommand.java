@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 public class InvalidateGrantCommand extends BaseCommand {
 
     @Default
-    @CommandCompletion("@players @ranks @nothing")
+    @CommandCompletion("@players @ranks @reasons @nothing")
     @CommandPermission("melee.command.invalidategrant")
     @Syntax("(player) (rank) [reason]")
     @Description("Manually invalidate grants from players")
