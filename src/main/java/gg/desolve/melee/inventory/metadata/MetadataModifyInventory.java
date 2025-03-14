@@ -48,7 +48,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack nameStack = XMaterial.NAME_TAG.parseItem();
         ItemMeta nameMeta = nameStack.getItemMeta();
-        nameMeta.setDisplayName(Message.translate("<green>Name"));
+        nameMeta.setDisplayName(Message.translate("<green><bold>Name"));
         nameMeta.setLore(Stream.of(
                 "<gray>Self explanatory its the name but",
                 "<gray>its used for identification",
@@ -61,7 +61,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack displayStack = XMaterial.WRITABLE_BOOK.parseItem();
         ItemMeta displayMeta = displayStack.getItemMeta();
-        displayMeta.setDisplayName(Message.translate("<green>Display Name"));
+        displayMeta.setDisplayName(Message.translate("<green><bold>Display Name"));
         displayMeta.setLore(Stream.of(
                 "<gray>The display name is what players",
                 "<gray>will see first when viewing",
@@ -74,7 +74,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack priorityStack = XMaterial.GOLD_INGOT.parseItem();
         ItemMeta priorityMeta = priorityStack.getItemMeta();
-        priorityMeta.setDisplayName(Message.translate("<green>Priority"));
+        priorityMeta.setDisplayName(Message.translate("<green><bold>Priority"));
         priorityMeta.setLore(Stream.of(
                 "<gray>Ranks with a higher priority override",
                 "<gray>lowers, used to manage hierarchy",
@@ -87,7 +87,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack prefixStack = XMaterial.OAK_SIGN.parseItem();
         ItemMeta prefixMeta = prefixStack.getItemMeta();
-        prefixMeta.setDisplayName(Message.translate("<green>Prefix"));
+        prefixMeta.setDisplayName(Message.translate("<green><bold>Prefix"));
         prefixMeta.setLore(Stream.of(
                 "<gray>Appears before a player name",
                 "<gray>in chat helping distinguish ranks",
@@ -100,7 +100,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack colorStack = XMaterial.RED_DYE.parseItem();
         ItemMeta colorMeta = colorStack.getItemMeta();
-        colorMeta.setDisplayName(Message.translate("<green>Color"));
+        colorMeta.setDisplayName(Message.translate("<green><bold>Color"));
         colorMeta.setLore(Stream.of(
                 "<gray>Color defines how this rank",
                 "<gray>appears in chat and menus",
@@ -113,7 +113,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack primaryStack = XMaterial.NETHER_STAR.parseItem();
         ItemMeta primaryMeta = primaryStack.getItemMeta();
-        primaryMeta.setDisplayName(Message.translate("<green>Primary"));
+        primaryMeta.setDisplayName(Message.translate("<green><bold>Primary"));
         primaryMeta.setLore(Stream.of(
                 "<gray>When a player has no other rank",
                 "<gray>this will be assigned automatically",
@@ -126,7 +126,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack grantableStack = XMaterial.BLAZE_POWDER.parseItem();
         ItemMeta grantableMeta = grantableStack.getItemMeta();
-        grantableMeta.setDisplayName(Message.translate("<green>Grantable"));
+        grantableMeta.setDisplayName(Message.translate("<green><bold>Grantable"));
         grantableMeta.setLore(Stream.of(
                 "<gray>Determines if this rank can be",
                 "<gray>granted to players by staff",
@@ -139,7 +139,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack visibleStack = XMaterial.PRISMARINE_SHARD.parseItem();
         ItemMeta visibleMeta = visibleStack.getItemMeta();
-        visibleMeta.setDisplayName(Message.translate("<green>Visible"));
+        visibleMeta.setDisplayName(Message.translate("<green><bold>Visible"));
         visibleMeta.setLore(Stream.of(
                 "<gray>Hides ranks from players, priority",
                 "<gray>will be stripped if not visible",
@@ -152,7 +152,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack timestampStack = XMaterial.FIRE_CHARGE.parseItem();
         ItemMeta timestampMeta = timestampStack.getItemMeta();
-        timestampMeta.setDisplayName(Message.translate("<green>Timestamp"));
+        timestampMeta.setDisplayName(Message.translate("<green><bold>Timestamp"));
         timestampMeta.setLore(Stream.of(
                 "<gray>Informs last time the rank",
                 "<gray>was updated locally",
@@ -164,7 +164,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack permissionsStack = XMaterial.ANVIL.parseItem();
         ItemMeta permissionsMeta = permissionsStack.getItemMeta();
-        permissionsMeta.setDisplayName(Message.translate("<green>Permissions"));
+        permissionsMeta.setDisplayName(Message.translate("<green><bold>Permissions"));
         permissionsMeta.setLore(Stream.of(
                 "<gray>Permissions define what actions",
                 "<gray>a player with this rank can do",
@@ -177,7 +177,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack inheritsStack = XMaterial.COMPARATOR.parseItem();
         ItemMeta inheritsMeta = inheritsStack.getItemMeta();
-        inheritsMeta.setDisplayName(Message.translate("<green>Inherits"));
+        inheritsMeta.setDisplayName(Message.translate("<green><bold>Inherits"));
         inheritsMeta.setLore(Stream.of(
                 "<gray>Ranks that this rank will inherit",
                 "<gray>permissions and attributes from",
@@ -190,7 +190,7 @@ public class MetadataModifyInventory implements InventoryProvider {
 
         ItemStack deleteStack = XMaterial.BARRIER.parseItem();
         ItemMeta deleteMeta = deleteStack.getItemMeta();
-        deleteMeta.setDisplayName(Message.translate(!rank.isPending() ? "<red>Delete" : "<yellow>Pending"));
+        deleteMeta.setDisplayName(Message.translate(!rank.isPending() ? "<red><bold>Delete" : "<yellow><bold>Pending"));
         deleteMeta.setLore(Stream.of(
                 rank.isPending() ?
                         "<gray>Under pending deletion, console" : "<gray>It will delete the rank locally and",

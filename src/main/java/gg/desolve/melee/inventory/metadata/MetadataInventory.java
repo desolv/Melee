@@ -51,7 +51,7 @@ public class MetadataInventory implements InventoryProvider {
         List<ClickableItem> ranks = new ArrayList<>();
 
         Melee.getInstance().getRankManager().sorted().forEach(rank -> {
-            XMaterial material = XMaterial.matchXMaterial(Material.getWool(rank.getColor()) + "_WOOL")
+            XMaterial material = XMaterial.matchXMaterial(Material.getWoolColor(rank.getColor()) + "_WOOL")
                     .orElse(XMaterial.WHITE_WOOL);
 
             ItemStack rankStack = material.parseItem();
@@ -78,7 +78,7 @@ public class MetadataInventory implements InventoryProvider {
         if (!pagination.isFirst()) {
             ItemStack previousStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
             ItemMeta previousMeta = previousStack.getItemMeta();
-            previousMeta.setDisplayName(Message.translate("<yellow>Previous Page"));
+            previousMeta.setDisplayName(Message.translate("<yellow><bold>Previous Page"));
             previousMeta.setLore(Stream.of(
                     "<gray>Click to go to the previous page"
             ).map(Message::translate).toList());
@@ -93,7 +93,7 @@ public class MetadataInventory implements InventoryProvider {
         if (!pagination.isLast()) {
             ItemStack nextStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
             ItemMeta nextMeta = nextStack.getItemMeta();
-            nextMeta.setDisplayName(Message.translate("<yellow>Next Page"));
+            nextMeta.setDisplayName(Message.translate("<yellow><bold>Next Page"));
             nextMeta.setLore(Stream.of(
                     "<gray>Click to go to the next page"
             ).map(Message::translate).toList());

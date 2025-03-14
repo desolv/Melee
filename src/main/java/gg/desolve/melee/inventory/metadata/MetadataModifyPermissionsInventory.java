@@ -76,7 +76,7 @@ public class MetadataModifyPermissionsInventory implements InventoryProvider {
 
         ItemStack addStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyMDk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZTAyNzgwMTQyZjcxNiJ9fX0=");
         ItemMeta addMeta = addStack.getItemMeta();
-        addMeta.setDisplayName(Message.translate("<green>Add Permission"));
+        addMeta.setDisplayName(Message.translate("<green><bold>Add Permission"));
         addMeta.setLore(Stream.of(
                 "<gray>Permissions define what actions",
                 "<gray>a player can do",
@@ -89,7 +89,7 @@ public class MetadataModifyPermissionsInventory implements InventoryProvider {
         if (!pagination.isFirst()) {
             ItemStack previousStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
             ItemMeta previousMeta = previousStack.getItemMeta();
-            previousMeta.setDisplayName(Message.translate("<yellow>Previous Page"));
+            previousMeta.setDisplayName(Message.translate("<yellow><bold>Previous Page"));
             previousMeta.setLore(Stream.of(
                     "<gray>Click to go to the previous page"
             ).map(Message::translate).toList());
@@ -104,7 +104,7 @@ public class MetadataModifyPermissionsInventory implements InventoryProvider {
         if (!pagination.isLast()) {
             ItemStack nextStack = Material.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
             ItemMeta nextMeta = nextStack.getItemMeta();
-            nextMeta.setDisplayName(Message.translate("<yellow>Next Page"));
+            nextMeta.setDisplayName(Message.translate("<yellow><bold>Next Page"));
             nextMeta.setLore(Stream.of(
                     "<gray>Click to go to the next page"
             ).map(Message::translate).toList());
