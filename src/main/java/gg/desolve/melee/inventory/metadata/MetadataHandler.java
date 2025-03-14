@@ -1,34 +1,27 @@
-package gg.desolve.melee.rank;
+package gg.desolve.melee.inventory.metadata;
 
 import gg.desolve.melee.Melee;
-import gg.desolve.melee.inventory.metadata.MetadataModifyInheritsInventory;
-import gg.desolve.melee.inventory.metadata.MetadataModifyInventory;
-import gg.desolve.melee.inventory.metadata.MetadataModifyPermissionsInventory;
 import gg.desolve.melee.profile.Profile;
+import gg.desolve.melee.rank.Rank;
 import gg.desolve.mithril.relevance.Message;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RankHandler {
+public class MetadataHandler {
 
     private final Profile profile;
     private final Rank rank;
     private final String process;
 
-    public RankHandler(Profile profile, Rank rank, String process) {
+    public MetadataHandler(Profile profile, Rank rank, String process) {
         this.profile = profile;
         this.rank = rank;
         this.process = process;
     }
 
     public void process(Player player, String message) {
-        if (message.equalsIgnoreCase("cancel")) {
-            Message.send(player, "<red>Modification process cancelled.");
-            return;
-        }
-
         switch (process) {
             case "display":
                 rank.setDisplay(message);
